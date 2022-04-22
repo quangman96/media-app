@@ -19,8 +19,7 @@ import Copyright from "./copyright";
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
 import { useRouter } from "next/router";
-import styles from '../styles/Dashboard.module.css'
-
+import {linksInfo} from './../components/linksInfo';
 
 const drawerWidth = 240;
 
@@ -70,15 +69,18 @@ const Drawer = styled(MuiDrawer, {
 
 const mdTheme = createTheme();
 
+const checkPath = (path) => {
+  const link = linksInfo.find(link => link.path === path);
+  return link.name || "";
+}
+
 export default function Dashboard({ children }) {
   const router = useRouter();
-  console.log(router.route.substring(1));
-
+  const pageName = checkPath(router.route);
   const [open, setOpen] = useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
   };
-  console.log(drawerWidth);
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -110,7 +112,7 @@ export default function Dashboard({ children }) {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              Dashboard
+              {pageName}
             </Typography>
           </Toolbar>
         </AppBar>
@@ -130,7 +132,7 @@ export default function Dashboard({ children }) {
               justifyContent="center"
               alignItems="center"
               spacing={2}
-              className={styles.mr9}
+              sx={{mr: '9%'}}
               // style={{ color: 'red' }}
             >
               <h2>Admin</h2>
@@ -174,23 +176,24 @@ export default function Dashboard({ children }) {
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
-              {/* Chart */}
+          <Container maxWidth="lg" style={{ marginTop: '1.5%', height: '85.5%', borderRadius: '8px' }}>
+          {children}
+            {/* <Grid container spacing={3}>
               <Grid className="zxzx" item xs={12} md={8} lg={9}>
                 <Paper
+                className="azaz"
                   sx={{
                     p: 2,
                     display: "flex",
                     flexDirection: "column",
-                    height: 240,
+                    height: '100%',
                   }}
                 >
                   {children}
                 </Paper>
               </Grid>
-            </Grid>
-            <Copyright sx={{ pt: 4 }} />
+            </Grid> */}
+            <Copyright sx={{ pt: 3 }} />
           </Container>
         </Box>
       </Box>

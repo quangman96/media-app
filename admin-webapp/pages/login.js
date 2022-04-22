@@ -18,24 +18,25 @@ const styling = {
   backgroundRepeat: "no-repeat",
   width: "100%",
   height: "100%",
+  backgroundSize: '60%',
+    position: 'fixed',
+    top: '11%',
+    left: '37%'
 };
 
 export default function Login() {
   return (
-    <Grid container columns={6} sx={{ height: "100vh" }}>
-      <Grid item xs={2}>
-        <h1>1</h1>
+    <Grid container columns={7} sx={{ height: '100vh'  }}>
+      <Grid item xs={3}>
         <FormLogin />
         {/* <Item>xs=8</Item> */}
       </Grid>
       <Grid item xs={4}>
-        <Grid container columns={6} sx={{ height: "100vh" }}>
-          <Grid item xs={2}>
-            <h1>2</h1>
+        <Grid container columns={10} sx={{ height: "100%" }}>
+          <Grid item xs={4}>
           </Grid>
-          <Grid item xs={4} sx={{ background: "#E1F8FF" }}>
-            <h1>3</h1>
-            <Box style={styling}>2</Box>
+          <Grid item xs={6} sx={{ background: "#E1F8FF" }}>
+            <Box style={styling}></Box>
           </Grid>
         </Grid>
       </Grid>

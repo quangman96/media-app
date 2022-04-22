@@ -19,3 +19,9 @@ a {
 * {
   box-sizing: border-box;
 }
+
+@media (min-width: 1200px){
+  .css-1oqqzyl-MuiContainer-root {
+    max-width: 97%;
+  }
+}
