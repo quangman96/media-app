@@ -109,9 +109,26 @@
 // }
 
 import Input from "../components/input";
-import { Box, Button, Paper, Grid } from "@mui/material";
+import {
+  Box,
+  Button,
+  Paper,
+  Grid,
+  InputLabel,
+  MenuItem,
+  FormControl,
+  Select,
+  Stack,
+  TextareaAutosize,
+} from "@mui/material";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import { styled } from "@mui/material/styles";
+import { useState } from "react";
+import DropDown from "../components/dropdown";
+import ImgDialog from "../components/imgDialog";
+import TextEditor from "../components/textEditor";
+import TextArea from "../components/textArea";
+
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
@@ -146,7 +163,7 @@ export default function AddArticle() {
       }}
     >
       <form style={{ height: "100%", padding: "2%" }}>
-        <Box
+        {/* <Box
           className="abc"
           sx={{ ...commonStyles, borderRadius: 1, width: 1, p: 2 }}
           style={{
@@ -158,26 +175,105 @@ export default function AddArticle() {
           }}
         >
           <Grid container sx={{ m: 0, height: 1, p: "0.7%" }}>
-            <Grid item xs={6}>
-              <Grid container sx={{ height: 1 }}>
-              <Grid item xs={12} sx={{ background: "red" }}>
-                <Input label="Name" placeHolder="Input text" />
+            <Grid item xs={6} sx={{ pr: '1%' }}>
+              <Grid
+                container
+                direction="column"
+                justifyContent="flex-start"
+                alignItems="stretch"
+              >
+                <Grid item xs={12}>
+                  <Input label="Title" placeHolder="Input text" />
                 </Grid>
-                <Grid item xs={12} sx={{ background: "yellow" }}>
-                <Input label="Name" placeHolder="Input text" />
+                <Grid item xs={12}>
+                  <Input
+                    label="Description"
+                    placeHolder="Enter a description..."
+                  />
                 </Grid>
-                <Grid item xs={12} sx={{ background: "green" }}>
-                <Input label="Name" placeHolder="Input text" />
+                <Grid item xs={12}>
+                  <DropDown label="Category" />
+                  <DropDown label="Status" />
                 </Grid>
               </Grid>
             </Grid>
-            <Grid item xs={6} sx={{ background: "yellow" }}>
-              <Item>xs=4</Item>
+            <Grid item xs={6} sx={{ pl: '1%' }}>
+              <ImgDialog />
             </Grid>
-            <Grid item xs={12} sx={{ background: "green" }}>
-              <Item>xs=4</Item>
+            <Grid item xs={12} height='50%'>
+              <TextEditor/>
             </Grid>
           </Grid>
+        </Box> */}
+
+        <Box
+          sx={{ ...commonStyles, borderRadius: 1, width: 1, p: 2 }}
+          style={{
+            borderColor: "#F6CA56",
+            borderStyle: "dashed",
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
+          }}
+        >
+          <Box
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              height: "100%",
+            }}
+          >
+            <Box style={{ width: "50%", paddingRight: "1%" }}>
+              <Grid
+                container
+                direction="column"
+                justifyContent="flex-start"
+                alignItems="stretch"
+              >
+                <Grid item xs={12}>
+                  <Input label="Title" placeHolder="Input text" />
+                </Grid>
+                <Grid item xs={12} sx={{mt: 1}}>
+                  <TextArea
+                    label="Description"
+                    placeHolder="Enter a description..."
+                    minRows='8'
+                    style={{
+                      width: "100%",
+                      resize: "none",
+                      overflow: "auto",
+                      borderRadius: '6px'
+                    }}
+                  />
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  style={{ display: "flex", justifyContent: "space-between", marginTop: '1.5%' }}
+                >
+                  <DropDown label="Category" width="72%" />
+                  <DropDown label="Status" width="20%" />
+                </Grid>
+              </Grid>
+            </Box>
+            <Box style={{ width: "50%", paddingLeft: "1%" }}>
+              <ImgDialog />
+            </Box>
+          </Box>
+
+          <Box sx={{ marginTop: "1.2%", marginBottom: "1%" }}>
+            <TextEditor style={{height: '27vh'}}/>
+          </Box>
+
+          <Stack direction="row" justifyContent="end">
+            <Button
+              variant="contained"
+              style={{ width: "10%", borderRadius: "6px" }}
+              endIcon={<AddBoxIcon />}
+            >
+              Create
+            </Button>
+          </Stack>
         </Box>
 
         {/* <Box
