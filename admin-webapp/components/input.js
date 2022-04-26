@@ -239,7 +239,15 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import { useState } from "react";
 
-export default function Input({ label, placeHolder, icon, button }) {
+export default function Input({
+  label,
+  placeHolder,
+  icon,
+  button,
+  className,
+  positionAdornment,
+  formHelperText = false,
+}) {
   const [value, setValue] = useState("");
 
   const handleChange = (event) => {
@@ -247,36 +255,66 @@ export default function Input({ label, placeHolder, icon, button }) {
   };
 
   return (
-    <Box sx={{ display: "flex", flexWrap: "wrap"}}>
+    <Box sx={{ display: "flex", flexWrap: "wrap", width: 1 }}>
       <FormControl sx={{ width: 1 }} variant="standard">
-        <InputLabel
-          shrink
-          htmlFor={"outlined-adornment-" + label.toLowerCase()}
-          sx={{fontSize: 18}}
-        >
-          {label}
-        </InputLabel>
+        {label && (
+          <InputLabel
+            shrink
+            htmlFor={"outlined-adornment-" + label.toLowerCase()}
+            sx={{ fontSize: 18 }}
+          >
+            {label}
+          </InputLabel>
+        )}
 
         <Box sx={{ display: "flex", flexWrap: "wrap", mt: 3 }}>
-        <OutlinedInput
-          id="outlined-adornment-email"
-          placeholder={placeHolder}
-          value={value}
-          onChange={handleChange}
-          endAdornment={icon}
-          aria-describedby={"outlined-" + label.toLowerCase() + "-helper-text"}
-          borderRadius='100px'
-          style={button ? { width:'85%'} : { width:'100%' } }  
-          sx={{ borderRadius: '6px' }}
-        />
-        {button && button}
+          <OutlinedInput
+            id={`outlined-adornment${label ? label.toLowerCase() : "-input"}`}
+            placeholder={placeHolder}
+            value={value}
+            onChange={handleChange}
+            endAdornment={positionAdornment !== 'start' && icon}
+            startAdornment={positionAdornment === 'start' && icon}
+            aria-describedby={`outlined-${
+              label ? label.toLowerCase() : "input"
+            }-helper-text`}
+            style={button ? { width: "85%" } : { width: "100%" }}
+            sx={{ borderRadius: "6px" }}
+            className={className}
+          />
+
+          {/* <TextField
+            id={`outlined-adornment-${label ? label.toLowerCase() : "input"}`}
+            placeholder={placeHolder}
+            value={value}
+            onChange={handleChange}
+            InputProps={positionAdornment === 'start'? {
+              startAdornment: (
+                <InputAdornment position="start">{icon}</InputAdornment>
+              ),
+            } : {
+              endAdornment: (
+                <InputAdornment position="end">{icon}</InputAdornment>
+              )
+            }}
+            aria-describedby={`outlined-${
+              label ? label.toLowerCase() : "input"
+            }-helper-text`}
+            style={button ? { width: "85%" } : { width: "100%"}}
+            sx={{'& fieldset': {
+              borderRadius: '6px',
+            } }}
+            className={className}
+          /> */}
+          {button && button}
         </Box>
 
-        <FormHelperText
-          id={"outlined-" + label.toLowerCase() + "-helper-text"}
-        ></FormHelperText>
+        {formHelperText === "true" && (
+          <FormHelperText
+            id={`outlined-${label ? label.toLowerCase() : "input"}-helper-text`}
+          ></FormHelperText>
+        )}
       </FormControl>
     </Box>
   );
 }
-

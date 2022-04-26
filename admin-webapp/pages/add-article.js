@@ -143,15 +143,6 @@ const commonStyles = {
   width: "5rem",
   height: "5rem",
 };
-const button = (
-  <Button
-    variant="contained"
-    style={{ width: "10%", marginLeft: "5%", borderRadius: "6px" }}
-    endIcon={<AddBoxIcon />}
-  >
-    Create
-  </Button>
-);
 
 export default function AddArticle() {
   return (
@@ -268,7 +259,7 @@ export default function AddArticle() {
           <Stack direction="row" justifyContent="end">
             <Button
               variant="contained"
-              style={{ width: "10%", borderRadius: "6px" }}
+              style={{ width: "10%", borderRadius: "6px", background: "#51CBFF" }}
               endIcon={<AddBoxIcon />}
             >
               Create

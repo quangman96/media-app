@@ -16,6 +16,7 @@ export default function InputPassword() {
   });
 
   const handleChange = (prop) => (event) => {
+    console.log(...passwordObj);
     setPasswordObj({ ...passwordObj, [prop]: event.target.value });
   };
 

@@ -24,7 +24,7 @@ export default function MyApp(props) {
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head> */}
                   <Head>
-                <title>Next.js - Form Validation Example</title>
+                <title>Hello</title>
 
                 {/* eslint-disable-next-line @next/next/no-css-tags */}
                 {/* <link href="//netdna.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" /> */}

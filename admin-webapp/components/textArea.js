@@ -1,32 +1,6 @@
 import { Box, TextareaAutosize, FormControl, InputLabel } from "@mui/material";
 import customStyle from '../styles/TextArea.module.css'
 
-const customClass = {
-    '::placeholder': {
-        color: 'red'
-    }
-}
-
-const styles = {
-    myStyleClassName: {
-            padding: '16px 0px 16px 0px',
-            '& a': {
-                textDecoration: 'none',
-                color: '#0000ee',
-            },
-            '& a:hover': {
-            background: 'red',
-        },
-    },
-    myButtonClass: {
-        '&:hover': {
-             textDecoration: 'underline',
-        },       
-    },
-};
-
-
-
 export default function TextArea({ label, placeHolder, minRows, style }) {
   return (
     <Box sx={{ display: "flex", flexWrap: "wrap" }}>

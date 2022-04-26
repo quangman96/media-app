@@ -523,7 +523,7 @@ export default function LoginForm() {
           <Input
             label="Email"
             placeHolder="Email address"
-            icon={<MailOutlineIcon position="end" sx={{ color: "#979797" }} />}
+            icon={<MailOutlineIcon sx={{ color: "#979797" }} />}
           />
           <InputPassword />
           <Box
