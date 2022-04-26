@@ -4,9 +4,9 @@
     "slug": "native-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/favicon.ico",
+    "icon": "./assets/images/logo.png",
     "splash": {
-      "image": "./assets/images/favicon.ico",
+      "image": "./assets/images/logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -21,12 +21,12 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/favicon.ico",
+        "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#FFFFFF"
       }
     },
     "web": {
-      "favicon": "./assets/images/favicon.ico"
+      "favicon": "./assets/images/favicon.png"
     }
   }
 }

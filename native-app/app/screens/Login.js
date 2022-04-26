@@ -10,7 +10,7 @@ const validationSchema = Yup.object().shape({
   email: Yup.string().required().email().label("Email"),
   password: Yup.string().required().min(4).max(12).label("Password"),
 });
-function Login(props) {
+function Login({ navigation }) {
   return (
     <KeyBoardAvoidingWrapper>
       <Screen>
@@ -31,7 +31,7 @@ function Login(props) {
                 fontWeight: "700",
                 color: "rgba(102, 112, 128, 1)",
                 lineHeight: 36,
-                paddingBottom: 20,
+                paddingBottom: 15,
               }}
             >
               Login
@@ -44,7 +44,9 @@ function Login(props) {
             </AppText>
             <AppForm
               initialValues={{ email: "", password: "" }}
-              onSubmit={(values) => console.log(values)}
+              onSubmit={(values) =>
+                navigation.navigate("Main", { screen: "User" })
+              }
               validationSchema={validationSchema}
             >
               <View
@@ -74,6 +76,7 @@ function Login(props) {
               </View>
               <AppFormField
                 icon="mail"
+                label="test"
                 autoCapitalize="none"
                 autoCorrect={false}
                 keyboardType="email-address"

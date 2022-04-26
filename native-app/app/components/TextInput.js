@@ -1,6 +1,7 @@
 import React from "react";
 import { View, TextInput, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import AppText from "./Text";
 
 import defaultStyles from "../config/styles";
 
@@ -38,8 +39,6 @@ const styles = StyleSheet.create({
   },
   icon: {
     position: "absolute",
-    // width: 30,
-    // height: 30,
     alignSelf: "center",
     right: 0,
     marginRight: 10,
