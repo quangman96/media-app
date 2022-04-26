@@ -1,44 +1,28 @@
 import { StyleSheet, Text } from "react-native";
-import React, { useState } from "react";
+import React from "react";
 import { Feather } from "@expo/vector-icons";
 import Screen from "./app/components/Screens";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createStackNavigator } from "@react-navigation/stack";
 import { useFonts } from "expo-font";
 import "react-native-gesture-handler";
+import { NavigationContainer } from "@react-navigation/native";
 import Login from "./app/screens/Login";
-
-const Home = () => (
-  <Screen>
-    <Text>Home</Text>
-  </Screen>
-);
-
-const Search = () => (
-  <Screen>
-    <Text>Search</Text>
-  </Screen>
-);
-
-const Saved = () => (
-  <Screen>
-    <Text>Saved</Text>
-  </Screen>
-);
-
-const User = () => (
-  <Screen>
-    <Text>User</Text>
-  </Screen>
-);
+import User from "./app/screens/User";
+import Saved from "./app/screens/Saved";
+import Search from "./app/screens/Search";
+import Home from "./app/screens/Home";
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
+
 const screenOptions = {
   tabBarLabel: () => {
     return null;
   },
   tabBarStyle: {
     backgroundColor: "white",
-    height: 100,
+    height: 70,
   },
 };
 const TabNavigator = () => (
@@ -50,10 +34,11 @@ const TabNavigator = () => (
         tabBarIcon: ({ focused }) => (
           <Feather
             name="home"
-            size={30}
+            size={26}
             color={focused ? "#667080" : "#bbc0c8"}
           />
         ),
+        header: () => null,
       }}
     />
     <Tab.Screen
@@ -63,10 +48,11 @@ const TabNavigator = () => (
         tabBarIcon: ({ focused }) => (
           <Feather
             name="search"
-            size={30}
+            size={26}
             color={focused ? "#667080" : "#bbc0c8"}
           />
         ),
+        header: () => null,
       }}
     />
     <Tab.Screen
@@ -76,10 +62,11 @@ const TabNavigator = () => (
         tabBarIcon: ({ focused }) => (
           <Feather
             name="bookmark"
-            size={30}
+            size={26}
             color={focused ? "#667080" : "#bbc0c8"}
           />
         ),
+        header: () => null,
       }}
     />
     <Tab.Screen
@@ -89,15 +76,17 @@ const TabNavigator = () => (
         tabBarIcon: ({ focused }) => (
           <Feather
             name="user"
-            size={30}
+            size={26}
             color={focused ? "#667080" : "#bbc0c8"}
           />
         ),
+        header: () => null,
       }}
     />
   </Tab.Navigator>
 );
 
+const styles = StyleSheet.create({});
 export default function App() {
   const [loaded] = useFonts({
     Inter: require("./assets/fonts/static/Inter-Regular.ttf"),
@@ -108,9 +97,19 @@ export default function App() {
   }
 
   return (
-    <Login />
-    // <NavigationContainer>
-    //   <TabNavigator />
-    // </NavigationContainer>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Main"
+          component={TabNavigator}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Login"
+          component={Login}
+          options={{ headerShown: false }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
