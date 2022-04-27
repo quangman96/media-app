@@ -457,6 +457,16 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Button from "@mui/material/Button";
 import Link from "next/link";
+import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signInWithRedirect,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import firebase from "../utils/firebase";
+import { useState } from "react";
 
 const commonStyles = {
   bgcolor: "background.paper",
@@ -466,7 +476,40 @@ const commonStyles = {
   height: "5rem",
 };
 
+const GoogleIcon = () => (
+  <svg
+    version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    width="18px"
+    height="18px"
+    viewBox="0 0 48 48"
+  >
+    <g>
+      <path
+        fill="#EA4335"
+        d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
+      ></path>
+      <path
+        fill="#4285F4"
+        d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
+      ></path>
+      <path
+        fill="#FBBC05"
+        d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
+      ></path>
+      <path
+        fill="#34A853"
+        d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+      ></path>
+      <path fill="none" d="M0 0h48v48H0z"></path>
+    </g>
+  </svg>
+);
+
 export default function LoginForm() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   // form validation rules
   const validationSchema = Yup.object().shape({
     // title: Yup.string()
@@ -499,6 +542,77 @@ export default function LoginForm() {
     return false;
   }
 
+  const handleOnClickGoogle = () => {
+    console.log("google");
+    const provider = new GoogleAuthProvider();
+    // provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+    // const auth = getAuth();
+    // auth.languageCode = 'it'
+    const auth = firebase.auth;
+
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+        console.log(credential);
+        console.log(token);
+        console.log(user);
+        // ...
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        // ...
+      });
+  };
+
+  const handleOnChangeEmail = (value) => {
+    setEmail(value);
+  };
+
+  const handleOnChangePassword = (value) => {
+    setPassword(value);
+  };
+
+  const handleOnClickLogin = () => {
+    console.log("login");
+    const auth = firebase.auth;
+    // createUserWithEmailAndPassword(auth, "admin2@gmail.com", "123456")
+    // .then((userCredential) => {
+    //   // Signed in
+    //   const user = userCredential.user;
+    //   console.log(user)
+    //   // ...
+    // })
+    // .catch((error) => {
+    //   const errorCode = error.code;
+    //   const errorMessage = error.message;
+    //   // ..
+    // });
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        console.log(user);
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode);
+        console.log(errorMessage);
+      });
+  };
+
   return (
     <form>
       <Box sx={{ ml: "20%", mt: "25%", pr: "20%" }}>
@@ -524,8 +638,9 @@ export default function LoginForm() {
             label="Email"
             placeHolder="Email address"
             icon={<MailOutlineIcon sx={{ color: "#979797" }} />}
+            onChangeEvent={handleOnChangeEmail}
           />
-          <InputPassword />
+          <InputPassword onChangeEvent={handleOnChangePassword} />
           <Box
             sx={{
               display: "flex",
@@ -547,7 +662,7 @@ export default function LoginForm() {
               Forgot password
             </Typography>
           </Box>
-          <Link href="/articles">
+          {/* <Link href="/articles">
             <Button
               variant="text"
               sx={{
@@ -563,7 +678,53 @@ export default function LoginForm() {
             >
               Login
             </Button>
-          </Link>
+          </Link> */}
+          <Button
+            variant="text"
+            onClick={handleOnClickLogin}
+            sx={{
+              background: "#FAE4AA",
+              color: "#667080",
+              width: 1,
+              mt: 1,
+              ":hover": {
+                background: "#F6CA56",
+                color: "white",
+              },
+            }}
+          >
+            Login
+          </Button>
+          <Button
+            variant="text"
+            onClick={handleOnClickGoogle}
+            sx={{
+              background: "#3283fc",
+              color: "white",
+              width: 1,
+              mt: 1,
+              ":hover": {
+                background: "#3283fccc",
+                color: "white",
+              },
+            }}
+          >
+            <Box
+              sx={{
+                background: "white",
+                display: "flex",
+                alignItems: "center",
+                position: "absolute",
+                left: "1%",
+                height: "86%",
+                width: "7%",
+                justifyContent: "center",
+              }}
+            >
+              <GoogleIcon />
+            </Box>
+            Sign in with Google
+          </Button>
           <Typography
             component="p"
             color="#667080"

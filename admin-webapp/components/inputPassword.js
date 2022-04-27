@@ -9,15 +9,16 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useState } from "react";
 
-export default function InputPassword() {
+export default function InputPassword({onChangeEvent}) {
   const [passwordObj, setPasswordObj] = useState({
     password: "",
     showPassword: false,
   });
 
   const handleChange = (prop) => (event) => {
-    console.log(...passwordObj);
     setPasswordObj({ ...passwordObj, [prop]: event.target.value });
+    console.log(passwordObj);
+    onChangeEvent(event.target.value);
   };
 
   const handleClickShowPassword = () => {

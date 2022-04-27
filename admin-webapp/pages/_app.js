@@ -9,6 +9,7 @@ import createEmotionCache from "../components/createEmotionCache";
 import Layout from "../components/layout";
 import '../styles/globals.css'
 import { useRouter } from "next/router";
+import { AuthUserProvider } from "../utils/AuthUserProvider";
 
 // Client-side cache shared for the whole session
 // of the user in the browser.
@@ -36,6 +37,7 @@ export default function MyApp(props) {
 
         <CssBaseline />
         {router.route === "/" ? <Component {...pageProps} /> : <Layout><Component {...pageProps} /></Layout>}
+        {/* {router.route === "/" ? <AuthUserProvider><Component {...pageProps} /></AuthUserProvider> : <Layout><AuthUserProvider><Component {...pageProps} /></AuthUserProvider></Layout>} */}
       </ThemeProvider>
     </CacheProvider>
   );

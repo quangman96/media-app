@@ -13,7 +13,7 @@ import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { mainListItems, secondaryListItems } from "./listMenuSidebar";
+import { MainListItems, secondaryListItems } from "./listMenuSidebar";
 import { useState } from "react";
 import Copyright from "./copyright";
 import Avatar from "@mui/material/Avatar";
@@ -71,7 +71,7 @@ const mdTheme = createTheme();
 
 const checkPath = (path) => {
   const link = linksInfo.find(link => link.path === path);
-  return link.name || "";
+  return link ? link.name : "";
 }
 
 export default function Dashboard({ children }) {
@@ -87,7 +87,7 @@ export default function Dashboard({ children }) {
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         {/* Navigation */}
-        <AppBar position="absolute" open={open}>
+        <AppBar position="absolute" open={open} style={{background: "#51CBFF"}}>
           <Toolbar
             sx={{
               pr: "24px", // keep right padding when drawer closed
@@ -156,7 +156,8 @@ export default function Dashboard({ children }) {
 
           <Divider />
           <List component="nav">
-            {mainListItems}
+            {/* {mainListItems} */}
+            <MainListItems />
             <Divider sx={{ my: 1 }} />
             {secondaryListItems}
           </List>
