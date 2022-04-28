@@ -100,15 +100,20 @@ function createData(
     </Button>
   );
   
-  const ButtonAdd = () => <Button
+  const ButtonAdd = (handleOnCreate) => <Button
       variant="contained"
       style={{ width: "10%", marginLeft: "2.5%", borderRadius: "6px", background: "#51CBFF" }}
       endIcon={<AddBoxIcon />}
+      onClick={handleOnCreate}
     >
       Create
     </Button>;
 
-export default function Catologies() {
+export default function Catelogies() {
+  const handleOnCreate = () => {
+    console.log("handleOnCreate")
+  }
+
   return (
     <Box>
       <Box sx={{ width: "100%" }}>

@@ -467,6 +467,8 @@ import {
 } from "firebase/auth";
 import firebase from "../utils/firebase";
 import { useState } from "react";
+import { useRouter } from "next/router";
+import useFirebaseAuth from "../utils/useFirebaseAuth";
 
 const commonStyles = {
   bgcolor: "background.paper",
@@ -509,7 +511,9 @@ const GoogleIcon = () => (
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [inCorrect, setInCorrect] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
+  const route = useRouter();
   // form validation rules
   const validationSchema = Yup.object().shape({
     // title: Yup.string()
@@ -542,7 +546,7 @@ export default function LoginForm() {
     return false;
   }
 
-  const handleOnClickGoogle = () => {
+  const handleOnSubmitGoogle = () => {
     console.log("google");
     const provider = new GoogleAuthProvider();
     // provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
@@ -560,7 +564,8 @@ export default function LoginForm() {
         console.log(credential);
         console.log(token);
         console.log(user);
-        // ...
+        setInCorrect(false);
+        route.push("/articles");
       })
       .catch((error) => {
         // Handle Errors here.
@@ -570,7 +575,7 @@ export default function LoginForm() {
         const email = error.email;
         // The AuthCredential type that was used.
         const credential = GoogleAuthProvider.credentialFromError(error);
-        // ...
+        setInCorrect(true);
       });
   };
 
@@ -582,7 +587,7 @@ export default function LoginForm() {
     setPassword(value);
   };
 
-  const handleOnClickLogin = () => {
+  const handleOnSubmitLogin = () => {
     console.log("login");
     const auth = firebase.auth;
     // createUserWithEmailAndPassword(auth, "admin2@gmail.com", "123456")
@@ -597,20 +602,46 @@ export default function LoginForm() {
     //   const errorMessage = error.message;
     //   // ..
     // });
+    // useFirebaseAuth.signInWithEmailAndPassword2(email, password);
 
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
         console.log(user);
-        // ...
+        setInCorrect(false);
+        route.push("/articles");
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.log(errorCode);
         console.log(errorMessage);
+        setInCorrect(true);
       });
+  };
+
+  const handleSwitchLogin = () => {
+    setInCorrect(false);
+    setEmail("");
+    setPassword("");
+    setIsLogin(!isLogin);
+  }
+
+  const handleOnSubmitRegister = () => {
+    const auth = firebase.auth;
+    createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed in
+      const user = userCredential.user;
+      console.log(user)
+      setIsLogin(!isLogin);
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(errorMessage)
+    });
   };
 
   return (
@@ -623,7 +654,7 @@ export default function LoginForm() {
           fontWeight="bold"
           sx={{ p: 1 }}
         >
-          Login
+          {isLogin ? "Login" : "Register"}
         </Typography>
 
         <Box
@@ -634,13 +665,24 @@ export default function LoginForm() {
             height: "37%",
           }}
         >
+          <div
+            style={{
+              color: "red",
+              textAlign: "center",
+              display: inCorrect ? "block" : "none",
+            }}
+          >
+            The email or password is incorrect
+          </div>
           <Input
             label="Email"
             placeHolder="Email address"
             icon={<MailOutlineIcon sx={{ color: "#979797" }} />}
             onChangeEvent={handleOnChangeEmail}
+            value={email}
           />
-          <InputPassword onChangeEvent={handleOnChangePassword} />
+          <InputPassword onChangeEvent={handleOnChangePassword} value={password} />
+
           <Box
             sx={{
               display: "flex",
@@ -662,6 +704,32 @@ export default function LoginForm() {
               Forgot password
             </Typography>
           </Box>
+          {isLogin ? (
+            <Typography component="p" color="#667080" fontSize="16px" href="#" onClick={handleSwitchLogin}>
+              Don't have an account?&nbsp;
+              <Typography
+                component="a"
+                color="#0386D0"
+                fontSize="16px"
+                href="#"
+              >
+                Register here
+              </Typography>
+            </Typography>
+          ) : (
+            <Typography component="p" color="#667080" fontSize="16px" href="#" onClick={handleSwitchLogin}>
+              Have an account?&nbsp;
+              <Typography
+                component="a"
+                color="#0386D0"
+                fontSize="16px"
+                href="#"
+              >
+                Login here
+              </Typography>
+            </Typography>
+          )}
+
           {/* <Link href="/articles">
             <Button
               variant="text"
@@ -681,7 +749,7 @@ export default function LoginForm() {
           </Link> */}
           <Button
             variant="text"
-            onClick={handleOnClickLogin}
+            onClick={isLogin ? handleOnSubmitLogin : handleOnSubmitRegister}
             sx={{
               background: "#FAE4AA",
               color: "#667080",
@@ -693,11 +761,11 @@ export default function LoginForm() {
               },
             }}
           >
-            Login
+            {isLogin ? "Login" : "Register"}
           </Button>
           <Button
             variant="text"
-            onClick={handleOnClickGoogle}
+            onClick={handleOnSubmitGoogle}
             sx={{
               background: "#3283fc",
               color: "white",

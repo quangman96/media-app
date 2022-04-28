@@ -248,6 +248,7 @@ export default function Input({
   positionAdornment,
   formHelperText = false,
   onChangeEvent,
+  value
 }) {
   // const [value, setValue] = useState("");
 
@@ -273,7 +274,7 @@ export default function Input({
           <OutlinedInput
             id={`outlined-adornment${label ? label.toLowerCase() : "-input"}`}
             placeholder={placeHolder}
-            // value={value}
+            value={value}
             onChange={handleChange}
             endAdornment={positionAdornment !== 'start' && icon}
             startAdornment={positionAdornment === 'start' && icon}

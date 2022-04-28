@@ -145,6 +145,9 @@ const commonStyles = {
 };
 
 export default function AddArticle() {
+  const handleOnCreate = () => {
+    console.log("handleOnCreate")
+  }
   return (
     <Paper
       sx={{
@@ -261,6 +264,7 @@ export default function AddArticle() {
               variant="contained"
               style={{ width: "10%", borderRadius: "6px", background: "#51CBFF" }}
               endIcon={<AddBoxIcon />}
+              onClick={handleOnCreate}
             >
               Create
             </Button>

@@ -9,7 +9,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useState } from "react";
 
-export default function InputPassword({onChangeEvent}) {
+export default function InputPassword({onChangeEvent, value}) {
   const [passwordObj, setPasswordObj] = useState({
     password: "",
     showPassword: false,
@@ -41,7 +41,7 @@ export default function InputPassword({onChangeEvent}) {
         <OutlinedInput
           id="outlined-adornment-password"
           type={passwordObj.showPassword ? "text" : "password"}
-          value={passwordObj.password}
+          value={value}
           onChange={handleChange("password")}
           placeholder="Password"
           sx={{ mt: 3}}

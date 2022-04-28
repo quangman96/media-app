@@ -13,14 +13,13 @@ import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { MainListItems, secondaryListItems } from "./listMenuSidebar";
+import { MainListItems, SecondaryListItems } from "./listMenuSidebar";
 import { useState } from "react";
 import Copyright from "./copyright";
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
 import { useRouter } from "next/router";
 import {linksInfo} from './../components/linksInfo';
-
 const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
@@ -74,7 +73,7 @@ const checkPath = (path) => {
   return link ? link.name : "";
 }
 
-export default function Dashboard({ children }) {
+export default function Dashboard({ children, firebase }) {
   const router = useRouter();
   const pageName = checkPath(router.route);
   const [open, setOpen] = useState(true);
@@ -159,7 +158,8 @@ export default function Dashboard({ children }) {
             {/* {mainListItems} */}
             <MainListItems />
             <Divider sx={{ my: 1 }} />
-            {secondaryListItems}
+            {/* {secondaryListItems} */}
+            <SecondaryListItems firebase={firebase} />
           </List>
         </Drawer>
 

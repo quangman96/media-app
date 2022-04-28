@@ -9,15 +9,15 @@ import createEmotionCache from "../components/createEmotionCache";
 import Layout from "../components/layout";
 import '../styles/globals.css'
 import { useRouter } from "next/router";
-import { AuthUserProvider } from "../utils/AuthUserProvider";
-
+import Test from "../components/test";
+import AuthUserProvider from "../utils/authUserProvider.js"
 // Client-side cache shared for the whole session
 // of the user in the browser.
 
 const clientSideEmotionCache = createEmotionCache();
 
 export default function MyApp(props) {
-  const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+  const { Component, emotionCache = clientSideEmotionCache, pageProps} = props;
   const router = useRouter();
   return (
     <CacheProvider value={emotionCache}>
@@ -36,7 +36,8 @@ export default function MyApp(props) {
                 build upon. */}
 
         <CssBaseline />
-        {router.route === "/" ? <Component {...pageProps} /> : <Layout><Component {...pageProps} /></Layout>}
+        {/* {router.route === "/" ? <Component {...pageProps} /> : <Layout><Component {...pageProps} /></Layout>} */}
+        {router.route === "/" ? <Test><Component {...pageProps} /></Test> : <Layout><Test><Component {...pageProps} /></Test></Layout>}
         {/* {router.route === "/" ? <AuthUserProvider><Component {...pageProps} /></AuthUserProvider> : <Layout><AuthUserProvider><Component {...pageProps} /></AuthUserProvider></Layout>} */}
       </ThemeProvider>
     </CacheProvider>

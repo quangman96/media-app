@@ -2,12 +2,6 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import ListSubheader from "@mui/material/ListSubheader";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import PeopleIcon from "@mui/icons-material/People";
-import BarChartIcon from "@mui/icons-material/BarChart";
-import LayersIcon from "@mui/icons-material/Layers";
-import AssignmentIcon from "@mui/icons-material/Assignment";
 import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
 import PostAddOutlinedIcon from "@mui/icons-material/PostAddOutlined";
 import ContentPasteOutlinedIcon from "@mui/icons-material/ContentPasteOutlined";
@@ -15,15 +9,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import Link from "next/link";
 import {linksInfo} from './../components/linksInfo';
 import { useRouter } from 'next/router';
-
-export function Abc() {
-  return (
-    <div>
-      <h1>aaaaaaaaaaaaaaaa2</h1>
-  </div>
-  );
-}
-
+// import {signOut} from "firebase/auth";
 export function MainListItems() {
   const {route} = useRouter();
   const active = "link-active";
@@ -108,17 +94,46 @@ export function MainListItems() {
 //   </>
 // );
 
-export const secondaryListItems = (
-  <>
+// export const secondaryListItems = (
+//   <>
+//     {/* <ListSubheader component="div" inset>
+//       Saved reports
+//     </ListSubheader> */}
+
+//     <ListItemButton>
+//       <ListItemIcon>
+//         <LogoutIcon />
+//       </ListItemIcon>
+//       <ListItemText primary="Logout" />
+//     </ListItemButton>
+//   </>
+// );
+
+
+export function SecondaryListItems({firebase}) {
+  const route = useRouter();
+  const handleLogout = () => {
+    const auth = firebase.auth;
+    auth.signOut().then(() => {
+      console.log("logout");
+      route.push("/")
+    }).catch((error) => {
+      console.log("logout error");
+    });
+  }
+
+  return (
+    <>
     {/* <ListSubheader component="div" inset>
       Saved reports
     </ListSubheader> */}
 
-    <ListItemButton>
+    <ListItemButton onClick={handleLogout}>
       <ListItemIcon>
         <LogoutIcon />
       </ListItemIcon>
       <ListItemText primary="Logout" />
     </ListItemButton>
   </>
-);
+  );
+}

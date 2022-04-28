@@ -2,13 +2,14 @@
 import { initializeApp } from "firebase/app";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
-import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
+import { getFirestore, collection, getDocs, addDoc } from 'firebase/firestore/lite';
 import {
     getAuth,
     signInWithPopup,
     GoogleAuthProvider,
     signInWithRedirect,
   } from "firebase/auth";
+  import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -44,5 +45,38 @@ const getAll = async (table) => {
     return tableData;
 };
 
+const create = async (table, data) => {
+  const tableRef = getTableRef(table);
+  await addDoc(tableRef, data);
+};
+
 const auth = getAuth();
-export default {db, getAll, auth};
+const storage = getStorage(app);
+
+const createWithImg = async (filePath, table, data, callBack) => {
+    const storagePath = `uploads/${filePath}`;
+    const storageRef = ref(storage, storagePath);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on('state_changed', (snapshot) => {
+      // progrss function ....
+      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      console.log('Upload is ' + progress + '% done');
+    }, 
+    (error) => { 
+      // error function ....
+      console.log(error);
+    }, 
+    () => {
+      // complete function ....
+      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        console.log('File available at', downloadURL);
+        (async () => {
+          await create(table, data);
+        })()
+        callBack();
+      })
+    });
+}
+
+export default {db, getAll, create, auth, storage, createWithImg};
