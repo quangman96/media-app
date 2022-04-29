@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 
 import Text from "../Text";
 
-function ErrorMessage({ error, visible }) {
+export default function ErrorMessage({ error, visible }) {
   if (!visible || !error) return null;
 
   return <Text style={styles.error}>{error}</Text>;
@@ -12,5 +12,3 @@ function ErrorMessage({ error, visible }) {
 const styles = StyleSheet.create({
   error: { color: "red", alignSelf: "flex-start" },
 });
-
-export default ErrorMessage;

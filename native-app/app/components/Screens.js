@@ -1,8 +1,7 @@
 import React from "react";
-import Constants from "expo-constants";
 import { StyleSheet, SafeAreaView, View } from "react-native";
 
-function Screen({ children, style }) {
+export default function Screen({ children, style }) {
   return (
     <SafeAreaView style={[styles.screen, style]}>
       <View style={[styles.view, style]}>{children}</View>
@@ -12,13 +11,14 @@ function Screen({ children, style }) {
 
 const styles = StyleSheet.create({
   screen: {
+    position: "relative",
     paddingTop: 10,
     paddingBottom: 0,
     flex: 1,
   },
   view: {
+    position: "relative",
+
     flex: 1,
   },
 });
-
-export default Screen;

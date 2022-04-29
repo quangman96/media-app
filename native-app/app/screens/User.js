@@ -1,17 +1,29 @@
 import React, { useState } from "react";
 import Screen from "../components/Screens";
+import { Feather } from "@expo/vector-icons";
 import { AppFormField, AppForm, SubmitButton } from "../components/forms";
-import { Text, View, StyleSheet, Image } from "react-native";
+import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as Yup from "yup";
+import { useNavigation } from "@react-navigation/core";
+import { auth } from "../../firebase";
 
 const validationSchema = Yup.object().shape({
   // email: Yup.string().required().email().label("Email"),
   // password: Yup.string().required().min(4).max(12).label("Password"),
 });
 
-function User(props) {
+export default function User(props) {
+  const navigation = useNavigation();
+  const handleSignOut = () => {
+    auth
+      .signOut()
+      .then(() => {
+        navigation.replace("Login");
+      })
+      .catch((e) => console.log(e));
+  };
   const [datePicker, setDatePicker] = useState(false);
   const [date, setDate] = useState(new Date());
   const [timePicker, setTimePicker] = useState(false);
@@ -47,7 +59,18 @@ function User(props) {
             onChange={onDateSelected}
           />
         )}
-        <Text style={styles.title}>Profile</Text>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text style={styles.title}>Profile</Text>
+          <TouchableOpacity
+            onPress={handleSignOut}
+            style={{
+              alignSelf: "flex-end",
+              marginRight: 20,
+            }}
+          >
+            {<Feather name={"log-out"} size={30} color={"#0386D0"} />}
+          </TouchableOpacity>
+        </View>
         <View style={styles.body}>
           <AppForm
             initialValues={{ email: "", password: "" }}
@@ -145,5 +168,3 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 });
-
-export default User;

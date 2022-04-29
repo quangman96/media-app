@@ -3,16 +3,17 @@ import { StyleSheet, View, Image } from "react-native";
 import AppText from "../components/Text";
 import ChipList from "../components/ChipList";
 import { FontAwesome } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 
 import defaultStyles from "../config/styles";
 
-function Card({ icon, cardObj }) {
+export default function Card({ icon, cardObj }) {
   const image = `../../assets/images/${cardObj["image"]}`;
   return (
     <View style={styles.form}>
       <View style={styles.header}>
         <AppText style={styles.label}>{cardObj["label"]}</AppText>
-        {
+        {cardObj["is_saved"] ? (
           <FontAwesome
             name={"bookmark"}
             size={24}
@@ -21,7 +22,16 @@ function Card({ icon, cardObj }) {
             }
             style={styles.icon}
           />
-        }
+        ) : (
+          <Feather
+            name={"bookmark"}
+            size={24}
+            color={
+              !!cardObj["is_saved"] ? "#0386D0" : defaultStyles.colors.icon
+            }
+            style={styles.icon}
+          />
+        )}
       </View>
       <View style={styles.body}>
         <AppText style={styles.description}>{cardObj["description"]}</AppText>
@@ -103,5 +113,3 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
 });
-
-export default Card;

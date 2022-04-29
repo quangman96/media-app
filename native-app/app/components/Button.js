@@ -3,7 +3,7 @@ import { StyleSheet, Text, TouchableOpacity } from "react-native";
 
 import colors from "../config/colors";
 
-function AppButton({ title, onPress, color = "annotations" }) {
+export default function AppButton({ title, onPress, color = "annotations" }) {
   return (
     <TouchableOpacity
       style={[styles.button, { backgroundColor: colors[color] }]}
@@ -31,5 +31,3 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-
-export default AppButton;

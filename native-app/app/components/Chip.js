@@ -2,16 +2,90 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import AppText from "./Text";
 
-function Chip({ label, ...otherProps }) {
+export default function Chip({
+  label,
+  size = "small",
+  theme = "light",
+  ...otherProps
+}) {
+  const chipStyle =
+    size === "small"
+      ? {
+          height: 24,
+          borderRadius: 20,
+          backgroundColor: "#EEF1F4",
+          marginBottom: 5,
+          marginRight: 5,
+          marginTop: 5,
+          paddingRight: 5,
+          paddingLeft: 5,
+        }
+      : size === "medium"
+      ? {
+          height: 40,
+          minWidth: 100,
+          justifyContent: "center",
+          backgroundColor: "#EEF1F4",
+          borderRadius: 20,
+          marginRight: 20,
+        }
+      : {
+          height: 25,
+          minWidth: 80,
+          borderRadius: 20,
+          backgroundColor: "#EEF1F4",
+          marginBottom: 5,
+          marginRight: 5,
+          marginTop: 5,
+          paddingRight: 5,
+          paddingLeft: 5,
+        };
+
+  size === "medium" &&
+    theme === "dark" &&
+    (chipStyle["backgroundColor"] = "#667080");
+
+  const textStyle =
+    size === "small"
+      ? {
+          alignSelf: "center",
+          color: "#667080",
+          fontSize: 10,
+          fontWeight: "400",
+          lineHeight: 22,
+        }
+      : theme === "light"
+      ? {
+          alignSelf: "center",
+          color: "#667080",
+          fontSize: 14,
+          fontWeight: "700",
+          lineHeight: 22,
+        }
+      : {
+          alignSelf: "center",
+          color: "white",
+          fontSize: 14,
+          fontWeight: "700",
+          lineHeight: 22,
+        };
   return (
-    <View style={styles.chip}>
-      <AppText style={styles.text}>{label}</AppText>
+    <View style={chipStyle}>
+      <AppText style={textStyle}>{label}</AppText>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   chip: {
+    height: 40,
+    minWidth: 100,
+    justifyContent: "center",
+    backgroundColor: "#EEF1F4",
+    borderRadius: 20,
+    marginRight: 20,
+  },
+  chip2: {
     height: 24,
     borderRadius: 20,
     backgroundColor: "#EEF1F4",
@@ -21,13 +95,25 @@ const styles = StyleSheet.create({
     paddingRight: 5,
     paddingLeft: 5,
   },
-  text: {
+  text2: {
     alignSelf: "center",
     color: "#667080",
     fontSize: 10,
     fontWeight: "400",
     lineHeight: 22,
   },
+  text: {
+    alignSelf: "center",
+    color: "#667080",
+    fontSize: 14,
+    fontWeight: "700",
+    lineHeight: 22,
+  },
+  text: {
+    alignSelf: "center",
+    color: "#667080",
+    fontSize: 14,
+    fontWeight: "700",
+    lineHeight: 22,
+  },
 });
-
-export default Chip;
