@@ -5,13 +5,24 @@ import ErrorMessage from "./ErrorMessage";
 import { useFormikContext } from "formik";
 import { StyleSheet, View } from "react-native";
 
-function AppFormField({ name, label, width, position, top, ...otherProps }) {
+export default function AppFormField({
+  name,
+  label,
+  width,
+  position,
+  top,
+  style,
+  initValues,
+  ...otherProps
+}) {
   const { setFieldTouched, handleChange, errors, touched } = useFormikContext();
   const props = { ...otherProps, width };
   return (
     <View style={{ width: width ? width : "100%" }}>
       <AppText style={styles.label}>{label}</AppText>
       <AppTextInput
+        children={initValues}
+        style={style}
         onChangeText={handleChange(name)}
         onBlur={() => setFieldTouched(name)}
         {...props}
@@ -29,5 +40,3 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
 });
-
-export default AppFormField;

@@ -1,7 +1,5 @@
-import { StyleSheet, Text } from "react-native";
 import React from "react";
 import { Feather } from "@expo/vector-icons";
-import Screen from "./app/components/Screens";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useFonts } from "expo-font";
@@ -12,6 +10,7 @@ import User from "./app/screens/User";
 import Saved from "./app/screens/Saved";
 import Search from "./app/screens/Search";
 import Home from "./app/screens/Home";
+import Detail from "./app/screens/Detail";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -86,7 +85,6 @@ const TabNavigator = () => (
   </Tab.Navigator>
 );
 
-const styles = StyleSheet.create({});
 export default function App() {
   const [loaded] = useFonts({
     Inter: require("./assets/fonts/static/Inter-Regular.ttf"),
@@ -100,13 +98,13 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
-          name="Main"
-          component={TabNavigator}
+          name="Login"
+          component={Login}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="Login"
-          component={Login}
+          name="Main"
+          component={TabNavigator}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

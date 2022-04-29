@@ -1,16 +1,34 @@
 import React from "react";
 import { View, TextInput, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import AppText from "./Text";
-
 import defaultStyles from "../config/styles";
 
-function AppTextInput({ icon, width = "100%", ...otherProps }) {
+export default function AppTextInput({
+  icon,
+  width = "100%",
+  style = "right",
+  ...otherProps
+}) {
+  const iconStyle =
+    style === "right"
+      ? { position: "absolute", alignSelf: "center", right: 0, marginRight: 10 }
+      : {
+          position: "absolute",
+          alignSelf: "center",
+          left: 10,
+          marginRight: 10,
+        };
+
+  const textStyle =
+    style === "right"
+      ? { ...defaultStyles.text, width: "85%" }
+      : { ...defaultStyles.text, width: "85%", marginLeft: 30 };
+
   return (
     <View style={[styles.container, { width }]}>
       <TextInput
         placeholderTextColor={defaultStyles.colors.placeholder}
-        style={{ ...defaultStyles.text, width: "85%" }}
+        style={textStyle}
         {...otherProps}
       />
       {icon && (
@@ -18,7 +36,7 @@ function AppTextInput({ icon, width = "100%", ...otherProps }) {
           name={icon}
           size={25}
           color={defaultStyles.colors.icon}
-          style={styles.icon}
+          style={iconStyle}
         />
       )}
     </View>
@@ -37,12 +55,4 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingLeft: 15,
   },
-  icon: {
-    position: "absolute",
-    alignSelf: "center",
-    right: 0,
-    marginRight: 10,
-  },
 });
-
-export default AppTextInput;
