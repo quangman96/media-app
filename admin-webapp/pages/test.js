@@ -33,13 +33,9 @@ export default function Test() {
       const handleImageAsFile = (e) => {
         setFile(e.target.files[0]);
       }
-    
-    {/* Insert ------------------------------------------- */}
-      const addlist = async(event) => {
-        try {
-          event.preventDefault();
-          let file = isfile;
-                        const time = new Date().getTime();
+
+      const handleAfterUploadImg = async (downloadURL) => {
+                                const time = new Date().getTime();
               const data = {
                 change_at: time,
                 change_by: "test" ,
@@ -48,7 +44,28 @@ export default function Test() {
                 image: downloadURL,
                 name: "abc",
               };
-          firebase.createWithImg(file.name, "categories", data);
+console.log(downloadURL);
+          await firebase.create("categories", data );
+      }
+
+    {/* Insert ------------------------------------------- */}
+      const addlist = async(event) => {
+        try {
+          event.preventDefault();
+          console.log("aaaaa")
+          let file = isfile;
+          console.log(file)
+              //           const time = new Date().getTime();
+              // const data = {
+              //   change_at: time,
+              //   change_by: "test" ,
+              //   create_at: time,
+              //   create_by: "test",
+              //   image: downloadURL,
+              //   name: "abc",
+              // };
+          // firebase.uploadImg(file.name, "categories", data, );
+          firebase.uploadImg(file, handleAfterUploadImg);
 
         // //   const storage = getStorage();
         //   const storage = firebase.storage;

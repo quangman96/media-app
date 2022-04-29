@@ -27,19 +27,23 @@
 
 
 
+
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
+// import htmlToDraft from 'html-to-draftjs';
 const Editor = dynamic(
   () => import("react-draft-wysiwyg").then((mod) => mod.Editor),
   { ssr: false }
 );
 
-import { EditorState } from "draft-js";
-import "../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import { EditorState, convertToRaw } from "draft-js";
+import draftToHtml from 'draftjs-to-html';
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
-export default function TextEditor({style}) {
+export default function TextEditor({ style, onChangeEvent, keyObj }) {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
-
+  const [contentState, setContentState] = useState('');
+  // const [content, setContent] = useState('');
   //   const handleClick = async () => {
   //     const response = await fetch("/api/sendMail", {
   //       method: "POST",
@@ -56,18 +60,55 @@ export default function TextEditor({style}) {
     return null; //return nothing on the server-side
   }
 
+  const onEditorStateChange = (editorState) => {
+    setEditorState(editorState);
+    onChangeEvent(draftToHtml(convertToRaw(editorState.getCurrentContent())), keyObj);
+  };
+
+  // const onContentStateChange = (contentState) => {
+  //   console.log("contentState");
+  //   setContentState(contentState);
+  // };
+
   //return only on the client-side
   return (
+    <>
     <Editor
-    wrapperClassName="demo-wrapper"
-    editorClassName="demo-editor"
+      wrapperClassName="demo-wrapper"
+      editorClassName="demo-editor"
       editorState={editorState}
-      onEditorStateChange={setEditorState}
-      wrapperStyle={{ border: "1px dashed #7B61FF", height: "100%", width: "100%", display: 'flex', flexDirection: 'column', ...style}}
-    //   editorStyle={{ overflow: 'hidden' }}
+      onEditorStateChange={onEditorStateChange}
+      // onContentStateChange={onContentStateChange}
+      wrapperStyle={{
+        border: "1px dashed #7B61FF",
+        height: "100%",
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        ...style
+      }}
     />
+   {/* <textarea
+         disabled
+         // value={JSON.stringify(contentState, null, 4)}
+         value={content}
+       /> */}
+</>
+//     <Editor
+//   editorState={editorState}
+//   toolbarClassName="toolbarClassName"
+//   wrapperClassName="wrapperClassName"
+//   editorClassName="editorClassName"
+//   // onEditorStateChange={onEditorStateChange}
+// />
+      //   editorStyle={{ overflow: 'hidden' }}
   );
 }
+
+
+
+
+
 
 
 // import React, { useState } from "react";
@@ -84,9 +125,9 @@ export default function TextEditor({style}) {
 // export default function TextEditor({style}) {
 //     const [contentState, setContentState] = useState(convertFromRaw(content))
 //   const onContentStateChange = (contentState) => {
+//     console.log(JSON.stringify(contentState));
 //     setContentState(contentState);
 //   };
-
 //   if (typeof window === "undefined") {
 //     return null; //return nothing on the server-side
 //   }
@@ -96,11 +137,12 @@ export default function TextEditor({style}) {
 //       <Editor
 //         wrapperClassName="demo-wrapper"
 //         editorClassName="demo-editor"
-//         // onContentStateChange={onContentStateChange}
+//         onContentStateChange={onContentStateChange}
 //       />
 //       <textarea
 //         disabled
-//         value={JSON.stringify(contentState, null, 4)}
+//         // value={JSON.stringify(contentState, null, 4)}
+//         value={JSON.stringify(contentState)}
 //       />
 //     </div>
 //   );

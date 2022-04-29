@@ -2,8 +2,8 @@ import Input from "../components/input";
 import { Box, Button, Paper } from "@mui/material";
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import ImgDialog from "../components/imgDialog";
-import firebase from "../utils/firebase";
 import { useState } from "react";
+import firebase from '../utils/firebase';
 
 const commonStyles = {
   bgcolor: "background.paper",
@@ -15,25 +15,37 @@ const ButtonCreate = ({onClick}) => <Button variant="contained" style={{width: '
 
 export default function AddCategory() {
   const [name, setName] = useState("");
+  const [img, setImg] = useState("");
+  const [reset, setReset] = useState(false);
 
   const handleOnChangeName = (value) => {
     setName(value);
   }
 
-  const handleOnCreate = () => {
-    console.log("handleOnCreate")
-    console.log(firebase.auth)
+  const handleOnChangeImg = (img) => {
+    setImg(img)
+  }
+
+  const handleAfterUploadImg = async (downloadURL) => {
     const time = new Date().getTime();
     const data = {
       change_at: time,
-      change_by: "test" ,
+      change_by: "admin" ,
       create_at: time,
-      create_by: "test",
-      image: "",
+      create_by: "admin",
+      image: downloadURL,
+      is_delete:false,
       name: name,
     };
-    firebase.create("categories", data)
+    await firebase.create("categories", data)
     setName("");
+    setImg("");
+    setReset(true);
+}
+
+  const handleOnCreate = () => {
+    firebase.uploadImg(img, handleAfterUploadImg);
+    console.log("handleOnCreate")
   }
 
   return (
@@ -56,7 +68,7 @@ export default function AddCategory() {
           }}
         >
           <Input label="Name" placeHolder="Input text" onChangeEvent={handleOnChangeName} value={name} button={<ButtonCreate onClick={handleOnCreate} />} />
-          <ImgDialog style={{marginTop: '1%', marginBottom: '1%'}} />
+          <ImgDialog style={{marginTop: '1%', marginBottom: '1%'}} onChangeEvent={handleOnChangeImg} reset={reset}/>
         </Box>
       </form>
     </Paper>

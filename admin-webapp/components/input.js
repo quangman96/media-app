@@ -248,15 +248,16 @@ export default function Input({
   positionAdornment,
   formHelperText = false,
   onChangeEvent,
+  keyObj,
   value
 }) {
   // const [value, setValue] = useState("");
 
   const handleChange = (event) => {
     // setValue(event.target.value);
-    onChangeEvent(event.target.value);
+    onChangeEvent(event.target.value, keyObj);
   };
-
+console.log(value)
   return (
     <Box sx={{ display: "flex", flexWrap: "wrap", width: 1 }}>
       <FormControl sx={{ width: 1 }} variant="standard">
@@ -274,10 +275,10 @@ export default function Input({
           <OutlinedInput
             id={`outlined-adornment${label ? label.toLowerCase() : "-input"}`}
             placeholder={placeHolder}
-            value={value}
             onChange={handleChange}
-            endAdornment={positionAdornment !== 'start' && icon}
-            startAdornment={positionAdornment === 'start' && icon}
+            value={value}
+            endAdornment={positionAdornment !== "start" && icon}
+            startAdornment={positionAdornment === "start" && icon}
             aria-describedby={`outlined-${
               label ? label.toLowerCase() : "input"
             }-helper-text`}
