@@ -14,7 +14,7 @@ import {
   Stack,
   Pagination,
   Typography,
-  TextField,
+  TextField
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -23,9 +23,9 @@ const theme = createTheme({
   palette: {
     neutral: {
       main: "#d55ae0",
-      contrastText: "#fff",
-    },
-  },
+      contrastText: "#fff"
+    }
+  }
 });
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -95,10 +95,11 @@ function EnhancedTableHead(props) {
 EnhancedTableHead.propTypes = {
   onRequestSort: PropTypes.func.isRequired,
   order: PropTypes.oneOf(["asc", "desc"]).isRequired,
-  orderBy: PropTypes.string.isRequired,
+  orderBy: PropTypes.string.isRequired
 };
 
 export default function CustomTable({ rows, align, headCells, tb }) {
+  console.log(rows);
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("No");
   const [page, setPage] = useState(0);
@@ -121,8 +122,9 @@ export default function CustomTable({ rows, align, headCells, tb }) {
   };
 
   const handleOnChange = (event) => {
-    if (!event.target.validity.valid || event.target.value === '') event.target.value = 1;
-  }
+    if (!event.target.validity.valid || event.target.value === "")
+      event.target.value = 1;
+  };
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -170,7 +172,7 @@ export default function CustomTable({ rows, align, headCells, tb }) {
             {emptyRows > 0 && (
               <TableRow
                 style={{
-                  height: 53 * emptyRows,
+                  height: 53 * emptyRows
                 }}
               >
                 <TableCell colSpan={6} />
@@ -190,25 +192,47 @@ export default function CustomTable({ rows, align, headCells, tb }) {
             onRowsPerPageChange={handleChangeRowsPerPage}
           /> */}
 
-      <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{pt: '0.5%', pb: '0.5%'}}>
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        sx={{ pt: "0.5%", pb: "0.5%" }}
+      >
         <Typography
           style={{ marginLeft: "17px", fontSize: "15px", color: "#6C757D" }}
         >
           Showing 1 to 5 of 50 entries
         </Typography>
 
-        <Stack direction="row" alignItems="center" justifyContent="end" sx={{mr: '17px'}}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="end"
+          sx={{ mr: "17px" }}
+        >
           <Typography style={{ fontSize: "15px", color: "#6C757D" }}>
             Display
           </Typography>
-          <Box sx={{width: '15%'}}>
-          <TextField id="outlined-number" type="number" defaultValue="5" InputProps={{ inputProps: { min: 1} }} sx={{p: ' 5px 10px', '& fieldset': {
-              padding: '6px',
-            }, '& .MuiInputBase-input': {
-              padding: '5px 10px'
-            }, '& ::-webkit-inner-spin-button': {
-              opacity: 1
-          } }} onChange={handleOnChange}/>
+          <Box sx={{ width: "15%" }}>
+            <TextField
+              id="outlined-number"
+              type="number"
+              defaultValue="5"
+              InputProps={{ inputProps: { min: 1 } }}
+              sx={{
+                p: " 5px 10px",
+                "& fieldset": {
+                  padding: "6px"
+                },
+                "& .MuiInputBase-input": {
+                  padding: "5px 10px"
+                },
+                "& ::-webkit-inner-spin-button": {
+                  opacity: 1
+                }
+              }}
+              onChange={handleOnChange}
+            />
           </Box>
           <Pagination
             count={210}
@@ -216,8 +240,8 @@ export default function CustomTable({ rows, align, headCells, tb }) {
             sx={{
               "& .Mui-selected": {
                 backgroundColor: "#51CBFF !important",
-                color: "white",
-              },
+                color: "white"
+              }
             }}
           />
         </Stack>

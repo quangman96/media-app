@@ -6,15 +6,29 @@ import {
   InputLabel,
   NativeSelect
 } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function DropDown({ label, width, onChangeEvent, keyObj, data }) {
-  const [valueSelected, setValueSelected] = useState(data[0]);
-
+export default function DropDown({
+  label,
+  width,
+  onChangeEvent,
+  keyObj,
+  data,
+  reset,
+  handleSetReset
+}) {
+  const [valueSelected, setValueSelected] = useState(data[0].value);
   const handleChange = (event) => {
     setValueSelected(event.target.value);
+    handleSetReset(false);
     onChangeEvent(event.target.value, keyObj);
   };
+
+  useEffect(() => {
+    if (reset) {
+      setValueSelected(data[0].value);
+    }
+  }, [reset]);
 
   return (
     <Box sx={{ display: "flex", flexWrap: "wrap" }} width={width}>
@@ -32,8 +46,10 @@ export default function DropDown({ label, width, onChangeEvent, keyObj, data }) 
             onChange={handleChange}
             style={{ width: "100%", borderRadius: "6px" }}
           >
-            {data.map((v, i) => (
-              <MenuItem key={i} value={v}>{v}</MenuItem>
+            {data.map((child) => (
+              <MenuItem key={child.value} value={child.value}>
+                {child.text}
+              </MenuItem>
             ))}
           </Select>
         </Box>

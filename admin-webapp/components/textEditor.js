@@ -28,7 +28,7 @@
 
 
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 // import htmlToDraft from 'html-to-draftjs';
 const Editor = dynamic(
@@ -40,7 +40,7 @@ import { EditorState, convertToRaw } from "draft-js";
 import draftToHtml from 'draftjs-to-html';
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
-export default function TextEditor({ style, onChangeEvent, keyObj }) {
+export default function TextEditor({ style, onChangeEvent, keyObj, reset, handleSetReset }) {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [contentState, setContentState] = useState('');
   // const [content, setContent] = useState('');
@@ -62,6 +62,7 @@ export default function TextEditor({ style, onChangeEvent, keyObj }) {
 
   const onEditorStateChange = (editorState) => {
     setEditorState(editorState);
+    handleSetReset(false);
     onChangeEvent(draftToHtml(convertToRaw(editorState.getCurrentContent())), keyObj);
   };
 
@@ -69,6 +70,12 @@ export default function TextEditor({ style, onChangeEvent, keyObj }) {
   //   console.log("contentState");
   //   setContentState(contentState);
   // };
+
+  useEffect(() => {
+    if (reset){
+      setEditorState(EditorState.createEmpty())
+    }
+  }, [reset]);
 
   //return only on the client-side
   return (

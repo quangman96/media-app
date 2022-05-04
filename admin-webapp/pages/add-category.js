@@ -1,17 +1,31 @@
 import Input from "../components/input";
 import { Box, Button, Paper } from "@mui/material";
-import AddBoxIcon from '@mui/icons-material/AddBox';
+import AddBoxIcon from "@mui/icons-material/AddBox";
 import ImgDialog from "../components/imgDialog";
 import { useState } from "react";
-import firebase from '../utils/firebase';
+import firebase from "../utils/firebase";
 
 const commonStyles = {
   bgcolor: "background.paper",
   border: 1,
   width: "5rem",
-  height: "5rem",
+  height: "5rem"
 };
-const ButtonCreate = ({onClick}) => <Button variant="contained" style={{width: '10%', marginLeft: '5%', borderRadius: '6px', background: "#51CBFF"}} endIcon={<AddBoxIcon />} onClick={onClick}>Create</Button>
+const ButtonCreate = ({ onClick }) => (
+  <Button
+    variant="contained"
+    style={{
+      width: "10%",
+      marginLeft: "5%",
+      borderRadius: "6px",
+      background: "#51CBFF"
+    }}
+    endIcon={<AddBoxIcon />}
+    onClick={onClick}
+  >
+    Create
+  </Button>
+);
 
 export default function AddCategory() {
   const [name, setName] = useState("");
@@ -20,43 +34,47 @@ export default function AddCategory() {
 
   const handleOnChangeName = (value) => {
     setName(value);
-  }
+  };
 
   const handleOnChangeImg = (img) => {
-    setImg(img)
-  }
+    setImg(img);
+  };
 
   const handleAfterUploadImg = async (downloadURL) => {
     const time = new Date().getTime();
     const data = {
       change_at: time,
-      change_by: "admin" ,
+      change_by: "admin",
       create_at: time,
       create_by: "admin",
       image: downloadURL,
-      is_delete:false,
-      name: name,
+      is_delete: false,
+      name: name
     };
-    await firebase.create("categories", data)
+    await firebase.create("categories", data);
     setName("");
     setImg("");
     setReset(true);
-}
+  };
+
+  const handleSetReset = (value) => {
+    setReset(value);
+  };
 
   const handleOnCreate = () => {
     firebase.uploadImg(img, handleAfterUploadImg);
-    console.log("handleOnCreate")
-  }
+    console.log("handleOnCreate");
+  };
 
   return (
     <Paper
       sx={{
         display: "flex",
         flexDirection: "column",
-        height: "100%",
+        height: "100%"
       }}
     >
-      <form style={{ height: "100%", padding: '2%' }}>
+      <form style={{ height: "100%", padding: "2%" }}>
         <Box
           sx={{ ...commonStyles, borderRadius: 1, width: 1, p: 2 }}
           style={{
@@ -64,20 +82,27 @@ export default function AddCategory() {
             borderStyle: "dashed",
             display: "flex",
             flexDirection: "column",
-            height: "100%",
+            height: "100%"
           }}
         >
-          <Input label="Name" placeHolder="Input text" onChangeEvent={handleOnChangeName} value={name} button={<ButtonCreate onClick={handleOnCreate} />} />
-          <ImgDialog style={{marginTop: '1%', marginBottom: '1%'}} onChangeEvent={handleOnChangeImg} reset={reset}/>
+          <Input
+            label="Name"
+            placeHolder="Input text"
+            onChangeEvent={handleOnChangeName}
+            value={name}
+            button={<ButtonCreate onClick={handleOnCreate} />}
+          />
+          <ImgDialog
+            style={{ marginTop: "1%", marginBottom: "1%" }}
+            onChangeEvent={handleOnChangeImg}
+            reset={reset}
+            handleSetReset={handleSetReset}
+          />
         </Box>
       </form>
     </Paper>
   );
 }
-
-
-
-
 
 // // App.js
 // // Kindacode.com
@@ -148,18 +173,6 @@ export default function AddCategory() {
 //     border: "none",
 //   },
 // };
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import * as React from 'react';
 // import { styled } from '@mui/material/styles';

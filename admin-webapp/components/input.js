@@ -257,7 +257,7 @@ export default function Input({
     // setValue(event.target.value);
     onChangeEvent(event.target.value, keyObj);
   };
-console.log(value)
+
   return (
     <Box sx={{ display: "flex", flexWrap: "wrap", width: 1 }}>
       <FormControl sx={{ width: 1 }} variant="standard">

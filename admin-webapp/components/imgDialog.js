@@ -1,22 +1,35 @@
 import React from "react";
 import { Button, Box, InputLabel, FormControl } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function ImgDialog({ style, onChangeEvent, keyObj, reset }) {
+export default function ImgDialog({
+  style,
+  onChangeEvent,
+  keyObj,
+  reset,
+  handleSetReset
+}) {
   const [pathImg, setPathImg] = useState("/image.png");
   const handleOnChangeImg = (e) => {
     if (e.target.files && e.target.files.length > 0) {
       const path = URL.createObjectURL(e.target.files[0]);
       setPathImg(path);
+      handleSetReset(false);
       onChangeEvent(e.target.files[0], keyObj);
     }
   };
 
+  useEffect(() => {
+    if (reset) {
+      setPathImg("/image.png");
+    }
+  }, [reset]);
+
   const styling = {
     width: "100%",
     height: "100%",
-    // backgroundImage: `url(${pathImg})`,
-    backgroundImage: `url(${reset ? '/image.png': pathImg})`,
+    backgroundImage: `url(${pathImg})`,
+    // backgroundImage: `url(${reset ? '/image.png': pathImg})`,
     backgroundRepeat: "no-repeat",
     backgroundColor: "#f2f2f2",
     // // backgroundSize: "100% 100%",
@@ -41,7 +54,7 @@ export default function ImgDialog({ style, onChangeEvent, keyObj, reset }) {
               ...styling,
               "&:hover": {
                 backgroundColor: "#f2f2f2"
-              },
+              }
               // backgroundImage: `url(${isReset ? pathImg : '/image.png'})`,
             }}
           >

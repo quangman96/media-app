@@ -9,43 +9,42 @@ import {
   FormControl,
   Select,
   Stack,
-  TextareaAutosize,
+  TextareaAutosize
 } from "@mui/material";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import { styled } from "@mui/material/styles";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import DropDown from "../components/dropdown";
 import ImgDialog from "../components/imgDialog";
 import TextEditor from "../components/textEditor";
 import TextArea from "../components/textArea";
 import firebase from "../utils/firebase";
 import MultipleSelectChip from "../components/multipleSelectChip";
-import {where} from "firebase/firestore/lite";
+import { where } from "firebase/firestore/lite";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
   padding: theme.spacing(1),
   textAlign: "center",
-  color: theme.palette.text.secondary,
+  color: theme.palette.text.secondary
 }));
 
 const commonStyles = {
   bgcolor: "background.paper",
   border: 1,
   width: "5rem",
-  height: "5rem",
+  height: "5rem"
 };
 
-export default function AddArticle({test, categoryData, statusData}) {
-  console.log(test);
+export default function AddArticle({ categoryData, statusData }) {
   const [form, setForm] = useState({
     title: "",
     description: "",
-    category: "",
-    status: "",
+    category: [categoryData[0].value],
+    status: statusData[0].value,
     image: "",
-    content: "",
+    content: ""
   });
   const [reset, setReset] = useState(false);
 
@@ -64,7 +63,7 @@ export default function AddArticle({test, categoryData, statusData}) {
       is_delete: false,
       sort_no: "",
       status: form.status,
-      user_id: "yWgyHYLBxw0R0FnP31Qf",
+      user_id: "yWgyHYLBxw0R0FnP31Qf"
     };
     await firebase.create("articles", data);
     setForm({
@@ -73,27 +72,28 @@ export default function AddArticle({test, categoryData, statusData}) {
       category: "",
       status: "",
       image: "",
-      content: "",
+      content: ""
     });
     setReset(true);
   };
 
+  const handleSetReset = (value) => {
+    setReset(value);
+  };
+
   const handleOnCreate = () => {
     firebase.uploadImg(form.image, handleAfterUploadImg);
-    console.log("handleOnCreate");
   };
 
   const handleOnChange = (value, keyObj) => {
-    console.log(value);
     setForm({ ...form, [keyObj]: value });
-    console.log(form);
   };
   return (
     <Paper
       sx={{
         display: "flex",
         flexDirection: "column",
-        height: "100%",
+        height: "100%"
       }}
     >
       <form style={{ height: "100%", padding: "2%" }}>
@@ -104,14 +104,14 @@ export default function AddArticle({test, categoryData, statusData}) {
             borderStyle: "dashed",
             display: "flex",
             flexDirection: "column",
-            height: "100%",
+            height: "100%"
           }}
         >
           <Box
             style={{
               display: "flex",
               flexDirection: "row",
-              height: "100%",
+              height: "100%"
             }}
           >
             <Box style={{ width: "50%", paddingRight: "1%" }}>
@@ -139,7 +139,7 @@ export default function AddArticle({test, categoryData, statusData}) {
                       width: "100%",
                       resize: "none",
                       overflow: "auto",
-                      borderRadius: "6px",
+                      borderRadius: "6px"
                     }}
                     onChangeEvent={handleOnChange}
                     keyObj={"description"}
@@ -152,27 +152,33 @@ export default function AddArticle({test, categoryData, statusData}) {
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
-                    marginTop: "1.5%",
+                    marginTop: "1.5%"
                   }}
                 >
-                  <MultipleSelectChip                
+                  <MultipleSelectChip
                     label="Category"
                     width="72%"
                     onChangeEvent={handleOnChange}
                     keyObj={"category"}
-                    data={categoryData} />
+                    data={categoryData}
+                    reset={reset}
+                    handleSetReset={handleSetReset}
+                  />
                   {/* <DropDown
                     label="Category"
                     width="72%"
                     onChangeEvent={handleOnChange}
                     keyObj={"category"}
                   /> */}
+
                   <DropDown
                     label="Status"
                     width="20%"
                     onChangeEvent={handleOnChange}
                     keyObj={"status"}
                     data={statusData}
+                    reset={reset}
+                    handleSetReset={handleSetReset}
                   />
                 </Grid>
               </Grid>
@@ -182,6 +188,7 @@ export default function AddArticle({test, categoryData, statusData}) {
                 onChangeEvent={handleOnChange}
                 keyObj={"image"}
                 reset={reset}
+                handleSetReset={handleSetReset}
               />
             </Box>
           </Box>
@@ -191,6 +198,8 @@ export default function AddArticle({test, categoryData, statusData}) {
               style={{ height: "27vh" }}
               onChangeEvent={handleOnChange}
               keyObj={"content"}
+              reset={reset}
+              handleSetReset={handleSetReset}
             />
           </Box>
 
@@ -200,7 +209,7 @@ export default function AddArticle({test, categoryData, statusData}) {
               style={{
                 width: "10%",
                 borderRadius: "6px",
-                background: "#51CBFF",
+                background: "#51CBFF"
               }}
               endIcon={<AddBoxIcon />}
               onClick={handleOnCreate}
@@ -216,25 +225,23 @@ export default function AddArticle({test, categoryData, statusData}) {
 
 export async function getStaticProps() {
   const categories = await firebase.getAll("categories");
-  const categoryData = categories.map((category) => {
-    return category["name"]
-  });
-
-  const categoryData2 = categories.map((category) => ({
-    name: category["name"],
-    id: category.id,
+  const categoriesData = categories.map((category) => ({
+    text: category["name"],
+    value: category.id
   }));
 
-  const masterData = await firebase.getByQuery("master_data", where("class", "==", "ARTICLES_STATUS"));
-  const statusData = masterData.map((data) => {
-    return data["code"]
-  });
+  const masterData = await firebase.getByQuery(
+    "master_data",
+    where("class", "==", "ARTICLES_STATUS")
+  );
+  const statusData = masterData.map((data) => ({
+    text: data["code"],
+    value: data.id
+  }));
   return {
     props: {
-      test: categoryData2,
-      categoryData: categoryData,
+      categoryData: categoriesData,
       statusData: statusData
-    },
+    }
   };
 }
-
