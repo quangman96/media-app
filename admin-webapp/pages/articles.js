@@ -7,8 +7,10 @@ import AddBoxIcon from "@mui/icons-material/AddBox";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
 import firebase from "../utils/firebase";
-import { where } from "firebase/firestore/lite";
+import { where } from "firebase/firestore";
 import moment from "moment";
+import {getArticlesData, createRowsArticles} from "../utils/paginationArticles"
+import {useState, useEffect} from "react"
 function createData(
   no,
   image,
@@ -193,28 +195,25 @@ const handleOnDelete = (id) => {
   console.log(id)
 }
 
-export default function Articles({ articles, test}) {
-  console.log(articles);
-  console.log(test);
+export default function Articles({ articles, pagination, test}) {
+    const rows = articles.map((article, i) => {
+      const dateTime = moment(article.change_at).format("YYYY/MM/DD HH:mm:ss");
+      return createData(
+        i + 1,
+        <CreateImg src={article.image} alt={article.title} />,
+        article.title,
+        article.description,
+        <CreateCategory labels={article.category_id} />,
+        dateTime,
+        <CreateStatus label={article.status} />,
+        <CreateAction id={article.id} />
+      );
+    });
 
-
-
-  const rows = articles.map((article, i) => {
-    const dateTime = moment(article.change_at).format("YYYY/MM/DD HH:mm:ss");
-    return createData(
-      i + 1,
-      <CreateImg src={article.image} alt={article.title} />,
-      article.title,
-      article.description,
-      <CreateCategory labels={article.category_id} />,
-      dateTime,
-      <CreateStatus label={article.status} />,
-      <CreateAction id={article.id} />
-    );
-  });
 
   return (
     <Box>
+    {rows ? <>
       <Box sx={{ width: "100%" }}>
         <Paper
           className={customStyles["pd-1"]}
@@ -244,55 +243,53 @@ export default function Articles({ articles, test}) {
           align={align}
           headCells={headCells}
           tb={customStyles["tb"]}
+          pagination={pagination}
         />
       </Box>
+    </> :<div>loading...</div>}
+      
+      {/* <Box sx={{ width: "100%" }}>
+        <Paper
+          className={customStyles["pd-1"]}
+          sx={{
+            width: "100%",
+            mb: 2,
+            display: "flex",
+            justifyContent: "space-between"
+          }}
+        >
+          <Box sx={{ mt: -3, width: 1 }}>
+            <Input
+              className={customStyles["pd-input"]}
+              placeHolder="Search"
+              button={ButtonSearch}
+              positionAdornment="start"
+              icon={<SearchIcon sx={{ color: "#979797" }} />}
+            />
+          </Box>
+          <ButtonAdd />
+        </Paper>
+      </Box>
+
+      <Box sx={{ width: "100%", mt: 4 }}>
+        <CustomTable
+          rows={rows}
+          align={align}
+          headCells={headCells}
+          tb={customStyles["tb"]}
+          pagination={pagination}
+        />
+      </Box> */}
     </Box>
   );
 }
 
 export async function getStaticProps() {
-  let categoriesData = {};
-  const categories = await firebase.getAll("categories");
-  categories.forEach((data) => {
-    categoriesData[data.id] = data.name;
-  });
-
-  let statusData = {};
-  const masterData = await firebase.getByQuery(
-    "master_data",
-    where("class", "==", "ARTICLES_STATUS")
-  );
-  masterData.forEach((data) => {
-    statusData[data.id] = data.code;
-  });
-
-  // const articles = await firebase.getAll("articles");
-  const articles = await firebase.getByQuery(
-    "articles",
-    where("is_delete", "==", false)
-  );
-  const articlesData = articles.map((article) => ({
-    ...article,
-    id: article.id,
-    status: statusData[article.status],
-    category_id: article.category_id.map((id) => {
-      return categoriesData[id]
-    })
-  }));
-
-  const test1 = await firebase.getByQuery(
-    "articles",
-    where("is_delete", "==", false)
-  );
-  const test2 = test1.map((article) => ({
-    ...article,
-    id: article.id
-  }));
-
+  const data = await getArticlesData(1,2)
   return {
     props: {
-      articles: articlesData,
-      test: test2
+      articles: data.articles,
+      pagination: data.pagination
     }
   };
 }

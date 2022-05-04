@@ -20,7 +20,7 @@ import TextEditor from "../components/textEditor";
 import TextArea from "../components/textArea";
 import firebase from "../utils/firebase";
 import MultipleSelectChip from "../components/multipleSelectChip";
-import { where } from "firebase/firestore/lite";
+import { where, orderBy } from "firebase/firestore";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -234,14 +234,16 @@ export async function getStaticProps() {
     "master_data",
     where("class", "==", "ARTICLES_STATUS")
   );
+
   const statusData = masterData.map((data) => ({
     text: data["code"],
     value: data.id
   }));
+
   return {
     props: {
       categoryData: categoriesData,
-      statusData: statusData
+      statusData: statusData,
     }
   };
 }

@@ -18,6 +18,9 @@ import {
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import firebase from "../utils/firebase";
+import { where } from "firebase/firestore";
+import {getArticlesData} from "../utils/paginationArticles"
 
 const theme = createTheme({
   palette: {
@@ -98,13 +101,13 @@ EnhancedTableHead.propTypes = {
   orderBy: PropTypes.string.isRequired
 };
 
-export default function CustomTable({ rows, align, headCells, tb }) {
-  console.log(rows);
+export default function CustomTable({ rows, align, headCells, tb, pagination}) {
+  console.log(rows)
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("No");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  const [rowsData, setRowsData] = useState(rows);
   const handleRequestSort = (event, property) => {
     console.log(property);
     const isAsc = orderBy === property && order === "asc";
@@ -126,9 +129,17 @@ export default function CustomTable({ rows, align, headCells, tb }) {
       event.target.value = 1;
   };
 
+  const handlePagination = async (e) => {
+    const pageIndex = e.target.textContent;
+    const data = await (await getArticlesData(pageIndex)).articles
+    console.log(rowsData)
+    console.log(data)
+    // setRowsData(data);
+  }
+
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rowsData.length) : 0;
 
   return (
     <Paper sx={{ width: "100%" }}>
@@ -149,7 +160,7 @@ export default function CustomTable({ rows, align, headCells, tb }) {
           <TableBody>
             {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                  rows.slice().sort(getComparator(order, orderBy)) */}
-            {stableSort(rows, getComparator(order, orderBy))
+            {stableSort(rowsData, getComparator(order, orderBy))
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => {
                 const labelId = `custom-table-${index}`;
@@ -235,7 +246,7 @@ export default function CustomTable({ rows, align, headCells, tb }) {
             />
           </Box>
           <Pagination
-            count={210}
+            count={pagination.pageTotal}
             shape="rounded"
             sx={{
               "& .Mui-selected": {
@@ -243,6 +254,7 @@ export default function CustomTable({ rows, align, headCells, tb }) {
                 color: "white"
               }
             }}
+            onClick={handlePagination}
           />
         </Stack>
 

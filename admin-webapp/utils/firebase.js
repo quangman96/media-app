@@ -9,7 +9,12 @@ import {
   addDoc,
   query,
   where,
-} from "firebase/firestore/lite";
+  orderBy,
+  limit,
+  startAfter,
+  startAt 
+} from "firebase/firestore";
+
 import {
   getAuth,
   signInWithPopup,
@@ -80,7 +85,7 @@ const uploadImg = async (file, callBack) => {
     (error) => {
       // error function ....
       console.log(error);
-      return f
+      return f;
     },
     () => {
       // complete function ....
@@ -90,16 +95,50 @@ const uploadImg = async (file, callBack) => {
       });
     }
   );
-}
+};
 
-const getByQuery = async (table, where) => {
-  // const q = query(getTableRef("master_data"), where("class", "==", "ARTICLES_STATUS"));
-  const q = query(getTableRef(table), where);
+const getByQuery = async (table, ...condition) => {
+  const q = query(getTableRef(table), ...condition);
   const querySnapshot = await getDocs(q);
-      return querySnapshot.docs.map((doc) => ({
+  return querySnapshot.docs.map((doc) => ({
     ...doc.data(),
     id: doc.id,
   }));
-}
+};
 
-export default { db, getAll, create, auth, storage, uploadImg, getByQuery };
+const pagination = async (table, where, pageIndex, pageSize) => {
+  const allData = await query(getTableRef(table), where);
+  const documentSnapshots = await getDocs(allData);
+  const lastVisible = documentSnapshots.docs[pageIndex];
+  const next = query(getTableRef(table), where, startAt(lastVisible), limit(pageSize)
+  );
+
+  const querySnapshot = await getDocs(next);
+  let querySnapshotData = {
+    data: [],
+    pagination: {}
+  };
+
+  querySnapshotData["pagination"] = {
+    pageTotal: Math.ceil(documentSnapshots.size / pageSize)
+  };
+
+  querySnapshotData["data"] = querySnapshot.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id
+    }));
+
+  return querySnapshotData;
+};
+
+
+export default {
+  db,
+  getAll,
+  create,
+  auth,
+  storage,
+  uploadImg,
+  getByQuery,
+  pagination,
+};
