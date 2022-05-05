@@ -38,12 +38,13 @@ const commonStyles = {
 };
 
 export default function AddArticle({ categoryData, statusData }) {
+  const defaultImg = "https://firebasestorage.googleapis.com/v0/b/new-app-97a36.appspot.com/o/uploads%2Fimage.png?alt=media&token=2230ed0c-035a-4b66-a043-25052dc563ab"
   const [form, setForm] = useState({
     title: "",
     description: "",
     category: [categoryData[0].value],
     status: statusData[0].value,
-    image: "",
+    image: defaultImg,
     content: ""
   });
   const [reset, setReset] = useState(false);
@@ -51,7 +52,7 @@ export default function AddArticle({ categoryData, statusData }) {
   const handleAfterUploadImg = async (downloadURL) => {
     const time = new Date().getTime();
     const data = {
-      category_id: form.category,
+      categories: form.category,
       change_at: time,
       change_by: "admin",
       create_at: time,
@@ -71,7 +72,7 @@ export default function AddArticle({ categoryData, statusData }) {
       description: "",
       category: "",
       status: "",
-      image: "",
+      image: defaultImg,
       content: ""
     });
     setReset(true);
@@ -82,7 +83,10 @@ export default function AddArticle({ categoryData, statusData }) {
   };
 
   const handleOnCreate = () => {
-    firebase.uploadImg(form.image, handleAfterUploadImg);
+    if(form.image instanceof File)
+      firebase.uploadImg(form.image, handleAfterUploadImg);
+    else
+      handleAfterUploadImg(form.image)
   };
 
   const handleOnChange = (value, keyObj) => {
@@ -189,6 +193,7 @@ export default function AddArticle({ categoryData, statusData }) {
                 keyObj={"image"}
                 reset={reset}
                 handleSetReset={handleSetReset}
+                defaultImg={form.image}
               />
             </Box>
           </Box>
@@ -236,7 +241,7 @@ export async function getStaticProps() {
   );
 
   const statusData = masterData.map((data) => ({
-    text: data["code"],
+    text: data["name"],
     value: data.id
   }));
 

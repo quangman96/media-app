@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   Box,
@@ -20,7 +20,7 @@ import { visuallyHidden } from "@mui/utils";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import firebase from "../utils/firebase";
 import { where } from "firebase/firestore";
-import {getArticlesData} from "../utils/paginationArticles"
+import {getArticlesData, createRowsArticles} from "../utils/paginationArticles"
 
 const theme = createTheme({
   palette: {
@@ -101,13 +101,18 @@ EnhancedTableHead.propTypes = {
   orderBy: PropTypes.string.isRequired
 };
 
-export default function CustomTable({ rows, align, headCells, tb, pagination}) {
-  console.log(rows)
+export default function CustomTable({ rows, align, headCells, tb, pagination, handleOnPagination}) {
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("No");
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rowsData, setRowsData] = useState(rows);
+  const [paginationData, setPaginationData] = useState(pagination);
+
+  useEffect(async () => {
+    setRowsData(rows)
+    setPaginationData(pagination)
+  }, [rows]);
+
   const handleRequestSort = (event, property) => {
     console.log(property);
     const isAsc = orderBy === property && order === "asc";
@@ -115,32 +120,44 @@ export default function CustomTable({ rows, align, headCells, tb, pagination}) {
     setOrderBy(property);
   };
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const handleOnChange = (event) => {
+  const handleOnChangeMaxRow = async (event) => {
     if (!event.target.validity.valid || event.target.value === "")
       event.target.value = 1;
+
+      console.log(event.target.value)
+      const pageSize = parseInt(event.target.value);
+      const totalPage = Math.ceil(pagination.itemsTotal / pageSize);
+      const currentPage = totalPage < paginationData.currentPage ? 1 : paginationData.currentPage
+      const data = {...paginationData , pageTotal: totalPage, pageSize: pageSize, currentPage: currentPage}
+      setPaginationData(data);
+      handleOnPagination(data);
   };
 
   const handlePagination = async (e) => {
-    const pageIndex = e.target.textContent;
-    const data = await (await getArticlesData(pageIndex)).articles
-    console.log(rowsData)
-    console.log(data)
-    // setRowsData(data);
+    const arrowBtn = e.target.getAttribute("aria-label");
+    const arrowIcon = e.target.getAttribute("data-testid");
+    const pageNumber = e.target.textContent;
+
+    if(pageNumber || arrowIcon || arrowBtn){
+      const currentIndex = 1;
+      if((arrowIcon && arrowIcon === "NavigateBeforeIcon") || (arrowBtn && arrowBtn === "Go to previous page")){
+        currentIndex = parseInt(paginationData.currentPage) - 1;
+      }else if((arrowIcon && arrowIcon === "NavigateNextIcon") || (arrowBtn && arrowBtn === "Go to next page")){
+        currentIndex = parseInt(paginationData.currentPage) + 1;
+      } else{
+        currentIndex = parseInt(e.target.textContent);
+      }
+
+      const data = {...paginationData , currentPage: currentIndex}
+      setPaginationData(data)
+      handleOnPagination(data);
+    }
   }
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rowsData.length) : 0;
-
+    page > 0 ? Math.max(0, (1 + page) * paginationData.pageSize - rowsData.length) : 0;
+// console.log(rowsData)
   return (
     <Paper sx={{ width: "100%" }}>
       <TableContainer>
@@ -161,7 +178,7 @@ export default function CustomTable({ rows, align, headCells, tb, pagination}) {
             {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                  rows.slice().sort(getComparator(order, orderBy)) */}
             {stableSort(rowsData, getComparator(order, orderBy))
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .slice(page * paginationData.pageSize, page * paginationData.pageSize + paginationData.pageSize)
               .map((row, index) => {
                 const labelId = `custom-table-${index}`;
 
@@ -193,16 +210,6 @@ export default function CustomTable({ rows, align, headCells, tb, pagination}) {
         </Table>
       </TableContainer>
 
-      {/* <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={rows.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          /> */}
-
       <Stack
         direction="row"
         alignItems="center"
@@ -224,11 +231,12 @@ export default function CustomTable({ rows, align, headCells, tb, pagination}) {
           <Typography style={{ fontSize: "15px", color: "#6C757D" }}>
             Display
           </Typography>
-          <Box sx={{ width: "15%" }}>
+          <Box className="abc2" sx={{ width: "21%" }}>
             <TextField
+              className="abc"
               id="outlined-number"
               type="number"
-              defaultValue="5"
+              defaultValue={paginationData.pageSize}
               InputProps={{ inputProps: { min: 1 } }}
               sx={{
                 p: " 5px 10px",
@@ -240,13 +248,16 @@ export default function CustomTable({ rows, align, headCells, tb, pagination}) {
                 },
                 "& ::-webkit-inner-spin-button": {
                   opacity: 1
-                }
+                },
+                // "& .css-w56oqh": {
+                //   width: '55%'
+                // }
               }}
-              onChange={handleOnChange}
+              onChange={handleOnChangeMaxRow}
             />
           </Box>
           <Pagination
-            count={pagination.pageTotal}
+            count={paginationData.pageTotal}
             shape="rounded"
             sx={{
               "& .Mui-selected": {
@@ -255,17 +266,9 @@ export default function CustomTable({ rows, align, headCells, tb, pagination}) {
               }
             }}
             onClick={handlePagination}
+            page={paginationData.currentPage}
           />
         </Stack>
-
-        {/* <ThemeProvider theme={theme}>
-          <Pagination
-            className="abc"
-            count={210}
-            shape="rounded"
-            color="neutral"
-          />
-        </ThemeProvider> */}
       </Stack>
     </Paper>
   );

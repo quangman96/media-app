@@ -28,8 +28,9 @@ const ButtonCreate = ({ onClick }) => (
 );
 
 export default function AddCategory() {
+  const defaultImg = "https://firebasestorage.googleapis.com/v0/b/new-app-97a36.appspot.com/o/uploads%2Fimage.png?alt=media&token=2230ed0c-035a-4b66-a043-25052dc563ab"
   const [name, setName] = useState("");
-  const [img, setImg] = useState("");
+  const [img, setImg] = useState(defaultImg);
   const [reset, setReset] = useState(false);
 
   const handleOnChangeName = (value) => {
@@ -53,7 +54,7 @@ export default function AddCategory() {
     };
     await firebase.create("categories", data);
     setName("");
-    setImg("");
+    setImg(defaultImg);
     setReset(true);
   };
 
@@ -97,6 +98,7 @@ export default function AddCategory() {
             onChangeEvent={handleOnChangeImg}
             reset={reset}
             handleSetReset={handleSetReset}
+            defaultImg={img}
           />
         </Box>
       </form>

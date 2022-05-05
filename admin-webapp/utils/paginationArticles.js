@@ -4,8 +4,12 @@ import moment from "moment";
 import { Box, Button, Stack, IconButton, Chip } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
+import customStyles from "../styles/Articles.module.css";
+import ConfirmDialog from "../components/confirmDialog"
+import {useState} from "react"
 
-export async function getArticlesData(pageIndex, pageSize = 3) {
+
+export async function getArticlesData(pageIndex, pageSize = 5, currentPage = 1) {
   let categoriesData = {};
   const categories = await firebase.getAll("categories");
   categories.forEach((data) => {
@@ -18,20 +22,21 @@ export async function getArticlesData(pageIndex, pageSize = 3) {
     where("class", "==", "ARTICLES_STATUS")
   );
   masterData.forEach((data) => {
-    statusData[data.id] = data.code;
+    statusData[data.id] = data.name;
   });
 
   const articles = await firebase.pagination(
     "articles",
     where("is_delete", "==", false),
     pageIndex,
-    pageSize
+    pageSize,
+    currentPage
   );
   const articlesData = articles.data.map((article) => ({
     ...article,
     id: article.id,
     status: statusData[article.status],
-    category_id: article.category_id.map((id) => {
+    categories: article.categories.map((id) => {
       return categoriesData[id];
     }),
   }));
@@ -79,45 +84,64 @@ const CreateImg = ({ src, alt }) => {
 const CreateCategory = ({ labels }) => {
   return labels.map((label) => {
     return (
-      <Chip key={label} label={label} style={{ background: "#F9F5FF", color: "#6941C6" }} />
+      <Chip key={label} label={label} style={{ background: "#FFF6ED", color: "#C4320A" }} />
     );
   });
 };
 
 const CreateStatus = ({ label }) => {
-  return <Chip key={label} label={label} style={{ background: "#F9F5FF", color: "#6941C6" }} />
+  return <Chip key={label} label={label} style={{ background: "#F2F4F7", color: "#344054" }} />
 };
 
-const CreateAction = ({ id }) => {
+const CreateAction = ({ id, handleOnEdit, handleOnDelete }) => {
+  const [confirmOpen, setConfirmOpen] = useState(false)
+
   return <>
   <Stack direction="row" alignItems="center">
     <IconButton aria-label="edit" size="small" onClick={() => handleOnEdit(id)} >
       <DriveFileRenameOutlineIcon />
     </IconButton>
 
-    <IconButton aria-label="delete" size="small" onClick={() => handleOnDelete(id)} >
-      <DeleteIcon />
-    </IconButton>
+    <div>
+      <IconButton aria-label="delete" size="small" onClick={() =>     setConfirmOpen(true)}>
+        <DeleteIcon />
+      </IconButton>
+      
+      <ConfirmDialog
+        title="Delete Post?"
+        open={confirmOpen}
+        setOpen={setConfirmOpen}
+        onConfirm={handleOnDelete}
+        id={id}
+      >
+        Are you sure you want to delete this post?
+      </ConfirmDialog>
+    </div>
   </Stack>
   </>
 };
 
-export const createRowsArticles = (articles) => {
-  console.log("======================================================")
+// const handleOnEdit = (id) => {
+//   console.log(id)
+// }
+
+// const handleOnDelete = async (id) => {
+//   console.log(id)
+//   // await firebase.softDelete("articles", id);
+// }
+
+export const createRowsArticles = (articles, handleOnEdit, handleOnDelete) => {
   return articles.map((article, i) => {
     const dateTime = moment(article.change_at).format("YYYY/MM/DD HH:mm:ss");
     return createData(
           i + 1,
-          // <CreateImg src={article.image} alt={article.title} />,
-          "",
+          <CreateImg src={article.image} alt={article.title} />,
           article.title,
           article.description,
-          "",
-          // <CreateCategory labels={article.category_id} />,
+          <CreateCategory labels={article.categories} />,
           dateTime,
-          "",
-          // <CreateStatus label={article.status} />,
-          <CreateAction id={article.id} />
+          <CreateStatus label={article.status} />,
+          <CreateAction id={article.id} handleOnEdit={handleOnEdit} handleOnDelete={handleOnDelete}/>
         );
   })
   // return articles.map((article, i) => {
@@ -127,7 +151,7 @@ export const createRowsArticles = (articles) => {
   //     <CreateImg src={article.image} alt={article.title} />,
   //     article.title,
   //     article.description,
-  //     <CreateCategory labels={article.category_id} />,
+  //     <CreateCategory labels={article.categories} />,
   //     dateTime,
   //     <CreateStatus label={article.status} />,
   //     <CreateAction id={article.id} />

@@ -12,7 +12,9 @@ import {
   orderBy,
   limit,
   startAfter,
-  startAt 
+  startAt,
+  doc,
+  updateDoc 
 } from "firebase/firestore";
 
 import {
@@ -50,6 +52,10 @@ const db = getFirestore(app);
 
 const getTableRef = (table) => {
   return collection(db, table);
+};
+
+const getDocRef = (table, id) => {
+  return doc(db, table, id);
 };
 
 const getAll = async (table) => {
@@ -106,12 +112,19 @@ const getByQuery = async (table, ...condition) => {
   }));
 };
 
-const pagination = async (table, where, pageIndex, pageSize) => {
-  const allData = await query(getTableRef(table), where);
+const softDelete = async (table, id) => {
+  const docRef = getDocRef(table, id);
+  await updateDoc(docRef, { is_delete: true }).catch((e) => {
+    console.log("No such document exist!");
+  });
+};
+
+
+const pagination = async (table, where, pageIndex, pageSize, currentPage) => {
+  const allData = await query(getTableRef(table), where, orderBy("change_at"));
   const documentSnapshots = await getDocs(allData);
   const lastVisible = documentSnapshots.docs[pageIndex];
-  const next = query(getTableRef(table), where, startAt(lastVisible), limit(pageSize)
-  );
+  const next = query(getTableRef(table), where, orderBy("change_at"), startAt(lastVisible), limit(pageSize));
 
   const querySnapshot = await getDocs(next);
   let querySnapshotData = {
@@ -120,7 +133,10 @@ const pagination = async (table, where, pageIndex, pageSize) => {
   };
 
   querySnapshotData["pagination"] = {
-    pageTotal: Math.ceil(documentSnapshots.size / pageSize)
+    pageTotal: Math.ceil(documentSnapshots.size / pageSize),
+    itemsTotal: documentSnapshots.size,
+    pageSize: pageSize,
+    currentPage: currentPage
   };
 
   querySnapshotData["data"] = querySnapshot.docs.map((doc) => ({
@@ -141,4 +157,5 @@ export default {
   uploadImg,
   getByQuery,
   pagination,
+  softDelete,
 };

@@ -7,9 +7,10 @@ export default function ImgDialog({
   onChangeEvent,
   keyObj,
   reset,
-  handleSetReset
+  handleSetReset,
+  defaultImg
 }) {
-  const [pathImg, setPathImg] = useState("/image.png");
+  const [pathImg, setPathImg] = useState(defaultImg);
   const handleOnChangeImg = (e) => {
     if (e.target.files && e.target.files.length > 0) {
       const path = URL.createObjectURL(e.target.files[0]);
@@ -21,7 +22,7 @@ export default function ImgDialog({
 
   useEffect(() => {
     if (reset) {
-      setPathImg("/image.png");
+      setPathImg(defaultImg);
     }
   }, [reset]);
 
