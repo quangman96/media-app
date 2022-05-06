@@ -4,13 +4,19 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useFonts } from "expo-font";
 import "react-native-gesture-handler";
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  getFocusedRouteNameFromRoute,
+  useRoute,
+  useNavigationState,
+} from "@react-navigation/native";
 import Login from "./app/screens/Login";
 import User from "./app/screens/User";
 import Saved from "./app/screens/Saved";
 import Search from "./app/screens/Search";
 import Home from "./app/screens/Home";
 import Detail from "./app/screens/Detail";
+import Header from "./app/screens/Header";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -58,6 +64,7 @@ const TabNavigator = () => (
       name="Saved"
       component={Saved}
       options={{
+        unmountOnBlur: true,
         tabBarIcon: ({ focused }) => (
           <Feather
             name="bookmark"
@@ -66,12 +73,14 @@ const TabNavigator = () => (
           />
         ),
         header: () => null,
+        headerLeft: () => null,
       }}
     />
     <Tab.Screen
       name="User"
       component={User}
       options={{
+        unmountOnBlur: true,
         tabBarIcon: ({ focused }) => (
           <Feather
             name="user"
@@ -80,6 +89,8 @@ const TabNavigator = () => (
           />
         ),
         header: () => null,
+        headerTitle: () => <></>,
+        headerLeft: () => <></>,
       }}
     />
   </Tab.Navigator>
@@ -94,6 +105,15 @@ export default function App() {
     return null;
   }
 
+  const getTitle = () => {
+    const routes = useNavigationState((state) => state.routes);
+    const currentRouteIndex =
+      routes?.length && routes[routes.length - 1].state?.index;
+    const currentRoute =
+      routes[routes.length - 1].state?.routeNames[currentRouteIndex];
+    return currentRoute || "Home";
+  };
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -105,7 +125,24 @@ export default function App() {
         <Stack.Screen
           name="Main"
           component={TabNavigator}
-          options={{ headerShown: false }}
+          // options={{ headerShown: false }}
+          options={{
+            headerTitle: () => <Header title={getTitle()} />,
+            headerLeft: () => <></>,
+          }}
+        />
+        <Stack.Screen
+          name="Detail"
+          component={Detail}
+          options={{
+            title: "",
+            headerStyle: {
+              // height: 80,
+            },
+            headerLeftContainerStyle: {
+              marginBottom: 20,
+            },
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>

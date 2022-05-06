@@ -30,7 +30,7 @@ export default function Search() {
   return (
     <KeyBoardAvoidingWrapper>
       <Screen style={{ backgroundColor: "#EEF1F4" }}>
-        <View style={styles.header}>
+        {/* <View style={styles.header}>
           <View
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
@@ -66,7 +66,7 @@ export default function Search() {
           <View style={{ marginLeft: 20, marginBottom: 10 }}>
             <ChipList data={TEST[0]["category"]}></ChipList>
           </View>
-        </View>
+        </View> */}
         <View style={styles.result}>
           <AppText>Result: {result}</AppText>
         </View>

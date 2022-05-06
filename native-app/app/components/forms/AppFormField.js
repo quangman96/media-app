@@ -13,6 +13,7 @@ export default function AppFormField({
   top,
   style,
   initValues,
+  editable,
   ...otherProps
 }) {
   const { setFieldTouched, handleChange, errors, touched } = useFormikContext();
@@ -23,6 +24,7 @@ export default function AppFormField({
       <AppTextInput
         children={initValues}
         style={style}
+        editable={editable}
         onChangeText={handleChange(name)}
         onBlur={() => setFieldTouched(name)}
         {...props}

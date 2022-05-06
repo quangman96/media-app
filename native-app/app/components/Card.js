@@ -1,58 +1,85 @@
-import React from "react";
-import { StyleSheet, View, Image } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import AppText from "../components/Text";
 import ChipList from "../components/ChipList";
-import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
-
 import defaultStyles from "../config/styles";
+import { useNavigation } from "@react-navigation/core";
 
 export default function Card({ icon, cardObj }) {
-  const image = `../../assets/images/${cardObj["image"]}`;
+  const [isSaved, setSaved] = useState(cardObj["is_saved"]);
+  const navigation = useNavigation();
+  const calculateTime = (time) => {
+    const date = Math.floor(Math.abs(new Date() - new Date(time)) / 86400000);
+    let z = 0;
+    if (date > 365) {
+      z = `${Math.floor(date / 365)} years ago`;
+    } else if (date > 30) {
+      z = `${Math.floor(date / 30)} months ago`;
+    } else {
+      z = `${date} days ago`;
+    }
+    return z === `0 days ago` ? `just new` : z;
+  };
+  const handleClickButton = () => {
+    setSaved(!isSaved);
+  };
+
+  const handleClickCard = () => {
+    navigation.navigate("Detail", { data: cardObj });
+  };
   return (
-    <View style={styles.form}>
-      <View style={styles.header}>
-        <AppText style={styles.label}>{cardObj["label"]}</AppText>
-        {cardObj["is_saved"] ? (
-          <FontAwesome
-            name={"bookmark"}
-            size={24}
-            color={
-              !!cardObj["is_saved"] ? "#0386D0" : defaultStyles.colors.icon
-            }
-            style={styles.icon}
-          />
-        ) : (
-          <Feather
-            name={"bookmark"}
-            size={24}
-            color={
-              !!cardObj["is_saved"] ? "#0386D0" : defaultStyles.colors.icon
-            }
-            style={styles.icon}
-          />
-        )}
+    <TouchableOpacity style={styles.area} onPress={handleClickCard}>
+      <View style={styles.form}>
+        <View style={styles.header}>
+          <AppText numberOfLines={2} style={styles.label}>
+            {cardObj["title"]}
+          </AppText>
+          {isSaved ? (
+            <TouchableOpacity onPress={() => handleClickButton()}>
+              <Feather
+                name={"bookmark"}
+                size={22}
+                color={!!isSaved ? "#0386D0" : defaultStyles.colors.icon}
+                style={styles.icon}
+              />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity onPress={() => handleClickButton()}>
+              <Feather
+                name={"bookmark"}
+                size={22}
+                color={!!isSaved ? "#0386D0" : defaultStyles.colors.icon}
+                style={styles.icon}
+              />
+            </TouchableOpacity>
+          )}
+        </View>
+        <View style={styles.body}>
+          <AppText numberOfLines={5} style={styles.description}>
+            {cardObj["description"]}
+          </AppText>
+          <Image style={styles.image} source={{ uri: cardObj["image"] }} />
+        </View>
+        <View style={styles.footer}>
+          <ChipList data={cardObj["categories"]}></ChipList>
+          <AppText style={styles.time}>
+            {calculateTime(cardObj["create_at"])}
+          </AppText>
+        </View>
       </View>
-      <View style={styles.body}>
-        <AppText style={styles.description}>{cardObj["description"]}</AppText>
-        <Image
-          style={styles.image}
-          source={require(`../../assets/images/pic.png`)}
-        />
-      </View>
-      <View style={styles.footer}>
-        <ChipList data={cardObj["category"]}></ChipList>
-        <AppText style={styles.time}>2 days ago</AppText>
-      </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
+  area: {
+    width: "100%",
+  },
   form: {
     position: "relative",
     width: "100%",
-    // height: 150,
+    minHeight: 170,
     flex: 1,
     paddingRight: 20,
     paddingLeft: 20,
@@ -66,27 +93,29 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     justifyContent: "space-between",
     flexDirection: "row",
-    flex: 1,
-    marginTop: 5,
-    marginBottom: 5,
+    flex: 0.5,
+    marginTop: 10,
+    // marginBottom: 5,
   },
   body: {
     flex: 2,
     flexDirection: "row",
     marginTop: 5,
-    marginBottom: 5,
+    // paddingRight: 5,
+    // marginBottom: 5,
   },
   footer: {
     flex: 1,
     flexDirection: "row",
-    marginTop: 5,
-    marginBottom: 5,
+    // marginTop: 5,
+    marginBottom: 10,
   },
   label: {
+    width: 270,
     color: "#667080",
     fontSize: 14,
     fontWeight: "700",
-    lineHeight: 30,
+    lineHeight: 20,
   },
   description: {
     flex: 3.5,
@@ -97,11 +126,12 @@ const styles = StyleSheet.create({
   },
   image: {
     flex: 2,
-    width: "100%",
-    height: "100%",
+    width: 120,
+    height: 75,
   },
   icon: {
     alignSelf: "center",
+    marginTop: 5,
   },
   time: {
     alignSelf: "center",

@@ -15,7 +15,7 @@ export default function Chip({
           borderRadius: 20,
           backgroundColor: "#EEF1F4",
           marginBottom: 5,
-          marginRight: 5,
+          marginRight: 10,
           marginTop: 5,
           paddingRight: 5,
           paddingLeft: 5,
@@ -75,45 +75,3 @@ export default function Chip({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  chip: {
-    height: 40,
-    minWidth: 100,
-    justifyContent: "center",
-    backgroundColor: "#EEF1F4",
-    borderRadius: 20,
-    marginRight: 20,
-  },
-  chip2: {
-    height: 24,
-    borderRadius: 20,
-    backgroundColor: "#EEF1F4",
-    marginBottom: 5,
-    marginRight: 5,
-    marginTop: 5,
-    paddingRight: 5,
-    paddingLeft: 5,
-  },
-  text2: {
-    alignSelf: "center",
-    color: "#667080",
-    fontSize: 10,
-    fontWeight: "400",
-    lineHeight: 22,
-  },
-  text: {
-    alignSelf: "center",
-    color: "#667080",
-    fontSize: 14,
-    fontWeight: "700",
-    lineHeight: 22,
-  },
-  text: {
-    alignSelf: "center",
-    color: "#667080",
-    fontSize: 14,
-    fontWeight: "700",
-    lineHeight: 22,
-  },
-});

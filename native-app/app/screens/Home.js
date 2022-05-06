@@ -1,15 +1,72 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import React, { useState, useEffect } from "react";
 import { Feather } from "@expo/vector-icons";
 import Screen from "../components/Screens";
 import CardList from "../components/CardList";
 import ChipList from "../components/ChipList";
 import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
 import { useNavigation } from "@react-navigation/core";
-import React from "react";
-import * as MOCK from "../mock/data";
-import { auth } from "../../firebase";
+import { auth, getMasterData, getAll } from "../../firebase";
 
 export default function Home() {
+  const [buttons, setButtons] = useState([]);
+  const [articles, setArticles] = useState([]);
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    async function getButtonList() {
+      const res = await getMasterData("CATEGORY");
+      const buttonList = [];
+      res.forEach((e, i) => {
+        if (i === 0) {
+          buttonList.push({
+            name: e["name"],
+            theme: "dark",
+          });
+        } else {
+          buttonList.push({
+            name: e["name"],
+            theme: "light",
+          });
+        }
+      });
+      setButtons(buttonList);
+    }
+
+    async function getArticleList() {
+      const res = await getAll("articles");
+      const articleList = [];
+
+      res.forEach((e) => {
+        const obj = {
+          ...e,
+          categories: tranferCategory(e["categories"]),
+        };
+        articleList.push(obj);
+      });
+      setArticles(articleList);
+    }
+
+    async function getCategoryList() {
+      const res = await getAll("categories");
+      setCategories(res);
+      getArticleList();
+    }
+    getButtonList();
+    getCategoryList();
+  }, []);
+
+  const tranferCategory = (list) => {
+    const array = [];
+    list.forEach((e) => {
+      const obj = categories.find((z) => z.id === e);
+      if (obj) {
+        array.push(obj["name"]);
+      }
+    });
+    return array;
+  };
+
   const navigation = useNavigation();
   const handleSignOut = () => {
     auth
@@ -20,17 +77,10 @@ export default function Home() {
       .catch((e) => console.log(e));
   };
 
-  const TEST = MOCK.list;
-  const CHIP = [
-    { name: "For you", theme: "dark" },
-    { name: "Popular", theme: "light" },
-    { name: "All", theme: "light" },
-  ];
-
   return (
     <KeyBoardAvoidingWrapper>
       <Screen style={{ backgroundColor: "#EEF1F4" }}>
-        <View style={styles.header}>
+        {/* <View style={styles.header}>
           <View
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
@@ -46,10 +96,10 @@ export default function Home() {
             </TouchableOpacity>
           </View>
           <View style={styles.chips}>
-            <ChipList data={CHIP} size="medium"></ChipList>
+            <ChipList data={buttons} size="medium"></ChipList>
           </View>
-        </View>
-        <CardList data={TEST}></CardList>
+        </View> */}
+        <CardList data={articles}></CardList>
       </Screen>
     </KeyBoardAvoidingWrapper>
   );
