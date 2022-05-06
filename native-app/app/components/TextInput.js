@@ -7,6 +7,7 @@ export default function AppTextInput({
   icon,
   width = "100%",
   style = "right",
+  editable = true,
   ...otherProps
 }) {
   const iconStyle =
@@ -27,6 +28,7 @@ export default function AppTextInput({
   return (
     <View style={[styles.container, { width }]}>
       <TextInput
+        editable={editable}
         placeholderTextColor={defaultStyles.colors.placeholder}
         style={textStyle}
         {...otherProps}

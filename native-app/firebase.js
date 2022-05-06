@@ -1,5 +1,15 @@
 // Import the functions you need from the SDKs you need
 import * as firebase from "firebase/compat";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  query,
+  where,
+  doc,
+  updateDoc,
+} from "firebase/firestore/lite";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -21,5 +31,34 @@ if (firebase.apps.length === 0) {
   app = firebase.app();
 }
 const auth = firebase.auth();
+const db = getFirestore(app);
 
-export { auth };
+const getTableRef = (table) => {
+  return collection(db, table);
+};
+
+const getAll = async (table) => {
+  const ref = getTableRef(table);
+  const snapshot = await getDocs(ref);
+  const data = snapshot.docs.map((doc) => ({
+    ...doc.data(),
+    id: doc.id,
+  }));
+  return data;
+};
+
+const updateOne = async (table, record) => {
+  const ref = doc(db, table, record["id"]);
+  const snapshot = await updateDoc(ref, record).then((res) => console.log(res));
+};
+
+const getMasterData = async (classCode) => {
+  const q = query(getTableRef("master_data"), where("class", "==", classCode));
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.docs.map((doc) => ({
+    ...doc.data(),
+    id: doc.id,
+  }));
+};
+
+export { auth, db, getAll, getMasterData, updateOne };

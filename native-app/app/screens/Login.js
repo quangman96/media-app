@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import { AppFormField, AppForm, SubmitButton } from "../components/forms";
 import AppText from "../components/Text";
 import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
-import { auth } from "../../firebase";
+import { auth, getAll } from "../../firebase";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string().required().email().label("Email"),
@@ -14,9 +14,22 @@ const validationSchema = Yup.object().shape({
 
 export default function Login({ navigation }) {
   const [page, setPage] = useState(0);
-  const [initValues, setinitValues] = useState({ email: "", password: "" });
+  const [user, setUser] = useState(null);
+  const [initValues, setinitValues] = useState({
+    email: "",
+    password: "",
+  });
   const onPressLogin = () => setPage(0);
   const onPressRegister = () => setPage(1);
+
+  useEffect(() => {
+    async function getData() {
+      const res = await getAll("user_profile");
+      setUser(res);
+    }
+    getData();
+  }, []);
+
   // useEffect(() => {
   //   const unsubscribe = auth.onAuthStateChanged((user) => {
   //     if (user) {
@@ -34,7 +47,6 @@ export default function Login({ navigation }) {
         const user = userCredential.user;
         setinitValues(values);
         setPage(0);
-        console.log(user);
       })
       .catch((error) => console.log(error.message));
   };
@@ -44,7 +56,7 @@ export default function Login({ navigation }) {
     auth
       .signInWithEmailAndPassword(email, password)
       .then(() => {
-        navigation.navigate("Main", { screen: "Detail" });
+        navigation.navigate("Main", { screen: "Home" });
         // const user = userCredential.user;
       })
       .catch((error) => console.log(error.message));
@@ -116,7 +128,7 @@ export default function Login({ navigation }) {
             </View>
             {page === 0 && (
               <AppForm
-                initialValues={{ email: "", password: "" }}
+                initialValues={initValues}
                 onSubmit={(values) => {
                   handleLogin(values);
                 }}
@@ -172,7 +184,7 @@ export default function Login({ navigation }) {
             )}
             {page === 1 && (
               <AppForm
-                initialValues={{ email: "", password: "" }}
+                initialValues={initValues}
                 onSubmit={(values) => {
                   handleSignUp(values);
                 }}

@@ -23,7 +23,7 @@ export default function Saved(props) {
   return (
     <KeyBoardAvoidingWrapper>
       <Screen style={{ backgroundColor: "#EEF1F4" }}>
-        <View style={styles.header}>
+        {/* <View style={styles.header}>
           <View
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
@@ -38,7 +38,7 @@ export default function Saved(props) {
               {<Feather name={"log-out"} size={30} color={"#0386D0"} />}
             </TouchableOpacity>
           </View>
-        </View>
+        </View> */}
         <CardList data={TEST}></CardList>
       </Screen>
     </KeyBoardAvoidingWrapper>

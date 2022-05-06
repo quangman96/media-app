@@ -1,12 +1,19 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
 import React from "react";
 import Card from "./Card";
 
 export default function CardList({ data }) {
+  const handleClick = (prop) => {
+    console.log(prop["title"]);
+  };
   return (
     <View style={styles.body}>
       {(data || []).map((prop, key) => {
-        return <Card key={key} cardObj={prop}></Card>;
+        return (
+          // <TouchableOpacity key={key} onPress={() => handleClick(prop)}>
+          <Card key={key} cardObj={prop}></Card>
+          // </TouchableOpacity>
+        );
       })}
     </View>
   );
