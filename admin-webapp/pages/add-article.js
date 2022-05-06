@@ -228,7 +228,7 @@ export default function AddArticle({ categoryData, statusData }) {
   );
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const categories = await firebase.getAll("categories");
   const categoriesData = categories.map((category) => ({
     text: category["name"],

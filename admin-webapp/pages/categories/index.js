@@ -126,7 +126,7 @@ export default function Catelogies({ categories, pagination }) {
   );
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const data = await getCategoriesData(0);
   return {
     props: {

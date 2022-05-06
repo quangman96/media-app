@@ -68,11 +68,8 @@ export default function Articles({ articles, pagination }) {
   const [rows, setRows] = useState("");
   const [paginationData, setPaginationData] = useState(pagination);
 
-  useEffect(() => {
-    fetchData = async() => {
-      setRows(await createRowsArticles(articles, handleOnEdit, handleOnDelete, paginationData))
-    }
-    fetchData();
+  useEffect(async () => {
+    setRows(await createRowsArticles(articles, handleOnEdit, handleOnDelete, paginationData))
   }, []);
 
   const handleOnEdit = async (id) => {
@@ -135,7 +132,7 @@ export default function Articles({ articles, pagination }) {
   );
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const data = await getArticlesData(0);
   return {
     props: {

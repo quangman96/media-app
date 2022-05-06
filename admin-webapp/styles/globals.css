@@ -25,7 +25,7 @@ a {
 }
 
 @media (min-width: 1200px){
-  .css-1oqqzyl-MuiContainer-root {
+  .MuiContainer-root {
     max-width: 97%;
   }
 }

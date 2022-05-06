@@ -1,10 +1,13 @@
 {
   "name": "admin-webapp",
+  "main": "server.js",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "out": "next build && next export",
+    "deploy": "firebase deploy --only functions,hosting",
     "start": "next start",
     "lint": "next lint"
   },
@@ -18,7 +21,8 @@
     "draft-js": "^0.11.7",
     "draftjs-to-html": "^0.9.1",
     "firebase": "^9.7.0",
-    "firebase-admin": "^10.1.0",
+    "firebase-admin": "^10.2.0",
+    "firebase-functions": "^3.21.0",
     "firebase-tools": "^10.8.0",
     "moment": "^2.29.3",
     "next": "12.1.5",
