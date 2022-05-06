@@ -63,8 +63,10 @@ export default function AddCategory() {
   };
 
   const handleOnCreate = () => {
-    firebase.uploadImg(img, handleAfterUploadImg);
-    console.log("handleOnCreate");
+    if(img instanceof File)
+      firebase.uploadImg(img, handleAfterUploadImg);
+    else
+      handleAfterUploadImg(img)
   };
 
   return (

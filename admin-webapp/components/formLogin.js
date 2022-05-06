@@ -706,7 +706,7 @@ export default function LoginForm() {
           </Box>
           {isLogin ? (
             <Typography component="p" color="#667080" fontSize="16px" href="#" onClick={handleSwitchLogin}>
-              Don't have an account?&nbsp;
+              Don&rsquo;t have an account?&nbsp;
               <Typography
                 component="a"
                 color="#0386D0"

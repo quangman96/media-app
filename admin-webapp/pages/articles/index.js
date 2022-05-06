@@ -1,14 +1,14 @@
 import { Box, Paper, Button, Stack, IconButton, Chip } from "@mui/material";
-import CustomTable from "./../components/table";
-import Input from "./../components/input";
-import customStyles from "../styles/Articles.module.css";
+import CustomTable from "../../components/table";
+import Input from "../../components/input";
+import customStyles from "../../styles/Categories.module.css"
 import SearchIcon from "@mui/icons-material/Search";
 import AddBoxIcon from "@mui/icons-material/AddBox";
-import DeleteIcon from "@mui/icons-material/Delete";
-import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
-import firebase from "../utils/firebase";
-import { getArticlesData, createRowsArticles } from "../utils/paginationArticles"
+import firebase from "../../utils/firebase";
+import { getArticlesData, createRowsArticles } from "../../utils/paginationData"
 import { useState, useEffect } from "react"
+import Link from "next/link";
+import { linksInfo } from '../../components/linksInfo';
 
 const align = [
   "left",
@@ -48,49 +48,49 @@ const ButtonSearch = (
 );
 
 const ButtonAdd = () => (
-  <Button
-    variant="contained"
-    style={{
-      width: "10%",
-      marginLeft: "2.5%",
-      borderRadius: "6px",
-      background: "#51CBFF"
-    }}
-    endIcon={<AddBoxIcon />}
-  >
-    Create
-  </Button>
+  <Link href={linksInfo[1].path} passHref>
+    <Button
+      variant="contained"
+      style={{
+        width: "10%",
+        marginLeft: "2.5%",
+        borderRadius: "6px",
+        background: "#51CBFF"
+      }}
+      endIcon={<AddBoxIcon />}
+    >
+      Create
+    </Button>
+  </Link>
 );
 
-export default function Articles({ articles, pagination, test }) {
-  console.log("aaaaaaaaa")
-const [rows, setRows] = useState("");
-const [paginationData, setPaginationData] = useState(pagination);
+export default function Articles({ articles, pagination }) {
+  const [rows, setRows] = useState("");
+  const [paginationData, setPaginationData] = useState(pagination);
 
-  useEffect(async () => {
-    setRows(await createRowsArticles(articles, handleOnEdit, handleOnDelete))
-    console.log(articles)
+  useEffect(() => {
+    fetchData = async() => {
+      setRows(await createRowsArticles(articles, handleOnEdit, handleOnDelete, paginationData))
+    }
+    fetchData();
   }, []);
 
   const handleOnEdit = async (id) => {
     console.log(id)
   }
-  
-  const handleOnDelete = async (id) => {
-    setPaginationData(paginationData)
+
+  const handleOnDelete = async (id, newPagination) => {
     await firebase.softDelete("articles", id);
-    const data = await getArticlesData(paginationData.currentPage, paginationData.pageSize, paginationData.currentPage)
-    const articles = data.articles
-    const pagination = data.pagination
-    console.log(pagination)
-    const rows = await createRowsArticles(articles, handleOnEdit, handleOnDelete)
+    const data = await getArticlesData(newPagination.currentPage - 1, newPagination.pageSize, newPagination.currentPage)
+    setPaginationData(data.pagination)
+    const rows = await createRowsArticles(data.articles, handleOnEdit, handleOnDelete, newPagination)
     setRows(rows);
   }
 
   const handleOnPagination = async (data) => {
     setPaginationData(data)
     const results = await (await getArticlesData((data.currentPage - 1) * data.pageSize, data.pageSize, data.currentPage)).articles
-    const rows = await createRowsArticles(results, handleOnEdit, handleOnDelete)
+    const rows = await createRowsArticles(results, handleOnEdit, handleOnDelete, data)
     setRows(rows);
   }
 
@@ -136,7 +136,7 @@ const [paginationData, setPaginationData] = useState(pagination);
 }
 
 export async function getStaticProps() {
-  const data = await getArticlesData(0)
+  const data = await getArticlesData(0);
   return {
     props: {
       articles: data.articles,

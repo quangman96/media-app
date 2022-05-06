@@ -43,6 +43,13 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 export default function TextEditor({ style, onChangeEvent, keyObj, reset, handleSetReset }) {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [contentState, setContentState] = useState('');
+
+    useEffect(() => {
+    if (reset){
+      setEditorState(EditorState.createEmpty())
+    }
+  }, [reset]);
+
   // const [content, setContent] = useState('');
   //   const handleClick = async () => {
   //     const response = await fetch("/api/sendMail", {
@@ -69,13 +76,7 @@ export default function TextEditor({ style, onChangeEvent, keyObj, reset, handle
   // const onContentStateChange = (contentState) => {
   //   console.log("contentState");
   //   setContentState(contentState);
-  // };
-
-  useEffect(() => {
-    if (reset){
-      setEditorState(EditorState.createEmpty())
-    }
-  }, [reset]);
+  // }; 
 
   //return only on the client-side
   return (

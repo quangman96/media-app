@@ -14,7 +14,8 @@ import {
   startAfter,
   startAt,
   doc,
-  updateDoc 
+  updateDoc ,
+  getDoc
 } from "firebase/firestore";
 
 import {
@@ -68,6 +69,12 @@ const getAll = async (table) => {
   return tableData;
 };
 
+const getById = async (table, id) => {
+  const docRef = getDocRef(table, id);
+  const snapshot = await getDoc(docRef);
+  return snapshot.data();
+};
+
 const create = async (table, data) => {
   const tableRef = getTableRef(table);
   await addDoc(tableRef, data);
@@ -119,6 +126,13 @@ const softDelete = async (table, id) => {
   });
 };
 
+const updateById = async (table, data, id) => {
+  const docRef = getDocRef(table, id);
+  await updateDoc(docRef, data).catch((e) => {
+    console.log("No such document exist!");
+  });
+};
+
 
 const pagination = async (table, where, pageIndex, pageSize, currentPage) => {
   const allData = await query(getTableRef(table), where, orderBy("change_at"));
@@ -158,4 +172,6 @@ export default {
   getByQuery,
   pagination,
   softDelete,
+  getById,
+  updateById
 };

@@ -20,7 +20,7 @@ import { visuallyHidden } from "@mui/utils";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import firebase from "../utils/firebase";
 import { where } from "firebase/firestore";
-import {getArticlesData, createRowsArticles} from "../utils/paginationArticles"
+import { getArticlesData, createRowsArticles } from "../utils/paginationData"
 
 const theme = createTheme({
   palette: {
@@ -101,7 +101,7 @@ EnhancedTableHead.propTypes = {
   orderBy: PropTypes.string.isRequired
 };
 
-export default function CustomTable({ rows, align, headCells, tb, pagination, handleOnPagination}) {
+export default function CustomTable({ rows, align, headCells, tb, pagination, handleOnPagination }) {
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("No");
   const [page, setPage] = useState(0);
@@ -124,13 +124,13 @@ export default function CustomTable({ rows, align, headCells, tb, pagination, ha
     if (!event.target.validity.valid || event.target.value === "")
       event.target.value = 1;
 
-      console.log(event.target.value)
-      const pageSize = parseInt(event.target.value);
-      const totalPage = Math.ceil(pagination.itemsTotal / pageSize);
-      const currentPage = totalPage < paginationData.currentPage ? 1 : paginationData.currentPage
-      const data = {...paginationData , pageTotal: totalPage, pageSize: pageSize, currentPage: currentPage}
-      setPaginationData(data);
-      handleOnPagination(data);
+    console.log(event.target.value)
+    const pageSize = parseInt(event.target.value);
+    const totalPage = Math.ceil(pagination.itemsTotal / pageSize);
+    const currentPage = totalPage < paginationData.currentPage ? 1 : paginationData.currentPage
+    const data = { ...paginationData, pageTotal: totalPage, pageSize: pageSize, currentPage: currentPage }
+    setPaginationData(data);
+    handleOnPagination(data);
   };
 
   const handlePagination = async (e) => {
@@ -138,17 +138,17 @@ export default function CustomTable({ rows, align, headCells, tb, pagination, ha
     const arrowIcon = e.target.getAttribute("data-testid");
     const pageNumber = e.target.textContent;
 
-    if(pageNumber || arrowIcon || arrowBtn){
+    if (pageNumber || arrowIcon || arrowBtn) {
       const currentIndex = 1;
-      if((arrowIcon && arrowIcon === "NavigateBeforeIcon") || (arrowBtn && arrowBtn === "Go to previous page")){
+      if ((arrowIcon && arrowIcon === "NavigateBeforeIcon") || (arrowBtn && arrowBtn === "Go to previous page")) {
         currentIndex = parseInt(paginationData.currentPage) - 1;
-      }else if((arrowIcon && arrowIcon === "NavigateNextIcon") || (arrowBtn && arrowBtn === "Go to next page")){
+      } else if ((arrowIcon && arrowIcon === "NavigateNextIcon") || (arrowBtn && arrowBtn === "Go to next page")) {
         currentIndex = parseInt(paginationData.currentPage) + 1;
-      } else{
+      } else {
         currentIndex = parseInt(e.target.textContent);
       }
 
-      const data = {...paginationData , currentPage: currentIndex}
+      const data = { ...paginationData, currentPage: currentIndex }
       setPaginationData(data)
       handleOnPagination(data);
     }
@@ -157,7 +157,7 @@ export default function CustomTable({ rows, align, headCells, tb, pagination, ha
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * paginationData.pageSize - rowsData.length) : 0;
-// console.log(rowsData)
+  // console.log(rowsData)
   return (
     <Paper sx={{ width: "100%" }}>
       <TableContainer>
@@ -219,7 +219,9 @@ export default function CustomTable({ rows, align, headCells, tb, pagination, ha
         <Typography
           style={{ marginLeft: "17px", fontSize: "15px", color: "#6C757D" }}
         >
-          Showing 1 to 5 of 50 entries
+          Showing {((paginationData.currentPage - 1) * paginationData.pageSize) + 1}&nbsp;
+          to {((paginationData.currentPage - 1) * paginationData.pageSize) + paginationData.pageSize}&nbsp;
+          of {paginationData.itemsTotal} entries
         </Typography>
 
         <Stack

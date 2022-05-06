@@ -2,7 +2,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, DialogConten
 import { useTheme } from '@mui/material/styles';
 import {useState} from 'react'
 const ConfirmDialog = (props) => {
-  const { title, children, open, setOpen, onConfirm, id } = props;
+  const { title, children, open, setOpen, onConfirm, id, pagination } = props;
   return (
     <Dialog
       open={open}
@@ -23,7 +23,7 @@ const ConfirmDialog = (props) => {
           variant="contained"
           onClick={() => {
             setOpen(false);
-            onConfirm(id);
+            onConfirm(id, pagination);
           }}
           color="primary"
         >
