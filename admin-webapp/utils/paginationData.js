@@ -60,12 +60,12 @@ const CreateChip = ({ label, setFontSize }) => {
   );
 };
 
-const CreateAction = ({ id, handleOnEdit, handleOnDelete, pagination }) => {
+const CreateAction = ({ id, handleOnDelete, pagination, indexLink }) => {
   const [confirmOpen, setConfirmOpen] = useState(false)
 
   return <>
     <Stack direction="row" alignItems="center">
-      <Link href={`${linksInfo[2].path}/${id}`}>
+      <Link href={`${linksInfo[indexLink].path}/${id}`}>
         {/* <IconButton aria-label="edit" size="small" onClick={() => handleOnEdit(id)} > */}
         <IconButton aria-label="edit" size="small">
           <DriveFileRenameOutlineIcon />
@@ -129,7 +129,7 @@ export async function getArticlesData(pageIndex, pageSize = 5, currentPage = 1) 
   };
 }
 
-export const createRowsArticles = (articles, handleOnEdit, handleOnDelete, pagination) => {
+export const createRowsArticles = (articles, handleOnDelete, pagination) => {
   return articles.map((article, i) => {
     const dateTime = moment(article.change_at).format("YYYY/MM/DD HH:mm:ss");
     return createDataArticles(
@@ -140,7 +140,7 @@ export const createRowsArticles = (articles, handleOnEdit, handleOnDelete, pagin
       <CreateCategory labels={article.categories} />,
       dateTime,
       <CreateChip label={article.status} />,
-      <CreateAction id={article.id} handleOnEdit={handleOnEdit} handleOnDelete={handleOnDelete} pagination={pagination} />
+      <CreateAction id={article.id} handleOnDelete={handleOnDelete} pagination={pagination} indexLink="0" />
     );
   })
 }
@@ -180,7 +180,7 @@ export async function getCategoriesData(pageIndex, pageSize = 5, currentPage = 1
   };
 }
 
-export const createRowsCategories = (categories, handleOnEdit, handleOnDelete, pagination) => {
+export const createRowsCategories = (categories, handleOnDelete, pagination) => {
   return categories.map((category, i) => {
     const dateTime = moment(category.change_at).format("YYYY/MM/DD HH:mm:ss");
     return createDataCategories(
@@ -188,7 +188,7 @@ export const createRowsCategories = (categories, handleOnEdit, handleOnDelete, p
       <CreateImg src={category.image} alt={category.name} />,
       <CreateChip label={category.name} setFontSize="true"/>,
       dateTime,
-      <CreateAction id={category.id} handleOnEdit={handleOnEdit} handleOnDelete={handleOnDelete} pagination={pagination} />
+      <CreateAction id={category.id} handleOnDelete={handleOnDelete} pagination={pagination} indexLink="2" />
     );
   })
 }

@@ -6,6 +6,9 @@ import { useState } from "react";
 import firebase from "../../utils/firebase";
 import EditIcon from '@mui/icons-material/Edit';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
+import { useRouter } from 'next/router'
+import { linksInfo } from '../../components/linksInfo';
+
 const commonStyles = {
   bgcolor: "background.paper",
   border: 1,
@@ -33,6 +36,7 @@ export default function EditCategory({category, id}) {
   const [name, setName] = useState(category.name);
   const [img, setImg] = useState(category.image);
   const [reset, setReset] = useState(false);
+  const router = useRouter();
 
   const handleOnChangeName = (value) => {
     setName(value);
@@ -51,9 +55,7 @@ export default function EditCategory({category, id}) {
       name: name
     };
     await firebase.updateById("categories", data, id);
-    setName("");
-    setImg(defaultImg);
-    setReset(true);
+    router.push(linksInfo[2].path);
   };
 
   const handleSetReset = (value) => {

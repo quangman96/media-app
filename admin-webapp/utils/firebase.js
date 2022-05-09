@@ -13,6 +13,7 @@ import {
   limit,
   startAfter,
   startAt,
+  endAt,
   doc,
   updateDoc ,
   getDoc
@@ -29,8 +30,8 @@ import {
   ref,
   uploadBytesResumable,
   getDownloadURL,
+  connectStorageEmulator,
 } from "firebase/storage";
-
 // Your web app's Firebase configuration
 const firebaseConfig = {
   //   apiKey: "AIzaSyAHmHrFuHJuyzex74mgycMI79BCgFIAHlQ",
@@ -161,6 +162,30 @@ const pagination = async (table, where, pageIndex, pageSize, currentPage) => {
   return querySnapshotData;
 };
 
+const search = async (table, field, keyword, pageSize, currentPage) => {
+  const data = [];
+  if(field === "all")
+    data = await getAll(table);
+  else
+    data = await getByQuery(table, orderBy(field));
+  let querySnapshotData = {
+    data: [],
+    pagination: {}
+  };
+  
+  if(field === "all")
+    querySnapshotData["data"] = data.filter(obj => Object.values(obj).some(value => value.toString().includes(keyword)));
+  else
+    querySnapshotData["data"] = data.filter(child => child[field].toString().includes(keyword));
+  querySnapshotData["pagination"] = {
+    pageTotal: Math.ceil(querySnapshotData["data"].length / pageSize),
+    itemsTotal: querySnapshotData["data"].length,
+    pageSize: pageSize,
+    currentPage: currentPage
+  };
+  return querySnapshotData;
+}
+
 
 export default {
   db,
@@ -173,5 +198,6 @@ export default {
   pagination,
   softDelete,
   getById,
-  updateById
+  updateById,
+  search
 };

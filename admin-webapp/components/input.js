@@ -255,7 +255,9 @@ export default function Input({
 
   const handleChange = (event) => {
     // setValue(event.target.value);
-    onChangeEvent(event.target.value, keyObj);
+    if (typeof onChangeEvent == 'function') { 
+      onChangeEvent(event.target.value, keyObj);
+    }
   };
 
   return (

@@ -36,15 +36,28 @@ const Editor = dynamic(
   { ssr: false }
 );
 
-import { EditorState, convertToRaw } from "draft-js";
+// const htmlToDraft = dynamic(
+//   () => import('html-to-draftjs'),
+//   { ssr: false }
+// )
+
+import { EditorState, convertToRaw, ContentState } from "draft-js";
 import draftToHtml from 'draftjs-to-html';
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
-export default function TextEditor({ style, onChangeEvent, keyObj, reset, handleSetReset }) {
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
-  const [contentState, setContentState] = useState('');
-
-    useEffect(() => {
+export default function TextEditor({ style, onChangeEvent, keyObj, reset, handleSetReset, content }) {
+  let htmlToDraft = null;
+  let contentBlock;
+  let contentState;
+  let newEditorState;
+  if (typeof window === 'object' && content) {
+    htmlToDraft = require('html-to-draftjs').default
+    contentBlock = htmlToDraft(content);
+    contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+    newEditorState = EditorState.createWithContent(contentState);
+  }
+  const [editorState, setEditorState] = useState(content ? newEditorState : EditorState.createEmpty());
+  useEffect(() => {
     if (reset){
       setEditorState(EditorState.createEmpty())
     }

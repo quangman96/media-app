@@ -27,9 +27,10 @@ export default function MultipleSelectChip({
   keyObj,
   data,
   reset,
-  handleSetReset
+  handleSetReset,
+  selected
 }) {
-  const [valueSelected, setValueSelected] = useState([data[0]]);
+  const [valueSelected, setValueSelected] = useState(selected ? selected : [data[0]]);
   const handleChange = (event) => {
     setValueSelected(event.target.value);
     const value = event.target.value.map((child) => {
@@ -73,7 +74,7 @@ export default function MultipleSelectChip({
           >
             {data.map((child) => (
               <MenuItem key={child.value} value={child}>
-                <Checkbox checked={valueSelected.indexOf(child) > -1} />
+                <Checkbox checked={valueSelected.some(item => child.value === item.value)} />
                 <ListItemText primary={child.text} />
               </MenuItem>
             ))}

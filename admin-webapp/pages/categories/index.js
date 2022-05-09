@@ -9,6 +9,8 @@ import { useState, useEffect } from 'react'
 import firebase from "../../utils/firebase";
 import Link from "next/link";
 import { linksInfo } from '../../components/linksInfo';
+import DropDown from "../../components/dropdown";
+import { where, orderBy } from "firebase/firestore";
 
 const align = [
   "left",
@@ -26,63 +28,67 @@ const headCells = [
   "Action"
 ];
 
-const ButtonSearch = (
-  <Button
-    variant="contained"
-    style={{ width: "10%", marginLeft: "3%", borderRadius: "6px", background: "#51CBFF" }}
-    endIcon={<SearchIcon />}
-  >
-    Search
-  </Button>
-);
-
-const ButtonAdd = (handleOnCreate) => <Link href={linksInfo[3].path}>
-  <Button
-    variant="contained"
-    style={{ width: "10%", marginLeft: "2.5%", borderRadius: "6px", background: "#51CBFF" }}
-    endIcon={<AddBoxIcon />}
-  // onClick={handleOnCreate}
-  >
-    Create
-  </Button>
-</Link>;
+const searchByData = [{text: 'Category', value: 0}]
 
 export default function Catelogies({ categories, pagination }) {
   const [rows, setRows] = useState("");
   const [paginationData, setPaginationData] = useState(pagination);
+  const [searchBy, setSearchBy] = useState(searchByData[0].value);
+  const [searchValue, setSearchValue] = useState('');
+
   useEffect(async () => {
-    console.log("aa")
-    setRows(await createRowsCategories(categories, handleOnEdit, handleOnDelete, paginationData))
+    setRows(await createRowsCategories(categories, handleOnDelete, paginationData))
   }, []);
-
-  // useEffect(() => {
-  //   console.log(paginationData)
-  //   setPaginationData(paginationData);
-  // }, [paginationData]);
-
-
-  const handleOnEdit = async (id) => {
-    console.log(id)
+  
+  const handleOnSearch = async () => {
+    const filted = await firebase.search("categories", "name", searchValue, paginationData.pageSize, paginationData.currentPage)
+    setPaginationData(filted.pagination)
+    setRows(await createRowsCategories(filted.data, handleOnDelete, filted.pagination))
   }
+  
+  const ButtonSearch = (
+    <Button
+      variant="contained"
+      style={{ width: "10%", marginLeft: "3%", borderRadius: "6px", background: "#51CBFF" }}
+      endIcon={<SearchIcon />}
+      onClick={handleOnSearch}
+    >
+      Search
+    </Button>
+  );
+  
+  const ButtonAdd = () => <Link href={linksInfo[3].path}>
+    <Button
+      variant="contained"
+      style={{ width: "10%", marginLeft: "2.5%", borderRadius: "6px", background: "#51CBFF" }}
+      endIcon={<AddBoxIcon />}
+    // onClick={handleOnCreate}
+    >
+      Create
+    </Button>
+  </Link>;
 
   const handleOnDelete = async (id, currentPagination) => {
     await firebase.softDelete("categories", id);
     const data = await getCategoriesData(currentPagination.currentPage - 1, currentPagination.pageSize, currentPagination.currentPage)
     setPaginationData(data.pagination)
-    const rows = await createRowsCategories(data.categories, handleOnEdit, handleOnDelete, currentPagination)
+    const rows = await createRowsCategories(data.categories, handleOnDelete, currentPagination)
     setRows(rows);
   }
 
   const handleOnPagination = async (data) => {
-    console.log(data)
     setPaginationData(data)
     const results = await (await getCategoriesData((data.currentPage - 1) * data.pageSize, data.pageSize, data.currentPage)).categories
-    const rows = await createRowsCategories(results, handleOnEdit, handleOnDelete, data)
+    const rows = await createRowsCategories(results, handleOnDelete, data)
     setRows(rows);
   }
 
-  const handleOnCreate = () => {
-    console.log("handleOnCreate")
+  const handleOnChange = (e) => {
+    setSearchBy(e);
+  }
+
+  const handleOnInputSearch = (value) => {
+    setSearchValue(value)
   }
 
   return (
@@ -98,11 +104,23 @@ export default function Catelogies({ categories, pagination }) {
               justifyContent: "space-between",
             }}
           >
-            <Box sx={{ mt: -3, width: 1 }}>
+            <Box sx={{ mt: -3, width: 1, display: 'flex' }}>
+              <DropDown
+                width="20%"
+                onChangeEvent={handleOnChange}
+                data={searchByData}
+                sxBox={{width: '10%', marginRight: '1%'}}
+                sxSelect={{
+                  "& .MuiSelect-select": {
+                    padding: "6%"
+                  }
+              }}
+              />
               <Input
                 className={customStyles["pd-input"]}
                 placeHolder="Search"
                 button={ButtonSearch}
+                onChangeEvent={handleOnInputSearch}
                 positionAdornment="start"
                 icon={<SearchIcon sx={{ color: "#979797" }} />}
               />
