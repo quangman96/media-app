@@ -1,9 +1,9 @@
-import { Box, TextareaAutosize, FormControl, InputLabel } from "@mui/material";
+import { Box, FormControl, InputLabel, TextareaAutosize } from "@mui/material";
 import customStyle from "../styles/TextArea.module.css";
 export default function TextArea({
   label,
   placeHolder,
-  minRows,
+  maxRows,
   style,
   onChangeEvent,
   keyObj,
@@ -25,7 +25,8 @@ export default function TextArea({
             className={customStyle["text-area"]}
             onChange={handleChange}
             id="text-area"
-            minRows={minRows ? minRows : "1"}
+            maxRows={maxRows ? maxRows : "1"}
+            minRows={maxRows ? maxRows : "1"}
             placeholder={placeHolder}
             style={{
               borderColor: "#c4c4c4",

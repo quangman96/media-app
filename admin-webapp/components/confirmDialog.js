@@ -1,6 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, useMediaQuery } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
-import {useState} from 'react'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 const ConfirmDialog = (props) => {
   const { title, children, open, setOpen, onConfirm, id, pagination } = props;
   return (

@@ -1,16 +1,16 @@
-import { Box, Paper, Button, Stack, IconButton, Chip } from "@mui/material";
-import CustomTable from "../../components/table";
-import Input from "../../components/input";
-import customStyles from "../../styles/Categories.module.css"
-import SearchIcon from "@mui/icons-material/Search";
 import AddBoxIcon from "@mui/icons-material/AddBox";
-import firebase from "../../utils/firebase";
-import { getArticlesData, createRowsArticles } from "../../utils/paginationData"
-import { useState, useEffect } from "react"
-import Link from "next/link";
-import { linksInfo } from '../../components/linksInfo';
-import DropDown from "../../components/dropdown";
+import SearchIcon from "@mui/icons-material/Search";
+import { Box, Button, Paper } from "@mui/material";
 import { where } from "firebase/firestore";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import DropDown from "../../components/dropdown";
+import Input from "../../components/input";
+import { linksInfo } from '../../components/linksInfo';
+import CustomTable from "../../components/table";
+import customStyles from '../../styles/Articles.module.css';
+import firebase from "../../utils/firebase";
+import { createRowsArticles, getArticlesData } from "../../utils/paginationData";
 
 const align = [
   "left",
@@ -55,7 +55,6 @@ export default function Articles({ articles, pagination }) {
 
   const handleOnSearch = async () => {
     const filted = await firebase.search("articles", searchByData[searchBy].field, searchValue, paginationData.pageSize, paginationData.currentPage)
-    console.log(filted)
     setPaginationData(filted.pagination);
     let categoriesData = {};
     const categories = await firebase.getAll("categories");
@@ -145,7 +144,7 @@ export default function Articles({ articles, pagination }) {
       {rows ? <>
         <Box sx={{ width: "100%" }}>
           <Paper
-            className={customStyles["pd-1"]}
+            className={`${customStyles["pd-1"]} search-container`}
             sx={{
               width: "100%",
               mb: 2,
@@ -155,7 +154,7 @@ export default function Articles({ articles, pagination }) {
           >
             <Box sx={{ mt: -3, width: 1, display: 'flex' }}>
             <DropDown
-                width="20%"
+                className='search-by-data'
                 onChangeEvent={handleOnChange}
                 data={searchByData}
                 sxBox={{width: '10%', marginRight: '1%'}}

@@ -1,14 +1,14 @@
-import firebase from "./firebase";
-import { where } from "firebase/firestore";
-import moment from "moment";
-import { Box, Button, Stack, IconButton, Chip } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
-import customStyles from "../styles/Articles.module.css";
-import ConfirmDialog from "../components/confirmDialog"
-import { useState } from "react"
+import { Chip, IconButton, Stack } from "@mui/material";
+import { where } from "firebase/firestore";
+import moment from "moment";
 import Link from "next/link";
+import { useState } from "react";
+import ConfirmDialog from "../components/confirmDialog";
+import customStyles from "../styles/Articles.module.css";
 import { linksInfo } from './../components/linksInfo';
+import firebase from "./firebase";
 
 function createDataArticles(
   no,
@@ -130,10 +130,12 @@ export async function getArticlesData(pageIndex, pageSize = 5, currentPage = 1) 
 }
 
 export const createRowsArticles = (articles, handleOnDelete, pagination) => {
+  console.log(pagination)
   return articles.map((article, i) => {
     const dateTime = moment(article.change_at).format("YYYY/MM/DD HH:mm:ss");
     return createDataArticles(
-      i + 1,
+      // i + 1,
+      (pagination.pageSize * pagination.currentPage) - pagination.pageSize + i + 1,
       <CreateImg src={article.image} alt={article.title} />,
       article.title,
       article.description,
@@ -184,7 +186,7 @@ export const createRowsCategories = (categories, handleOnDelete, pagination) => 
   return categories.map((category, i) => {
     const dateTime = moment(category.change_at).format("YYYY/MM/DD HH:mm:ss");
     return createDataCategories(
-      i + 1,
+      (pagination.pageSize * pagination.currentPage) - pagination.pageSize + i + 1,
       <CreateImg src={category.image} alt={category.name} />,
       <CreateChip label={category.name} setFontSize="true"/>,
       dateTime,

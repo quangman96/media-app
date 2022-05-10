@@ -1,26 +1,16 @@
-import { useState, useEffect } from "react";
-import PropTypes from "prop-types";
 import {
-  Box,
-  Table,
+  Box, Pagination, Paper,
+  Stack, Table,
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
-  TablePagination,
-  TableRow,
-  TableSortLabel,
-  Paper,
-  Stack,
-  Pagination,
-  Typography,
-  TextField
+  TableHead, TableRow,
+  TableSortLabel, TextField, Typography
 } from "@mui/material";
+import { createTheme } from "@mui/material/styles";
 import { visuallyHidden } from "@mui/utils";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import firebase from "../utils/firebase";
-import { where } from "firebase/firestore";
-import { getArticlesData, createRowsArticles } from "../utils/paginationData"
+import PropTypes from "prop-types";
+import { useEffect, useState } from "react";
 
 const theme = createTheme({
   palette: {
@@ -155,12 +145,12 @@ export default function CustomTable({ rows, align, headCells, tb, pagination, ha
   }
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * paginationData.pageSize - rowsData.length) : 0;
-  // console.log(rowsData)
+  // const emptyRows = paginationData.currentPage == paginationData.pageTotal ? paginationData.pageSize - (paginationData.itemsTotal - paginationData.pageSize) : 0;
+  // const emptyRows = paginationData.currentPage == paginationData.pageTotal ? 4 : 0;
+  const emptyRows = 0;
   return (
     <Paper sx={{ width: "100%" }}>
-      <TableContainer>
+      <TableContainer style={{height: '68.5vh'}}>
         <Table
           sx={{ minWidth: 750 }}
           aria-labelledby="tableTitle"
@@ -200,7 +190,7 @@ export default function CustomTable({ rows, align, headCells, tb, pagination, ha
             {emptyRows > 0 && (
               <TableRow
                 style={{
-                  height: 53 * emptyRows
+                  height: 121.5 * emptyRows
                 }}
               >
                 <TableCell colSpan={6} />
@@ -220,7 +210,7 @@ export default function CustomTable({ rows, align, headCells, tb, pagination, ha
           style={{ marginLeft: "17px", fontSize: "15px", color: "#6C757D" }}
         >
           Showing {((paginationData.currentPage - 1) * paginationData.pageSize) + 1}&nbsp;
-          to {((paginationData.currentPage - 1) * paginationData.pageSize) + paginationData.pageSize}&nbsp;
+          to {paginationData.currentPage === paginationData.pageTotal ? paginationData.itemsTotal : ((paginationData.currentPage - 1) * paginationData.pageSize) + paginationData.pageSize}&nbsp;
           of {paginationData.itemsTotal} entries
         </Typography>
 

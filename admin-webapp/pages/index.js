@@ -5,13 +5,3 @@ export default function Home() {
     <Login user />
   )
 }
-
-// export async function getStaticProps() {
-//   const res = await firebase.getAll("user_profile");
-//   return {
-//     props: {
-//       users: res,
-//     },
-//   };
-// }
-

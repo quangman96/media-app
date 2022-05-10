@@ -1,29 +1,20 @@
-import Input from "../../components/input";
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import {
   Box,
-  Button,
-  Paper,
-  Grid,
-  InputLabel,
-  MenuItem,
-  FormControl,
-  Select,
-  Stack,
-  TextareaAutosize
+  Button, Grid, Paper, Stack
 } from "@mui/material";
-import AddBoxIcon from "@mui/icons-material/AddBox";
 import { styled } from "@mui/material/styles";
-import { useState, useRef } from "react";
+import { where } from "firebase/firestore";
+import { useRouter } from 'next/router';
+import { useState, useEffect } from "react";
 import DropDown from "../../components/dropdown";
 import ImgDialog from "../../components/imgDialog";
-import TextEditor from "../../components/textEditor";
-import TextArea from "../../components/textArea";
-import firebase from "../../utils/firebase";
-import MultipleSelectChip from "../../components/multipleSelectChip";
-import { where, orderBy } from "firebase/firestore";
-import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
-import { useRouter } from 'next/router'
+import Input from "../../components/input";
 import { linksInfo } from '../../components/linksInfo';
+import MultipleSelectChip from "../../components/multipleSelectChip";
+import TextArea from "../../components/textArea";
+import TextEditor from "../../components/textEditor";
+import firebase from "../../utils/firebase";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -52,6 +43,11 @@ export default function EditArticle({ categoryData, statusData, articlesData, ca
   });
   const [reset, setReset] = useState(false);
   const router = useRouter();
+  const [windowWidth, setWindowWidth] = useState('');
+
+  useEffect(()=> {
+    setWindowWidth(window.innerWidth);
+ }, [])
 
   const handleAfterUploadImg = async (downloadURL) => {
     const time = new Date().getTime();
@@ -85,6 +81,7 @@ export default function EditArticle({ categoryData, statusData, articlesData, ca
   };
   return (
     <Paper
+      className='edit-article'
       sx={{
         display: "flex",
         flexDirection: "column",
@@ -129,7 +126,7 @@ export default function EditArticle({ categoryData, statusData, articlesData, ca
                   <TextArea
                     label="Description"
                     placeHolder="Enter a description..."
-                    minRows="8"
+                    maxRows={windowWidth <= 1366 ? 6 : 8}
                     style={{
                       width: "100%",
                       resize: "none",
@@ -204,6 +201,7 @@ export default function EditArticle({ categoryData, statusData, articlesData, ca
 
           <Stack direction="row" justifyContent="end">
             <Button
+              id='submit-btn'
               variant="contained"
               style={{
                 width: "10%",

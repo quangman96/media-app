@@ -1,16 +1,15 @@
-import { Box, Paper, Button, Stack, IconButton, Chip } from "@mui/material";
-import CustomTable from "../../components/table";
-import Input from "../../components/input";
-import customStyles from "../../styles/Categories.module.css"
-import SearchIcon from "@mui/icons-material/Search";
 import AddBoxIcon from "@mui/icons-material/AddBox";
-import { getCategoriesData, createRowsCategories } from '../../utils/paginationData'
-import { useState, useEffect } from 'react'
-import firebase from "../../utils/firebase";
+import SearchIcon from "@mui/icons-material/Search";
+import { Box, Button, Paper } from "@mui/material";
 import Link from "next/link";
-import { linksInfo } from '../../components/linksInfo';
+import { useEffect, useState } from 'react';
 import DropDown from "../../components/dropdown";
-import { where, orderBy } from "firebase/firestore";
+import Input from "../../components/input";
+import { linksInfo } from '../../components/linksInfo';
+import CustomTable from "../../components/table";
+import customStyles from "../../styles/Categories.module.css";
+import firebase from "../../utils/firebase";
+import { createRowsCategories, getCategoriesData } from '../../utils/paginationData';
 
 const align = [
   "left",
@@ -96,7 +95,7 @@ export default function Catelogies({ categories, pagination }) {
       {rows ? <>
         <Box sx={{ width: "100%" }}>
           <Paper
-            className={customStyles["pd-1"]}
+            className={`${customStyles["pd-1"]} search-container`}
             sx={{
               width: "100%",
               mb: 2,
@@ -106,7 +105,7 @@ export default function Catelogies({ categories, pagination }) {
           >
             <Box sx={{ mt: -3, width: 1, display: 'flex' }}>
               <DropDown
-                width="20%"
+              className='search-by-data'
                 onChangeEvent={handleOnChange}
                 data={searchByData}
                 sxBox={{width: '10%', marginRight: '1%'}}

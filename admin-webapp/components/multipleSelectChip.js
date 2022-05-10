@@ -1,13 +1,13 @@
 import Box from "@mui/material/Box";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import Chip from "@mui/material/Chip";
-import ListItemText from "@mui/material/ListItemText";
 import Checkbox from "@mui/material/Checkbox";
-import { useState, useEffect } from "react";
+import Chip from "@mui/material/Chip";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import ListItemText from "@mui/material/ListItemText";
+import MenuItem from "@mui/material/MenuItem";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import Select from "@mui/material/Select";
+import { useEffect, useState } from "react";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -20,6 +20,10 @@ const MenuProps = {
   }
 };
 
+const getDefaultData = (selected, data) => {
+  return selected ? data.filter((elem) => selected.find(({ value }) => elem.value === value)) : [data[0]];
+}
+
 export default function MultipleSelectChip({
   label,
   width,
@@ -30,7 +34,7 @@ export default function MultipleSelectChip({
   handleSetReset,
   selected
 }) {
-  const [valueSelected, setValueSelected] = useState(selected ? selected : [data[0]]);
+  const [valueSelected, setValueSelected] = useState(getDefaultData(selected, data));
   const handleChange = (event) => {
     setValueSelected(event.target.value);
     const value = event.target.value.map((child) => {

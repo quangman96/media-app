@@ -1,37 +1,19 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
+import {
+  getAuth
+} from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 import {
-  getFirestore,
-  collection,
-  getDocs,
-  addDoc,
-  query,
-  where,
-  orderBy,
-  limit,
-  startAfter,
-  startAt,
-  endAt,
-  doc,
-  updateDoc ,
-  getDoc
+  addDoc, collection, doc, getDoc, getDocs, getFirestore, limit, orderBy, query, startAt, updateDoc
 } from "firebase/firestore";
-
 import {
-  getAuth,
-  signInWithPopup,
-  GoogleAuthProvider,
-  signInWithRedirect,
-} from "firebase/auth";
-import {
-  getStorage,
+  getDownloadURL, getStorage,
   ref,
-  uploadBytesResumable,
-  getDownloadURL,
-  connectStorageEmulator,
+  uploadBytesResumable
 } from "firebase/storage";
+
 // Your web app's Firebase configuration
 const firebaseConfig = {
   //   apiKey: "AIzaSyAHmHrFuHJuyzex74mgycMI79BCgFIAHlQ",
@@ -174,9 +156,9 @@ const search = async (table, field, keyword, pageSize, currentPage) => {
   };
   
   if(field === "all")
-    querySnapshotData["data"] = data.filter(obj => Object.values(obj).some(value => value.toString().includes(keyword)));
+    querySnapshotData["data"] = data.filter(obj => Object.values(obj).some(value => value.toString().toLowerCase().includes(keyword.toLowerCase())));
   else
-    querySnapshotData["data"] = data.filter(child => child[field].toString().includes(keyword));
+    querySnapshotData["data"] = data.filter(child => child[field].toString().toLowerCase().includes(keyword.toLowerCase()));
   querySnapshotData["pagination"] = {
     pageTotal: Math.ceil(querySnapshotData["data"].length / pageSize),
     itemsTotal: querySnapshotData["data"].length,

@@ -1,8 +1,5 @@
-import { Grid, Box } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import FormLogin from "./formLogin";
-import { useAuth } from '../utils/AuthUserProvider';
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
 
 const styling = {
   backgroundImage: `url(/login.png)`,
@@ -16,15 +13,6 @@ const styling = {
 };
 
 export default function Login() {
-  // const { authUser, loading } = useAuth();
-  // console.log(authUser)
-  // console.log(loading)
-  //   // Listen for changes on loading and authUser, redirect if needed
-  //   useEffect(() => {
-  //     if (!loading && !authUser)
-  //       router.push('/')
-  //   }, [authUser, loading])
-
   return (
     <Grid container columns={7} sx={{ height: '100vh'  }}>
       <Grid item xs={3}>

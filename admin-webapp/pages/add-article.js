@@ -1,26 +1,18 @@
-import Input from "../components/input";
+import AddBoxIcon from "@mui/icons-material/AddBox";
 import {
   Box,
-  Button,
-  Paper,
-  Grid,
-  InputLabel,
-  MenuItem,
-  FormControl,
-  Select,
-  Stack,
-  TextareaAutosize
+  Button, Grid, Paper, Stack
 } from "@mui/material";
-import AddBoxIcon from "@mui/icons-material/AddBox";
 import { styled } from "@mui/material/styles";
-import { useState, useRef } from "react";
+import { where } from "firebase/firestore";
+import { useState, useEffect } from "react";
 import DropDown from "../components/dropdown";
 import ImgDialog from "../components/imgDialog";
-import TextEditor from "../components/textEditor";
-import TextArea from "../components/textArea";
-import firebase from "../utils/firebase";
+import Input from "../components/input";
 import MultipleSelectChip from "../components/multipleSelectChip";
-import { where, orderBy } from "firebase/firestore";
+import TextArea from "../components/textArea";
+import TextEditor from "../components/textEditor";
+import firebase from "../utils/firebase";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -48,6 +40,11 @@ export default function AddArticle({ categoryData, statusData }) {
     content: ""
   });
   const [reset, setReset] = useState(false);
+  const [windowWidth, setWindowWidth] = useState('');
+
+  useEffect(()=> {
+    setWindowWidth(window.innerWidth);
+ }, [])
 
   const handleAfterUploadImg = async (downloadURL) => {
     const time = new Date().getTime();
@@ -64,7 +61,7 @@ export default function AddArticle({ categoryData, statusData }) {
       is_delete: false,
       sort_no: "",
       status: form.status,
-      user_id: "yWgyHYLBxw0R0FnP31Qf"
+      user_id: localStorage.getItem('userId')
     };
     await firebase.create("articles", data);
     setForm({
@@ -94,6 +91,7 @@ export default function AddArticle({ categoryData, statusData }) {
   };
   return (
     <Paper
+      className="add-article"
       sx={{
         display: "flex",
         flexDirection: "column",
@@ -138,7 +136,7 @@ export default function AddArticle({ categoryData, statusData }) {
                   <TextArea
                     label="Description"
                     placeHolder="Enter a description..."
-                    minRows="8"
+                    maxRows={windowWidth <= 1366 ? 5 : 8}
                     style={{
                       width: "100%",
                       resize: "none",

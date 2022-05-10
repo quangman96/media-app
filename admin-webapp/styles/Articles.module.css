@@ -38,7 +38,7 @@
     width: 11%;
 }
 .tb thead th:nth-child(3) {
-    width: 15%;
+    width: 30%;
 }
 
 .tb tbody td:nth-child(3) {
@@ -54,3 +54,18 @@
     padding-left: 17px;
 }
 
+  .tb tbody td:nth-child(4) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 10%;
+    max-width: 0;
+    white-space: nowrap;
+  }
+
+  .tb tbody td {
+    height: 12.5vh;
+    }
+
+/* .tb thead th:nth-child(5) {
+    width: 50%;
+} */

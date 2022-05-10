@@ -1,6 +1,5 @@
-import React from "react";
-import { Button, Box, InputLabel, FormControl } from "@mui/material";
-import { useState, useEffect } from "react";
+import { Box, Button, FormControl, InputLabel } from "@mui/material";
+import React, { useEffect, useState } from "react";
 
 export default function ImgDialog({
   style,
@@ -46,7 +45,6 @@ export default function ImgDialog({
         </InputLabel>
 
         <Box
-          className="zzz"
           sx={{ display: "flex", flexWrap: "wrap", mt: "3%", height: 1 }}
         >
           <Button

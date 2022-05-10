@@ -1,16 +1,15 @@
-import * as React from "react";
-import PropTypes from "prop-types";
-import Head from "next/head";
-import { ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
 import { CacheProvider } from "@emotion/react";
-import theme from "../components/theme";
+import CssBaseline from "@mui/material/CssBaseline";
+import { ThemeProvider } from "@mui/material/styles";
+import Head from "next/head";
+import { useRouter } from "next/router";
+import PropTypes from "prop-types";
+import * as React from "react";
 import createEmotionCache from "../components/createEmotionCache";
 import Layout from "../components/layout";
-import '../styles/globals.css'
-import { useRouter } from "next/router";
 import Test from "../components/test";
-import AuthUserProvider from "../utils/authUserProvider.js"
+import theme from "../components/theme";
+import '../styles/globals.css';
 // Client-side cache shared for the whole session
 // of the user in the browser.
 

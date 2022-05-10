@@ -5,11 +5,11 @@ body {
   /* font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif, inter; */
   font-family: inter;
-  }
+}
 
-  body * {
-    font-family: inter;
-  }
+body * {
+  font-family: inter;
+}
 
 a {
   color: inherit;
@@ -20,12 +20,82 @@ a {
   box-sizing: border-box;
 }
 
-.link-active{
+.link-active {
   background: #efefef;
 }
 
-@media (min-width: 1200px){
+@media (min-width: 1200px) {
   .MuiContainer-root {
     max-width: 97%;
+  }
+}
+
+@media screen and (max-width: 1366px) {
+  .MuiContainer-root {
+    height: 82.5% !important;
+  }
+
+  .MuiTableContainer-root {
+    height: 64.5vh !important;
+  }
+
+  .MuiTableContainer-root tbody td {
+    height: 11.4vh !important;
+  }
+
+  .MuiButton-root {
+    font-size: 12px !important;
+    width: 12% !important;
+  }
+  
+  .search-container .MuiInputBase-adornedStart {
+    width: 85% !important;
+  }
+
+  .search-by-data {
+    width: 14%;
+  }
+
+  .search-by-data #select {
+    padding-top: 5%;
+    padding-bottom: 5%;
+  }
+
+  .MuiTableContainer-root td, .MuiChip-label {
+    font-size: 12px !important;
+  }
+
+  .MuiTableContainer-root th {
+    font-size: 13px !important;
+  }
+
+  .MuiChip-root {
+    height: 23px !important;
+  }
+
+  .add-category .MuiOutlinedInput-root, .edit-category .MuiOutlinedInput-root{
+    width: 83% !important;
+    height: 70%;
+  }
+
+  .add-category #submit-btn, .add-article #submit-btn, .edit-category #submit-btn, .edit-article #submit-btn{
+    height: 70%;
+  }
+
+  .add-category #img-dialog, .add-article #img-dialog, .edit-category #img-dialog, .edit-article #img-dialog{
+    width: 100% !important;
+    heigth: 100% !important;
+  }
+
+  .add-article .MuiOutlinedInput-root, .edit-article .MuiOutlinedInput-root{
+    height: 70%;
+  }
+
+  .add-article .MuiGrid-root:nth-child(2), .edit-article .MuiGrid-root:nth-child(2){
+    margin-top: -2%;
+  }
+
+  .add-article .MuiGrid-root:nth-child(3), .edit-article .MuiGrid-root:nth-child(3){
+    margin-bottom: -3.5%;
   }
 }

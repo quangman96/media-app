@@ -1,19 +1,3 @@
-import Icon from '@mui/material/Icon';
-// import { makeStyles } from '@material-ui/styles';
-// import logout from "../public/logout (1) 1 (1).svg"
-
-// <Icon>
-//   <img className={classes.imageIcon} src="../public/logout (1) 1 (1).svg" />
-// </Icon>
-
-// import Icon from '@mui/material/Icon';
-
-// React.createElement(
-//   Icon,
-//   { classes: { root: classes.iconRoot } },
-//   React.createElement('img', { className: classes.imageIcon, src: '/graphics/firebase-logo.svg' })
-// );
-
 import SvgIcon from "@mui/material/SvgIcon";
 
 export default function LogoutIcon(props) {

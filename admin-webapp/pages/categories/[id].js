@@ -1,13 +1,11 @@
-import Input from "../../components/input";
-import { Box, Button, Paper } from "@mui/material";
-import AddBoxIcon from "@mui/icons-material/AddBox";
-import ImgDialog from "../../components/imgDialog";
-import { useState } from "react";
-import firebase from "../../utils/firebase";
-import EditIcon from '@mui/icons-material/Edit';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
-import { useRouter } from 'next/router'
+import { Box, Button, Paper } from "@mui/material";
+import { useRouter } from 'next/router';
+import { useState } from "react";
+import ImgDialog from "../../components/imgDialog";
+import Input from "../../components/input";
 import { linksInfo } from '../../components/linksInfo';
+import firebase from "../../utils/firebase";
 
 const commonStyles = {
   bgcolor: "background.paper",
@@ -17,6 +15,7 @@ const commonStyles = {
 };
 const ButtonEdit = ({ onClick }) => (
   <Button
+    id='submit-btn'
     variant="contained"
     style={{
       width: "10%",
@@ -71,6 +70,7 @@ export default function EditCategory({category, id}) {
 
   return (
     <Paper
+      className='edit-category'
       sx={{
         display: "flex",
         flexDirection: "column",
@@ -107,15 +107,6 @@ export default function EditCategory({category, id}) {
     </Paper>
   );
 }
-
-// export async function getStaticProps() {
-//     const category = await firebase.getById("categories", "2Flt992wVdUgtwvyNetx")
-//     return {
-//       props: {
-//         category: category,
-//       }
-//     };
-//   }
 
 export async function getServerSideProps(ctx) {
     const {params} = ctx;

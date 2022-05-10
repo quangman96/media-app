@@ -1,15 +1,15 @@
-import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputLabel from "@mui/material/InputLabel";
-import InputAdornment from "@mui/material/InputAdornment";
-import FormHelperText from "@mui/material/FormHelperText";
-import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import Box from "@mui/material/Box";
+import FormControl from "@mui/material/FormControl";
+import FormHelperText from "@mui/material/FormHelperText";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import InputLabel from "@mui/material/InputLabel";
+import OutlinedInput from "@mui/material/OutlinedInput";
 import { useState } from "react";
 
-export default function InputPassword({onChangeEvent, value}) {
+export default function InputPassword({onChangeEvent, value, errors, validate}) {
   const [passwordObj, setPasswordObj] = useState({
     password: "",
     showPassword: false,
@@ -17,8 +17,9 @@ export default function InputPassword({onChangeEvent, value}) {
 
   const handleChange = (prop) => (event) => {
     setPasswordObj({ ...passwordObj, [prop]: event.target.value });
-    console.log(passwordObj);
-    onChangeEvent(event.target.value);
+    if (typeof onChangeEvent == 'function') { 
+      onChangeEvent(event.target.value);
+    }
   };
 
   const handleClickShowPassword = () => {
@@ -39,6 +40,7 @@ export default function InputPassword({onChangeEvent, value}) {
           Password
         </InputLabel>
         <OutlinedInput
+          {...validate}
           id="outlined-adornment-password"
           type={passwordObj.showPassword ? "text" : "password"}
           value={value}
@@ -60,7 +62,7 @@ export default function InputPassword({onChangeEvent, value}) {
             </InputAdornment>
           }
         />
-        <FormHelperText id="outlined-password-helper-text"></FormHelperText>
+        <FormHelperText id="outlined-password-helper-text" style={{color: 'red', fontSize: '14px'}}>{errors}</FormHelperText>
       </FormControl>
     </Box>
   );

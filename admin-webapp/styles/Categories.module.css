@@ -46,3 +46,7 @@
     width: 5.7%;
     padding-left: 17px;
 }
+
+.tb tbody td {
+    height: 12.5vh;
+}
