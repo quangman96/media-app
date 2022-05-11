@@ -67,8 +67,7 @@ const Drawer = styled(MuiDrawer, {
 const mdTheme = createTheme();
 
 const checkPath = (path) => {
-  const link = linksInfo.find(link => (link.path === path || link.path.includes("/categories/")));
-  console.log(link)
+  const link = linksInfo.find(link => (link.path === path || (link.hasOwnProperty('regex') && new RegExp(link.regex).test(path))));
   return link ? link.name : "";
 }
 

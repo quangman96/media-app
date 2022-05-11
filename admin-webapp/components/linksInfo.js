@@ -15,8 +15,13 @@ export const linksInfo = [
       path: "/add-category",
     },
     {
+      name: "Edit Article",
+      regex: "/articles/.+$",
+    },
+
+    {
       name: "Edit Category",
-      path: "/edit-category",
+      regex: "/categories/.+$",
     },
   ];
   

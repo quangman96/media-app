@@ -99,3 +99,10 @@ a {
     margin-bottom: -3.5%;
   }
 }
+
+@media screen and (min-width: 1367px) {
+  #multiselect {
+    padding-top: 2.3%;
+    padding-bottom: 2.3%;
+  }
+}

@@ -34,13 +34,44 @@ const headCells = [
   "Action"
 ];
 
+const formatData = async (filtedData) => {
+  let categoriesData = {};
+  const categories = await firebase.getAll("categories");
+  categories.forEach((data) => {
+    categoriesData[data.id] = data.name;
+  });
+
+  let statusData = {};
+  const masterData = await firebase.getByQuery(
+    "master_data",
+    where("class", "==", "ARTICLES_STATUS")
+  );
+  masterData.forEach((data) => {
+    statusData[data.id] = data.name;
+  });
+
+  const articlesData = filtedData.map((article) => ({
+    ...article,
+    id: article.id,
+    status: statusData[article.status],
+    categories: article.categories.map((id) => {
+      return categoriesData[id];
+    }),
+  }));
+
+  return articlesData;
+}
+
+const customSearch = async (data) => {
+ return await formatData(data)
+}
 
 const searchByData = [
   {text: 'Title', value: 0, field: 'title'}, 
   {text: 'Description', value: 1, field: 'description'}, 
-  {text: 'Category', value: 2, field: 'category'}, 
-  {text: 'Status', value: 3, field: 'status'}, 
-  {text: 'All', value: 4, field: 'all'}
+  {text: 'Category', value: 2, field: 'categories', function: customSearch}, 
+  {text: 'Status', value: 3, field: 'status', function: customSearch}, 
+  {text: 'All', value: 4, field: 'all', function: customSearch}
 ]
 
 export default function Articles({ articles, pagination }) {
@@ -54,33 +85,15 @@ export default function Articles({ articles, pagination }) {
   }, []);
 
   const handleOnSearch = async () => {
-    const filted = await firebase.search("articles", searchByData[searchBy].field, searchValue, paginationData.pageSize, paginationData.currentPage)
+    const filted = await firebase.search("articles", searchByData[searchBy].field, searchValue, paginationData.pageSize, paginationData.currentPage, searchByData[searchBy].function)
     setPaginationData(filted.pagination);
-    let categoriesData = {};
-    const categories = await firebase.getAll("categories");
-    categories.forEach((data) => {
-      categoriesData[data.id] = data.name;
-    });
-  
-    let statusData = {};
-    const masterData = await firebase.getByQuery(
-      "master_data",
-      where("class", "==", "ARTICLES_STATUS")
-    );
-    masterData.forEach((data) => {
-      statusData[data.id] = data.name;
-    });
-  
-    const articlesData = filted.data.map((article) => ({
-      ...article,
-      id: article.id,
-      status: statusData[article.status],
-      categories: article.categories.map((id) => {
-        return categoriesData[id];
-      }),
-    }));
 
-    setRows(await createRowsArticles(articlesData, handleOnDelete, filted.pagination))
+    if(filted['formated']){
+      setRows(await createRowsArticles(filted['data'], handleOnDelete, filted.pagination))
+    } else {
+      const articlesData = await formatData(filted.data);
+      setRows(await createRowsArticles(articlesData, handleOnDelete, filted.pagination))
+    }
   }
 
   const ButtonSearch = (
@@ -118,7 +131,7 @@ export default function Articles({ articles, pagination }) {
 
   const handleOnDelete = async (id, newPagination) => {
     await firebase.softDelete("articles", id);
-    const data = await getArticlesData(newPagination.currentPage - 1, newPagination.pageSize, newPagination.currentPage)
+    const data = await getArticlesData((newPagination.currentPage - 1) * newPagination.pageSize, newPagination.pageSize, newPagination.currentPage)
     setPaginationData(data.pagination)
     const rows = await createRowsArticles(data.articles, handleOnDelete, newPagination)
     setRows(rows);

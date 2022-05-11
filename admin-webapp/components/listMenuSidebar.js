@@ -57,7 +57,6 @@ export function SecondaryListItems({firebase}) {
   const handleLogout = () => {
     const auth = firebase.auth;
     auth.signOut().then(() => {
-      console.log("logout");
       route.push("/")
     }).catch((error) => {
       console.log("logout error");

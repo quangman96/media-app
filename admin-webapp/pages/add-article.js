@@ -34,13 +34,23 @@ export default function AddArticle({ categoryData, statusData }) {
   const [form, setForm] = useState({
     title: "",
     description: "",
-    category: [categoryData[0].value],
+    categories: [categoryData[0].value],
     status: statusData[0].value,
     image: defaultImg,
     content: ""
   });
   const [reset, setReset] = useState(false);
   const [windowWidth, setWindowWidth] = useState('');
+  const [customError, setCustomError] = useState({
+    title: {
+      error: false,
+      msg: ''
+    },
+    categories: {
+      error: false,
+      msg: ''
+    }
+  });
 
   useEffect(()=> {
     setWindowWidth(window.innerWidth);
@@ -49,7 +59,7 @@ export default function AddArticle({ categoryData, statusData }) {
   const handleAfterUploadImg = async (downloadURL) => {
     const time = new Date().getTime();
     const data = {
-      categories: form.category,
+      categories: form.categories,
       change_at: time,
       change_by: "admin",
       create_at: time,
@@ -67,8 +77,8 @@ export default function AddArticle({ categoryData, statusData }) {
     setForm({
       title: "",
       description: "",
-      category: "",
-      status: "",
+      categories: [categoryData[0].value],
+      status: statusData[0].value,
       image: defaultImg,
       content: ""
     });
@@ -80,6 +90,35 @@ export default function AddArticle({ categoryData, statusData }) {
   };
 
   const handleOnCreate = () => {
+    const errors = {};
+    if(!form.title)
+      errors["title"] = {
+          error: true,
+          msg: 'Title is required'
+      }
+    else {
+      errors["title"] = {
+        error: false,
+        msg: ''
+      }
+    }
+
+    if(!form.categories || form.categories.length == 0)
+      errors["categories"] = {
+          error: true,
+          msg: 'Pick at least 1 category'
+      }
+    else {
+      errors["categories"] = {
+        error: false,
+        msg: ''
+      }
+    }
+
+    setCustomError({...customError, ...errors});
+    if(Object.values(errors).some(child => Object.values(child).includes(true)))
+      return false;
+
     if(form.image instanceof File)
       firebase.uploadImg(form.image, handleAfterUploadImg);
     else
@@ -130,6 +169,8 @@ export default function AddArticle({ categoryData, statusData }) {
                     onChangeEvent={handleOnChange}
                     keyObj={"title"}
                     value={form.title}
+                    errors={customError['title']['msg']}
+                    validate={customError['title']['error']}
                   />
                 </Grid>
                 <Grid item xs={12} sx={{ mt: 1 }}>
@@ -161,10 +202,12 @@ export default function AddArticle({ categoryData, statusData }) {
                     label="Category"
                     width="72%"
                     onChangeEvent={handleOnChange}
-                    keyObj={"category"}
+                    keyObj={"categories"}
                     data={categoryData}
                     reset={reset}
                     handleSetReset={handleSetReset}
+                    errors={customError['categories']['msg']}
+                    validate={customError['categories']['error']}
                   />
                   {/* <DropDown
                     label="Category"

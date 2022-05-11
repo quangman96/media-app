@@ -209,8 +209,8 @@ export default function CustomTable({ rows, align, headCells, tb, pagination, ha
         <Typography
           style={{ marginLeft: "17px", fontSize: "15px", color: "#6C757D" }}
         >
-          Showing {((paginationData.currentPage - 1) * paginationData.pageSize) + 1}&nbsp;
-          to {paginationData.currentPage === paginationData.pageTotal ? paginationData.itemsTotal : ((paginationData.currentPage - 1) * paginationData.pageSize) + paginationData.pageSize}&nbsp;
+          Showing {paginationData.itemsTotal == 0 ? 0 : ((paginationData.currentPage - 1) * paginationData.pageSize) + 1}&nbsp;
+          to {paginationData.itemsTotal == 0 ? 0 : paginationData.currentPage === paginationData.pageTotal ? paginationData.itemsTotal : ((paginationData.currentPage - 1) * paginationData.pageSize) + paginationData.pageSize}&nbsp;
           of {paginationData.itemsTotal} entries
         </Typography>
 

@@ -8,6 +8,7 @@ import MenuItem from "@mui/material/MenuItem";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import Select from "@mui/material/Select";
 import { useEffect, useState } from "react";
+import FormHelperText from "@mui/material/FormHelperText";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -32,7 +33,9 @@ export default function MultipleSelectChip({
   data,
   reset,
   handleSetReset,
-  selected
+  selected,
+  errors,
+  validate
 }) {
   const [valueSelected, setValueSelected] = useState(getDefaultData(selected, data));
   const handleChange = (event) => {
@@ -62,7 +65,7 @@ export default function MultipleSelectChip({
             variant="outlined"
             labelId="multiple-chip-label"
             multiple
-            id="select"
+            id="multiselect"
             value={valueSelected}
             onChange={handleChange}
             input={<OutlinedInput id="select-multiple-chip" />}
@@ -83,6 +86,11 @@ export default function MultipleSelectChip({
               </MenuItem>
             ))}
           </Select>
+          {validate && (
+          <FormHelperText
+            style={{color: 'red', fontSize: '14px'}}
+          >{errors}</FormHelperText>
+        )}
         </Box>
       </FormControl>
     </Box>

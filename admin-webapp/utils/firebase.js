@@ -144,7 +144,7 @@ const pagination = async (table, where, pageIndex, pageSize, currentPage) => {
   return querySnapshotData;
 };
 
-const search = async (table, field, keyword, pageSize, currentPage) => {
+const search = async (table, field, keyword, pageSize, currentPage, customFunction) => {
   const data = [];
   if(field === "all")
     data = await getAll(table);
@@ -154,11 +154,18 @@ const search = async (table, field, keyword, pageSize, currentPage) => {
     data: [],
     pagination: {}
   };
-  
+
+  if(customFunction){
+    data = await customFunction(data);
+    querySnapshotData["formated"] = true;
+  }
+
   if(field === "all")
     querySnapshotData["data"] = data.filter(obj => Object.values(obj).some(value => value.toString().toLowerCase().includes(keyword.toLowerCase())));
   else
     querySnapshotData["data"] = data.filter(child => child[field].toString().toLowerCase().includes(keyword.toLowerCase()));
+    
+
   querySnapshotData["pagination"] = {
     pageTotal: Math.ceil(querySnapshotData["data"].length / pageSize),
     itemsTotal: querySnapshotData["data"].length,
@@ -167,7 +174,6 @@ const search = async (table, field, keyword, pageSize, currentPage) => {
   };
   return querySnapshotData;
 }
-
 
 export default {
   db,

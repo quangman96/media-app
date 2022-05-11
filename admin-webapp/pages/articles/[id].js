@@ -32,11 +32,10 @@ const commonStyles = {
 };
 
 export default function EditArticle({ categoryData, statusData, articlesData, categoriesDataSelected, statusDataSelected, articleId }) {
-  const defaultImg = "https://firebasestorage.googleapis.com/v0/b/new-app-97a36.appspot.com/o/uploads%2Fimage.png?alt=media&token=2230ed0c-035a-4b66-a043-25052dc563ab"
   const [form, setForm] = useState({
     title: articlesData.title,
     description: articlesData.description,
-    categories: ['HeBLNFWCJRLlloWauH4o'],
+    categories: articlesData.categories,
     status: articlesData.status,
     image: articlesData.image,
     content: articlesData.content
@@ -44,6 +43,16 @@ export default function EditArticle({ categoryData, statusData, articlesData, ca
   const [reset, setReset] = useState(false);
   const router = useRouter();
   const [windowWidth, setWindowWidth] = useState('');
+  const [customError, setCustomError] = useState({
+    title: {
+      error: false,
+      msg: ''
+    },
+    categories: {
+      error: false,
+      msg: ''
+    }
+  });
 
   useEffect(()=> {
     setWindowWidth(window.innerWidth);
@@ -70,7 +79,36 @@ export default function EditArticle({ categoryData, statusData, articlesData, ca
   };
 
   const handleOnEdit = () => {
-    if (form.image instanceof File)
+    const errors = {};
+    if(!form.title)
+      errors["title"] = {
+          error: true,
+          msg: 'Title is required'
+      }
+    else {
+      errors["title"] = {
+        error: false,
+        msg: ''
+      }
+    }
+
+    if(!form.categories || form.categories.length == 0)
+      errors["categories"] = {
+          error: true,
+          msg: 'Pick at least 1 category'
+      }
+    else {
+      errors["categories"] = {
+        error: false,
+        msg: ''
+      }
+    }
+
+    setCustomError({...customError, ...errors});
+    if(Object.values(errors).some(child => Object.values(child).includes(true)))
+      return false;
+
+    if(form.image instanceof File)
       firebase.uploadImg(form.image, handleAfterUploadImg);
     else
       handleAfterUploadImg(form.image)
@@ -120,6 +158,8 @@ export default function EditArticle({ categoryData, statusData, articlesData, ca
                     onChangeEvent={handleOnChange}
                     keyObj={"title"}
                     value={form.title}
+                    errors={customError['title']['msg']}
+                    validate={customError['title']['error']}
                   />
                 </Grid>
                 <Grid item xs={12} sx={{ mt: 1 }}>
@@ -156,6 +196,8 @@ export default function EditArticle({ categoryData, statusData, articlesData, ca
                     reset={reset}
                     handleSetReset={handleSetReset}
                     selected={categoriesDataSelected}
+                    errors={customError['categories']['msg']}
+                    validate={customError['categories']['error']}
                   />
                   {/* <DropDown
                     label="Category"

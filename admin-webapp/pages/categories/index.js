@@ -69,7 +69,7 @@ export default function Catelogies({ categories, pagination }) {
 
   const handleOnDelete = async (id, currentPagination) => {
     await firebase.softDelete("categories", id);
-    const data = await getCategoriesData(currentPagination.currentPage - 1, currentPagination.pageSize, currentPagination.currentPage)
+    const data = await getCategoriesData((currentPagination.currentPage - 1) * currentPagination.pageSize, currentPagination.pageSize, currentPagination.currentPage)
     setPaginationData(data.pagination)
     const rows = await createRowsCategories(data.categories, handleOnDelete, currentPagination)
     setRows(rows);

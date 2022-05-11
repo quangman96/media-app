@@ -130,7 +130,6 @@ export async function getArticlesData(pageIndex, pageSize = 5, currentPage = 1) 
 }
 
 export const createRowsArticles = (articles, handleOnDelete, pagination) => {
-  console.log(pagination)
   return articles.map((article, i) => {
     const dateTime = moment(article.change_at).format("YYYY/MM/DD HH:mm:ss");
     return createDataArticles(
