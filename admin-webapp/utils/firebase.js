@@ -117,11 +117,12 @@ const updateById = async (table, data, id) => {
 };
 
 
-const pagination = async (table, where, pageIndex, pageSize, currentPage) => {
-  const allData = await query(getTableRef(table), where, orderBy("change_at"));
+const pagination = async (table, where, pageIndex, pageSize, currentPage, orderField) => {
+  const order = orderField ? orderBy(orderField.orderBy, orderField.order) : orderBy("create_at")
+  const allData = await query(getTableRef(table), where, order);
   const documentSnapshots = await getDocs(allData);
   const lastVisible = documentSnapshots.docs[pageIndex];
-  const next = query(getTableRef(table), where, orderBy("change_at"), startAt(lastVisible), limit(pageSize));
+  const next = query(getTableRef(table), where, order, startAt(lastVisible), limit(pageSize));
 
   const querySnapshot = await getDocs(next);
   let querySnapshotData = {

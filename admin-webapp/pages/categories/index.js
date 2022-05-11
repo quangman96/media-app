@@ -10,6 +10,7 @@ import CustomTable from "../../components/table";
 import customStyles from "../../styles/Categories.module.css";
 import firebase from "../../utils/firebase";
 import { createRowsCategories, getCategoriesData } from '../../utils/paginationData';
+import { where, orderBy } from "firebase/firestore";
 
 const align = [
   "left",
@@ -69,16 +70,36 @@ export default function Catelogies({ categories, pagination }) {
 
   const handleOnDelete = async (id, currentPagination) => {
     await firebase.softDelete("categories", id);
-    const data = await getCategoriesData((currentPagination.currentPage - 1) * currentPagination.pageSize, currentPagination.pageSize, currentPagination.currentPage)
-    setPaginationData(data.pagination)
-    const rows = await createRowsCategories(data.categories, handleOnDelete, currentPagination)
+    const data = await getCategoriesData((currentPagination.currentPage - 1) * currentPagination.pageSize, currentPagination.pageSize, currentPagination.currentPage);
+    setPaginationData(data.pagination);
+    const rows = await createRowsCategories(data.categories, handleOnDelete, currentPagination);
     setRows(rows);
+    console.log(currentPagination)
+    console.log(data.pagination)
   }
 
   const handleOnPagination = async (data) => {
-    setPaginationData(data)
-    const results = await (await getCategoriesData((data.currentPage - 1) * data.pageSize, data.pageSize, data.currentPage)).categories
-    const rows = await createRowsCategories(results, handleOnDelete, data)
+    setPaginationData(data);
+    const results = await (await getCategoriesData((data.currentPage - 1) * data.pageSize, data.pageSize, data.currentPage)).categories;
+    const rows = await createRowsCategories(results, handleOnDelete, data);
+    setRows(rows);
+  }
+
+  const handleOnSort = async (orderBy, order) => {
+    console.log(orderBy, order)
+    const field = (orderBy) => {
+      switch(orderBy){
+        case "No":
+          return "create_at"
+        case "Category": 
+          return "name"
+        case "Date": 
+          return "change_at"
+      }
+    }
+
+    const results = (await getCategoriesData((paginationData.currentPage - 1) * paginationData.pageSize, paginationData.pageSize, paginationData.currentPage, {orderBy: field(orderBy), order: order})).categories;
+    const rows = await createRowsCategories(results, handleOnDelete, paginationData);
     setRows(rows);
   }
 
@@ -136,6 +157,7 @@ export default function Catelogies({ categories, pagination }) {
             tb={customStyles["tb"]}
             pagination={paginationData}
             handleOnPagination={handleOnPagination}
+            handleOnSort={handleOnSort}
           />
         </Box>
       </> : <div>loading...</div>}

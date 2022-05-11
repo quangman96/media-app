@@ -7,48 +7,11 @@ import {
   TableHead, TableRow,
   TableSortLabel, TextField, Typography
 } from "@mui/material";
-import { createTheme } from "@mui/material/styles";
 import { visuallyHidden } from "@mui/utils";
-import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 
-const theme = createTheme({
-  palette: {
-    neutral: {
-      main: "#d55ae0",
-      contrastText: "#fff"
-    }
-  }
-});
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
 
-function getComparator(order, orderBy) {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-// This method is created for cross-browser compatibility, if you don't
-// need to support IE11, you can use Array.prototype.sort() directly
-function stableSort(array, comparator) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
+const columnNotSort = ["Image", "Action"];
 
 function EnhancedTableHead(props) {
   const { order, orderBy, onRequestSort, headCells, align } = props;
@@ -66,7 +29,7 @@ function EnhancedTableHead(props) {
             padding="normal"
             sortDirection={orderBy === headCell ? order : false}
           >
-            <TableSortLabel
+            {columnNotSort.toString().includes(headCell) ? headCell : <TableSortLabel
               active={orderBy === headCell}
               direction={orderBy === headCell ? order : "asc"}
               onClick={createSortHandler(headCell)}
@@ -77,7 +40,7 @@ function EnhancedTableHead(props) {
                   {order === "desc" ? "sorted descending" : "sorted ascending"}
                 </Box>
               ) : null}
-            </TableSortLabel>
+            </TableSortLabel>  }
           </TableCell>
         ))}
       </TableRow>
@@ -85,16 +48,9 @@ function EnhancedTableHead(props) {
   );
 }
 
-EnhancedTableHead.propTypes = {
-  onRequestSort: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(["asc", "desc"]).isRequired,
-  orderBy: PropTypes.string.isRequired
-};
-
-export default function CustomTable({ rows, align, headCells, tb, pagination, handleOnPagination }) {
+export default function CustomTable({ rows, align, headCells, tb, pagination, handleOnPagination, handleOnSort }) {
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("No");
-  const [page, setPage] = useState(0);
   const [rowsData, setRowsData] = useState(rows);
   const [paginationData, setPaginationData] = useState(pagination);
 
@@ -104,17 +60,19 @@ export default function CustomTable({ rows, align, headCells, tb, pagination, ha
   }, [rows]);
 
   const handleRequestSort = (event, property) => {
-    console.log(property);
     const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
+    const newOrder = isAsc ? "desc" : "asc"
+    setOrder(newOrder);
     setOrderBy(property);
+    if (typeof handleOnSort == 'function') { 
+      handleOnSort(property, newOrder);
+    }
   };
 
   const handleOnChangeMaxRow = async (event) => {
     if (!event.target.validity.valid || event.target.value === "")
       event.target.value = 1;
 
-    console.log(event.target.value)
     const pageSize = parseInt(event.target.value);
     const totalPage = Math.ceil(pagination.itemsTotal / pageSize);
     const currentPage = totalPage < paginationData.currentPage ? 1 : paginationData.currentPage
@@ -144,10 +102,6 @@ export default function CustomTable({ rows, align, headCells, tb, pagination, ha
     }
   }
 
-  // Avoid a layout jump when reaching the last page with empty rows.
-  // const emptyRows = paginationData.currentPage == paginationData.pageTotal ? paginationData.pageSize - (paginationData.itemsTotal - paginationData.pageSize) : 0;
-  // const emptyRows = paginationData.currentPage == paginationData.pageTotal ? 4 : 0;
-  const emptyRows = 0;
   return (
     <Paper sx={{ width: "100%" }}>
       <TableContainer style={{height: '68.5vh'}}>
@@ -165,13 +119,7 @@ export default function CustomTable({ rows, align, headCells, tb, pagination, ha
             align={align}
           />
           <TableBody>
-            {/* if you don't need to support IE11, you can replace the `stableSort` call with:
-                 rows.slice().sort(getComparator(order, orderBy)) */}
-            {stableSort(rowsData, getComparator(order, orderBy))
-              .slice(page * paginationData.pageSize, page * paginationData.pageSize + paginationData.pageSize)
-              .map((row, index) => {
-                const labelId = `custom-table-${index}`;
-
+            {rowsData.map((row, index) => {
                 return (
                   <TableRow hover tabIndex={-1} key={row.no}>
                     {Object.entries(row).map(([k, v], i) => (
@@ -186,16 +134,6 @@ export default function CustomTable({ rows, align, headCells, tb, pagination, ha
                   </TableRow>
                 );
               })}
-
-            {emptyRows > 0 && (
-              <TableRow
-                style={{
-                  height: 121.5 * emptyRows
-                }}
-              >
-                <TableCell colSpan={6} />
-              </TableRow>
-            )}
           </TableBody>
         </Table>
       </TableContainer>
@@ -248,6 +186,7 @@ export default function CustomTable({ rows, align, headCells, tb, pagination, ha
               onChange={handleOnChangeMaxRow}
             />
           </Box>
+
           <Pagination
             count={paginationData.pageTotal}
             shape="rounded"

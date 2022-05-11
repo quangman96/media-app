@@ -84,6 +84,25 @@ export default function Articles({ articles, pagination }) {
     setRows(await createRowsArticles(articles, handleOnDelete, paginationData))
   }, []);
 
+  const handleOnSort = async (orderBy, order) => {
+    const field = (orderBy) => {
+      switch(orderBy){
+        case "No":
+          return "create_at"
+        case "Category": 
+          return "categories"
+        case "Date": 
+          return "change_at"
+        default:
+          return orderBy.toLowerCase();
+      }
+    }
+
+    const results = (await getArticlesData((paginationData.currentPage - 1) * paginationData.pageSize, paginationData.pageSize, paginationData.currentPage, {orderBy: field(orderBy), order: order})).articles;
+    const rows = await createRowsArticles(results, handleOnDelete, paginationData);
+    setRows(rows);
+  }
+
   const handleOnSearch = async () => {
     const filted = await firebase.search("articles", searchByData[searchBy].field, searchValue, paginationData.pageSize, paginationData.currentPage, searchByData[searchBy].function)
     setPaginationData(filted.pagination);
@@ -198,6 +217,7 @@ export default function Articles({ articles, pagination }) {
             tb={customStyles["tb"]}
             pagination={paginationData}
             handleOnPagination={handleOnPagination}
+            handleOnSort={handleOnSort}
           />
         </Box>
       </> : <div>loading...</div>}

@@ -91,7 +91,7 @@ const CreateAction = ({ id, handleOnDelete, pagination, indexLink }) => {
   </>
 };
 
-export async function getArticlesData(pageIndex, pageSize = 5, currentPage = 1) {
+export async function getArticlesData(pageIndex, pageSize = 5, currentPage = 1, orderField) {
   let categoriesData = {};
   const categories = await firebase.getAll("categories");
   categories.forEach((data) => {
@@ -112,7 +112,8 @@ export async function getArticlesData(pageIndex, pageSize = 5, currentPage = 1) 
     where("is_delete", "==", false),
     pageIndex,
     pageSize,
-    currentPage
+    currentPage,
+    orderField
   );
   const articlesData = articles.data.map((article) => ({
     ...article,
@@ -162,13 +163,14 @@ function createDataCategories(
   };
 }
 
-export async function getCategoriesData(pageIndex, pageSize = 5, currentPage = 1) {
+export async function getCategoriesData(pageIndex, pageSize = 5, currentPage = 1, orderField) {
   const categories = await firebase.pagination(
     "categories",
     where("is_delete", "==", false),
     pageIndex,
     pageSize,
-    currentPage
+    currentPage,
+    orderField
   );
   const categoriesData = categories.data.map((category) => ({
     ...category,
