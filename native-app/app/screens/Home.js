@@ -1,17 +1,16 @@
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, ActivityIndicator, View } from "react-native";
 import React, { useState, useEffect } from "react";
-import { Feather } from "@expo/vector-icons";
 import Screen from "../components/Screens";
 import CardList from "../components/CardList";
-import ChipList from "../components/ChipList";
 import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
-import { useNavigation } from "@react-navigation/core";
-import { auth, getMasterData, getAll } from "../../firebase";
+import { getMasterData, getAll, getArticles, getUserId } from "../../firebase";
 
 export default function Home() {
+  const user_id = getUserId();
   const [buttons, setButtons] = useState([]);
   const [articles, setArticles] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function getButtonList() {
@@ -34,17 +33,12 @@ export default function Home() {
     }
 
     async function getArticleList() {
-      const res = await getAll("articles");
-      const articleList = [];
-
-      res.forEach((e) => {
-        const obj = {
-          ...e,
-          categories: tranferCategory(e["categories"]),
-        };
-        articleList.push(obj);
-      });
+      const articleList = await getArticles(user_id);
       setArticles(articleList);
+
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 0);
     }
 
     async function getCategoryList() {
@@ -67,42 +61,26 @@ export default function Home() {
     return array;
   };
 
-  const navigation = useNavigation();
-  const handleSignOut = () => {
-    auth
-      .signOut()
-      .then(() => {
-        navigation.replace("Login");
-      })
-      .catch((e) => console.log(e));
-  };
-
-  return (
-    <KeyBoardAvoidingWrapper>
-      <Screen style={{ backgroundColor: "#EEF1F4" }}>
-        {/* <View style={styles.header}>
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
-          >
-            <Text style={styles.title}>Home</Text>
-            <TouchableOpacity
-              onPress={handleSignOut}
-              style={{
-                alignSelf: "flex-end",
-                marginRight: 20,
-              }}
-            >
-              {<Feather name={"log-out"} size={30} color={"#0386D0"} />}
-            </TouchableOpacity>
-          </View>
-          <View style={styles.chips}>
-            <ChipList data={buttons} size="medium"></ChipList>
-          </View>
-        </View> */}
-        <CardList data={articles}></CardList>
-      </Screen>
-    </KeyBoardAvoidingWrapper>
-  );
+  if (isLoading) {
+    return (
+      <View style={[styles.container, styles.horizontal]}>
+        <ActivityIndicator
+          style={{ opacity: 0.5 }}
+          animating={true}
+          size={70}
+          color="tomato"
+        />
+      </View>
+    );
+  } else {
+    return (
+      <KeyBoardAvoidingWrapper>
+        <Screen style={{ backgroundColor: "#EEF1F4" }}>
+          <CardList data={articles}></CardList>
+        </Screen>
+      </KeyBoardAvoidingWrapper>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -129,5 +107,14 @@ const styles = StyleSheet.create({
     lineHeight: 36,
     marginTop: 40,
     marginLeft: 20,
+  },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  horizontal: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    padding: 10,
   },
 });

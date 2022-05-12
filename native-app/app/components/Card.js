@@ -5,9 +5,12 @@ import ChipList from "../components/ChipList";
 import { Feather } from "@expo/vector-icons";
 import defaultStyles from "../config/styles";
 import { useNavigation } from "@react-navigation/core";
+import { createSavedData, deleteSavedData, getUserId } from "../../firebase";
 
-export default function Card({ icon, cardObj }) {
+export default function Card({ icon, cardObj, isSavedPage }) {
+  const user_id = getUserId();
   const [isSaved, setSaved] = useState(cardObj["is_saved"]);
+  const [isDelete, setIsDelete] = useState(false);
   const navigation = useNavigation();
   const calculateTime = (time) => {
     const date = Math.floor(Math.abs(new Date() - new Date(time)) / 86400000);
@@ -21,7 +24,19 @@ export default function Card({ icon, cardObj }) {
     }
     return z === `0 days ago` ? `just new` : z;
   };
-  const handleClickButton = () => {
+  const handleClickButton = (status) => {
+    if (status) {
+      createSavedData(user_id, cardObj.id).then((res) => {
+        if (!isSavedPage) {
+          cardObj["savedId"] = res?.id || "";
+        }
+      });
+    } else {
+      deleteSavedData(cardObj.savedId);
+      setTimeout(() => {
+        isSavedPage && setIsDelete(true);
+      }, 100);
+    }
     setSaved(!isSaved);
   };
 
@@ -29,46 +44,48 @@ export default function Card({ icon, cardObj }) {
     navigation.navigate("Detail", { data: cardObj });
   };
   return (
-    <TouchableOpacity style={styles.area} onPress={handleClickCard}>
-      <View style={styles.form}>
-        <View style={styles.header}>
-          <AppText numberOfLines={2} style={styles.label}>
-            {cardObj["title"]}
-          </AppText>
-          {isSaved ? (
-            <TouchableOpacity onPress={() => handleClickButton()}>
-              <Feather
-                name={"bookmark"}
-                size={22}
-                color={!!isSaved ? "#0386D0" : defaultStyles.colors.icon}
-                style={styles.icon}
-              />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity onPress={() => handleClickButton()}>
-              <Feather
-                name={"bookmark"}
-                size={22}
-                color={!!isSaved ? "#0386D0" : defaultStyles.colors.icon}
-                style={styles.icon}
-              />
-            </TouchableOpacity>
-          )}
+    !isDelete && (
+      <TouchableOpacity style={styles.area} onPress={handleClickCard}>
+        <View style={styles.form}>
+          <View style={styles.header}>
+            <AppText numberOfLines={2} style={styles.label}>
+              {cardObj["title"]}
+            </AppText>
+            {isSaved ? (
+              <TouchableOpacity onPress={() => handleClickButton(false)}>
+                <Feather
+                  name={"bookmark"}
+                  size={22}
+                  color={!!isSaved ? "#0386D0" : defaultStyles.colors.icon}
+                  style={styles.icon}
+                />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={() => handleClickButton(true)}>
+                <Feather
+                  name={"bookmark"}
+                  size={22}
+                  color={!!isSaved ? "#0386D0" : defaultStyles.colors.icon}
+                  style={styles.icon}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
+          <View style={styles.body}>
+            <AppText numberOfLines={5} style={styles.description}>
+              {cardObj["description"]}
+            </AppText>
+            <Image style={styles.image} source={{ uri: cardObj["image"] }} />
+          </View>
+          <View style={styles.footer}>
+            <ChipList key={cardObj.id} data={cardObj["categories"]}></ChipList>
+            <AppText style={styles.time}>
+              {calculateTime(cardObj["create_at"])}
+            </AppText>
+          </View>
         </View>
-        <View style={styles.body}>
-          <AppText numberOfLines={5} style={styles.description}>
-            {cardObj["description"]}
-          </AppText>
-          <Image style={styles.image} source={{ uri: cardObj["image"] }} />
-        </View>
-        <View style={styles.footer}>
-          <ChipList data={cardObj["categories"]}></ChipList>
-          <AppText style={styles.time}>
-            {calculateTime(cardObj["create_at"])}
-          </AppText>
-        </View>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    )
   );
 }
 

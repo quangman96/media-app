@@ -1,13 +1,8 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import AppText from "./Text";
 
-export default function Chip({
-  label,
-  size = "small",
-  theme = "light",
-  ...otherProps
-}) {
+export default function Chip({ label, size = "small", theme = "light" }) {
   const chipStyle =
     size === "small"
       ? {
