@@ -7,7 +7,6 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import createEmotionCache from "../components/createEmotionCache";
 import Layout from "../components/layout";
-import Test from "../components/test";
 import theme from "../components/theme";
 import '../styles/globals.css';
 // Client-side cache shared for the whole session
@@ -24,7 +23,8 @@ export default function MyApp(props) {
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head> */}
                   <Head>
-                <title>Hello</title>
+                <title>News Dashboard</title>
+                <link rel="shortcut icon" href="/login.png" />
 
                 {/* eslint-disable-next-line @next/next/no-css-tags */}
                 {/* <link href="//netdna.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" /> */}
@@ -35,9 +35,7 @@ export default function MyApp(props) {
                 build upon. */}
 
         <CssBaseline />
-        {/* {router.route === "/" ? <Component {...pageProps} /> : <Layout><Component {...pageProps} /></Layout>} */}
-        {router.route === "/" ? <Test><Component {...pageProps} /></Test> : <Layout><Test><Component {...pageProps} /></Test></Layout>}
-        {/* {router.route === "/" ? <AuthUserProvider><Component {...pageProps} /></AuthUserProvider> : <Layout><AuthUserProvider><Component {...pageProps} /></AuthUserProvider></Layout>} */}
+        {router.route === "/" ? <Component {...pageProps} /> : <Layout><Component {...pageProps} /></Layout>}
       </ThemeProvider>
     </CacheProvider>
   );

@@ -24,12 +24,65 @@ a {
   background: #efefef;
 }
 
-@media (min-width: 1200px) {
-  .MuiContainer-root {
-    max-width: 97%;
-  }
+.css-6fbjxc {
+  margin-top: 0;
+  height: 100%;
 }
 
+.css-1c8hul6 {
+  align-items: baseline;
+}
+
+.MuiContainer-root {
+  max-width: 100%;
+}
+
+/* .search-area > .MuiPaper-root, .search-area > .MuiPaper-root > .MuiBox-root {
+  flex-direction: column;
+} */
+
+/* .search-by-data {
+  width: 100%;
+}
+
+.search-area > .MuiPaper-root {
+  padding: 4%;
+}
+
+.search-by-data #select {
+  padding: 2%;
+} */
+
+/* .search-area .Articles_pd-input__WNE7D {
+  padding: 1.8%;
+  margin-top: 4%;
+}
+
+.MuiContainer-root {
+  margin-top: 6.5% !important;
+} */
+
+/* .search-area .css-1oghyfy {
+  margin : 0
+} */
+
+/* .search-area > .MuiPaper-root > .MuiBox-root {
+  flex-direction: row;
+  flex-wrap: wrap;
+} */
+
+/* .search-area #btn-search {
+  margin-left : 0 !important;
+} */
+
+
+
+
+
+
+
+
+/* 
 @media screen and (max-width: 1366px) {
   .MuiContainer-root {
     height: 82.5% !important;
@@ -47,13 +100,9 @@ a {
     font-size: 12px !important;
     width: 12% !important;
   }
-  
-  .search-container .MuiInputBase-adornedStart {
-    width: 85% !important;
-  }
 
   .search-by-data {
-    width: 14%;
+    width: 18%;
   }
 
   .search-by-data #select {
@@ -105,4 +154,9 @@ a {
     padding-top: 2.3%;
     padding-bottom: 2.3%;
   }
+} */
+
+@media only screen and (max-width: 600px) {
+
+
 }

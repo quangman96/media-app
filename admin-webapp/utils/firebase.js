@@ -6,7 +6,7 @@ import {
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 import {
-  addDoc, collection, doc, getDoc, getDocs, getFirestore, limit, orderBy, query, startAt, updateDoc
+  addDoc, collection, doc, getDoc, getDocs, getFirestore, limit, where, orderBy, query, startAt, updateDoc
 } from "firebase/firestore";
 import {
   getDownloadURL, getStorage,
@@ -67,6 +67,7 @@ const auth = getAuth();
 const storage = getStorage(app);
 
 const uploadImg = async (file, callBack) => {
+  console.log(file)
   const storagePath = `uploads/${file.name}`;
   const storageRef = ref(storage, storagePath);
   const uploadTask = uploadBytesResumable(storageRef, file);
@@ -148,9 +149,9 @@ const pagination = async (table, where, pageIndex, pageSize, currentPage, orderF
 const search = async (table, field, keyword, pageSize, currentPage, customFunction) => {
   const data = [];
   if(field === "all")
-    data = await getAll(table);
+    data = await getByQuery(table, where("is_delete", "==", false));
   else
-    data = await getByQuery(table, orderBy(field));
+    data = await getByQuery(table, where("is_delete", "==", false), orderBy(field));
   let querySnapshotData = {
     data: [],
     pagination: {}
@@ -165,11 +166,13 @@ const search = async (table, field, keyword, pageSize, currentPage, customFuncti
     querySnapshotData["data"] = data.filter(obj => Object.values(obj).some(value => value.toString().toLowerCase().includes(keyword.toLowerCase())));
   else
     querySnapshotData["data"] = data.filter(child => child[field].toString().toLowerCase().includes(keyword.toLowerCase()));
-    
+  
+  const originalData = querySnapshotData["data"];
+  querySnapshotData["data"] = originalData.slice((currentPage - 1) * pageSize, (currentPage - 1) * pageSize + pageSize)
 
   querySnapshotData["pagination"] = {
-    pageTotal: Math.ceil(querySnapshotData["data"].length / pageSize),
-    itemsTotal: querySnapshotData["data"].length,
+    pageTotal: Math.ceil(originalData.length / pageSize),
+    itemsTotal: originalData.length,
     pageSize: pageSize,
     currentPage: currentPage
   };
