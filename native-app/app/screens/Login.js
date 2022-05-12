@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Image, View, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Image,
+  View,
+  TouchableOpacity,
+  ToastAndroid,
+} from "react-native";
 import Screen from "../components/Screens";
 import * as Yup from "yup";
 import { AppFormField, AppForm, SubmitButton } from "../components/forms";
 import AppText from "../components/Text";
 import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
-import { auth, getAll } from "../../firebase";
+import { auth, getAll, setUserId } from "../../firebase";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string().required().email().label("Email"),
@@ -22,6 +28,14 @@ export default function Login({ navigation }) {
   const onPressLogin = () => setPage(0);
   const onPressRegister = () => setPage(1);
 
+  const showToast = (type) => {
+    if (type === "login") {
+      ToastAndroid.show("Login successfully !!!", ToastAndroid.SHORT);
+    } else {
+      ToastAndroid.show("Register successfully !!!", ToastAndroid.SHORT);
+    }
+  };
+
   useEffect(() => {
     async function getData() {
       const res = await getAll("user_profile");
@@ -29,15 +43,6 @@ export default function Login({ navigation }) {
     }
     getData();
   }, []);
-
-  // useEffect(() => {
-  //   const unsubscribe = auth.onAuthStateChanged((user) => {
-  //     if (user) {
-  //       navigation.navigate("Main", { screen: "Home" });
-  //     }
-  //   });
-  //   return unsubscribe;
-  // }, []);
 
   const handleSignUp = (values) => {
     const { email, password } = values;
@@ -47,6 +52,7 @@ export default function Login({ navigation }) {
         const user = userCredential.user;
         setinitValues(values);
         setPage(0);
+        showToast("register");
       })
       .catch((error) => console.log(error.message));
   };
@@ -55,9 +61,11 @@ export default function Login({ navigation }) {
     const { email, password } = values;
     auth
       .signInWithEmailAndPassword(email, password)
-      .then(() => {
+      .then((userCredential) => {
+        showToast("login");
+        const user = userCredential.user;
+        setUserId(user.uid);
         navigation.navigate("Main", { screen: "Home" });
-        // const user = userCredential.user;
       })
       .catch((error) => console.log(error.message));
   };
@@ -158,25 +166,7 @@ export default function Login({ navigation }) {
                     paddingTop: 10,
                     paddingBottom: 15,
                   }}
-                >
-                  {/* <AppText
-                    style={{
-                      ...styles.text2,
-                      color: "#667080",
-                      flex: 1,
-                    }}
-                  >
-                    Remember password
-                  </AppText>
-                  <AppText
-                    style={{
-                      ...styles.text2,
-                      color: "#0386D0",
-                    }}
-                  >
-                    Forgot password
-                  </AppText> */}
-                </View>
+                ></View>
 
                 <SubmitButton title="Login" />
                 <View style={{ marginBottom: 25 }}></View>
@@ -232,8 +222,6 @@ export default function Login({ navigation }) {
 
 const styles = StyleSheet.create({
   footer: {
-    // position: "absolute",
-    // bottom: 0,
     height: 260,
     width: "100%",
   },

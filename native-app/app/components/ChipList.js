@@ -7,14 +7,16 @@ export default function ChipList({ data, size = "small" }) {
     <View style={styles.body}>
       {(data || []).map((prop, key) => {
         return (
-          <TouchableOpacity disabled={false}>
-            <Chip
-              key={key}
-              size={size}
-              theme={prop["theme"]}
-              label={prop["name"] || prop}
-            ></Chip>
-          </TouchableOpacity>
+          key < 4 && (
+            <TouchableOpacity disabled={false}>
+              <Chip
+                key={key}
+                size={size}
+                theme={prop["theme"]}
+                label={prop["name"] || prop}
+              ></Chip>
+            </TouchableOpacity>
+          )
         );
       })}
     </View>

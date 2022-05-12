@@ -1,79 +1,101 @@
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, View, ActivityIndicator } from "react-native";
+import React, { useState, useEffect } from "react";
 import Screen from "../components/Screens";
-import { Feather } from "@expo/vector-icons";
 import CardList from "../components/CardList";
-import ChipList from "../components/ChipList";
-import AppForm from "../components/forms/AppForm";
 import AppText from "../components/Text";
-import AppFormField from "../components/forms/AppFormField";
 import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
-import React from "react";
-import * as MOCK from "../mock/data";
-import * as Yup from "yup";
-import { useNavigation } from "@react-navigation/core";
-import { auth } from "../../firebase";
+import { getMasterData, getAll, getArticles, getUserId } from "../../firebase";
 
-const validationSchema = Yup.object().shape({});
+export default function Search({ value }) {
+  const user_id = getUserId();
+  const [buttons, setButtons] = useState([]);
+  const [articles, setArticles] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-export default function Search() {
-  const navigation = useNavigation();
-  const handleSignOut = () => {
-    auth
-      .signOut()
-      .then(() => {
-        navigation.replace("Login");
-      })
-      .catch((e) => console.log(e));
+  const tranferCategory = (list) => {
+    const array = [];
+    list.forEach((e) => {
+      const obj = categories.find((z) => z.id === e);
+      if (obj) {
+        array.push(obj["name"]);
+      }
+    });
+    return array;
   };
-  const TEST = MOCK.list;
-  const result = TEST.length;
-  return (
-    <KeyBoardAvoidingWrapper>
-      <Screen style={{ backgroundColor: "#EEF1F4" }}>
-        {/* <View style={styles.header}>
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
-          >
-            <Text style={styles.title}>Explore</Text>
-            <TouchableOpacity
-              onPress={handleSignOut}
-              style={{
-                alignSelf: "flex-end",
-                marginRight: 20,
-              }}
-            >
-              {<Feather name={"log-out"} size={30} color={"#0386D0"} />}
-            </TouchableOpacity>
+
+  useEffect(() => {
+    async function getButtonList() {
+      const res = await getMasterData("CATEGORY");
+      const buttonList = [];
+      res.forEach((e, i) => {
+        if (i === 0) {
+          buttonList.push({
+            name: e["name"],
+            theme: "dark",
+          });
+        } else {
+          buttonList.push({
+            name: e["name"],
+            theme: "light",
+          });
+        }
+      });
+      setButtons(buttonList);
+    }
+
+    async function getArticleList() {
+      const articleList = await getArticles(user_id);
+      if (value) {
+        const temp = articleList.filter((e) =>
+          e.title.toLowerCase().includes(value.toLowerCase())
+        );
+        setArticles(temp);
+      } else {
+        setArticles(articleList);
+      }
+
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 0);
+    }
+
+    async function getCategoryList() {
+      const res = await getAll("categories");
+      setCategories(res);
+      getArticleList();
+    }
+    try {
+      getButtonList();
+      getCategoryList();
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
+  if (isLoading) {
+    return (
+      <View style={[styles.container, styles.horizontal]}>
+        <ActivityIndicator
+          style={{ opacity: 0.5 }}
+          animating={true}
+          size={70}
+          color="tomato"
+        />
+      </View>
+    );
+  } else {
+    return (
+      <KeyBoardAvoidingWrapper>
+        <Screen style={{ backgroundColor: "#EEF1F4" }}>
+          <View style={styles.result}>
+            <AppText>Result: {articles?.length || 0}</AppText>
           </View>
-          <View style={styles.search}>
-            <AppForm
-              initialValues={{ email: "", password: "" }}
-              onSubmit={(values) =>
-                navigation.navigate("Main", { screen: "User" })
-              }
-              validationSchema={validationSchema}
-            >
-              <AppFormField
-                style="left"
-                icon="search"
-                autoCapitalize="none"
-                autoCorrect={false}
-                name="keyword"
-                placeholder="Enter the keywords"
-              />
-            </AppForm>
-          </View>
-          <View style={{ marginLeft: 20, marginBottom: 10 }}>
-            <ChipList data={TEST[0]["category"]}></ChipList>
-          </View>
-        </View> */}
-        <View style={styles.result}>
-          <AppText>Result: {result}</AppText>
-        </View>
-        <CardList data={TEST}></CardList>
-      </Screen>
-    </KeyBoardAvoidingWrapper>
-  );
+          <CardList data={articles}></CardList>
+        </Screen>
+      </KeyBoardAvoidingWrapper>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -104,5 +126,14 @@ const styles = StyleSheet.create({
     lineHeight: 36,
     marginTop: 40,
     marginLeft: 20,
+  },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  horizontal: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    padding: 10,
   },
 });

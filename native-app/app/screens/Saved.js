@@ -1,68 +1,66 @@
-import React from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, View, ActivityIndicator } from "react-native";
 import Screen from "../components/Screens";
 import CardList from "../components/CardList";
+import AppText from "../components/Text";
 import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
-import * as MOCK from "../mock/data";
-import { useNavigation } from "@react-navigation/core";
-import { auth } from "../../firebase";
+import { getSavedDataByUser, getUserId } from "../../firebase";
 
 export default function Saved(props) {
-  const navigation = useNavigation();
-  const handleSignOut = () => {
-    auth
-      .signOut()
-      .then(() => {
-        navigation.replace("Login");
-      })
-      .catch((e) => console.log(e));
-  };
-  const TEST = MOCK.saved;
+  const user_id = getUserId();
+  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState([]);
 
-  return (
-    <KeyBoardAvoidingWrapper>
-      <Screen style={{ backgroundColor: "#EEF1F4" }}>
-        {/* <View style={styles.header}>
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
-          >
-            <Text style={styles.title}>Saved</Text>
-            <TouchableOpacity
-              onPress={handleSignOut}
-              style={{
-                alignSelf: "flex-end",
-                marginRight: 20,
-              }}
-            >
-              {<Feather name={"log-out"} size={30} color={"#0386D0"} />}
-            </TouchableOpacity>
+  useEffect(() => {
+    async function getSavedData(id) {
+      const res = await getSavedDataByUser(id);
+      res.forEach((e) => (e["is_saved"] = true));
+      setData(res);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 0);
+    }
+    getSavedData(user_id);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <View style={[styles.container, styles.horizontal]}>
+        <ActivityIndicator
+          style={{ opacity: 0.5 }}
+          animating={true}
+          size={70}
+          color="tomato"
+        />
+      </View>
+    );
+  } else {
+    return (
+      <KeyBoardAvoidingWrapper>
+        <Screen style={{ backgroundColor: "#EEF1F4" }}>
+          <View style={styles.result}>
+            <AppText>Result: {data?.length || 0}</AppText>
           </View>
-        </View> */}
-        <CardList data={TEST}></CardList>
-      </Screen>
-    </KeyBoardAvoidingWrapper>
-  );
+          <CardList isSavedPage={true} data={data}></CardList>
+        </Screen>
+      </KeyBoardAvoidingWrapper>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
-  header: {
-    minHeight: 100,
-    backgroundColor: "white",
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-    marginTop: -10,
+  container: {
+    flex: 1,
+    justifyContent: "center",
   },
-  body: {
-    alignItems: "center",
-    margin: 20,
+  horizontal: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    padding: 10,
   },
-  title: {
-    color: "#667080",
-    fontSize: 32,
-    fontWeight: "700",
-    lineHeight: 36,
-    marginTop: 40,
+  result: {
     marginLeft: 20,
+    marginTop: 10,
+    marginBottom: -10,
   },
 });
