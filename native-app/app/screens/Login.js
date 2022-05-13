@@ -222,6 +222,7 @@ export default function Login({ navigation }) {
 
 const styles = StyleSheet.create({
   footer: {
+    marginTop: 20,
     height: 260,
     width: "100%",
   },

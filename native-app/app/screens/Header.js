@@ -13,35 +13,26 @@ import ChipList from "../components/ChipList";
 import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/core";
 import { auth } from "../../firebase";
-import { getMasterData } from "../../firebase";
 
 export default function Header({ title, passChildData }) {
-  const [buttons, setButtons] = useState([]);
+  const buttons = [
+    {
+      name: "Popular",
+      theme: "dark",
+    },
+    {
+      name: "All",
+      theme: "light",
+    },
+    {
+      name: "For you",
+      theme: "light",
+    },
+  ];
   const [text, onChangeText] = useState("");
   const { width } = useWindowDimensions();
   const name = title === "User" ? "Profile" : title;
   const navigation = useNavigation();
-  useEffect(() => {
-    async function getButtonList() {
-      const res = await getMasterData("CATEGORY");
-      const buttonList = [];
-      res.forEach((e, i) => {
-        if (i === 0) {
-          buttonList.push({
-            name: e["name"],
-            theme: "dark",
-          });
-        } else {
-          buttonList.push({
-            name: e["name"],
-            theme: "light",
-          });
-        }
-      });
-      setButtons(buttonList);
-    }
-    getButtonList();
-  }, []);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {

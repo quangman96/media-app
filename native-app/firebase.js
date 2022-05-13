@@ -170,6 +170,15 @@ export const getSavedData = async (user_id) => {
   }));
 };
 
+export const getUserByUserId = async (user_id) => {
+  const q = query(getTableRef("user_profile"), where("id", "==", user_id));
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.docs.map((doc) => ({
+    ...doc.data(),
+    id: doc.id,
+  }));
+};
+
 export const getArticles = async (user_id) => {
   const articles = await getAll("articles");
   const categoryList = await getAll("categories");

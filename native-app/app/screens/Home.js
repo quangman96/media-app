@@ -50,17 +50,6 @@ export default function Home() {
     getCategoryList();
   }, []);
 
-  const tranferCategory = (list) => {
-    const array = [];
-    list.forEach((e) => {
-      const obj = categories.find((z) => z.id === e);
-      if (obj) {
-        array.push(obj["name"]);
-      }
-    });
-    return array;
-  };
-
   if (isLoading) {
     return (
       <View style={[styles.container, styles.horizontal]}>

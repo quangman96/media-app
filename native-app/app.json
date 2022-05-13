@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "native-app",
+    "name": "Media app",
     "slug": "native-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -23,7 +23,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "ait.nativeapp"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"

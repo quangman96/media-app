@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Image,
+  TouchableOpacity,
+  ToastAndroid,
+} from "react-native";
 import AppText from "../components/Text";
 import ChipList from "../components/ChipList";
 import { Feather } from "@expo/vector-icons";
@@ -27,11 +33,13 @@ export default function Card({ icon, cardObj, isSavedPage }) {
   const handleClickButton = (status) => {
     if (status) {
       createSavedData(user_id, cardObj.id).then((res) => {
+        ToastAndroid.show("Save Article", ToastAndroid.SHORT);
         if (!isSavedPage) {
           cardObj["savedId"] = res?.id || "";
         }
       });
     } else {
+      ToastAndroid.show("Unsave Article", ToastAndroid.SHORT);
       deleteSavedData(cardObj.savedId);
       setTimeout(() => {
         isSavedPage && setIsDelete(true);
