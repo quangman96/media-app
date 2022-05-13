@@ -2,6 +2,7 @@ import { StyleSheet, ActivityIndicator, View } from "react-native";
 import React, { useState, useEffect } from "react";
 import Screen from "../components/Screens";
 import CardList from "../components/CardList";
+import HorizontalList from "../components/HorizontalList";
 import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
 import { getMasterData, getAll, getArticles, getUserId } from "../../firebase";
 
@@ -9,6 +10,7 @@ export default function Home() {
   const user_id = getUserId();
   const [buttons, setButtons] = useState([]);
   const [articles, setArticles] = useState([]);
+  const [articlesHorizontal, setsetArticlesHorizontal] = useState([]);
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -35,6 +37,8 @@ export default function Home() {
     async function getArticleList() {
       const articleList = await getArticles(user_id);
       setArticles(articleList);
+      const newArticleList = [...articleList].reverse();
+      setsetArticlesHorizontal(newArticleList.slice(0, 4));
 
       setTimeout(() => {
         setIsLoading(false);
@@ -65,6 +69,8 @@ export default function Home() {
     return (
       <KeyBoardAvoidingWrapper>
         <Screen style={{ backgroundColor: "#EEF1F4" }}>
+          <HorizontalList data={articlesHorizontal}></HorizontalList>
+          <View style={{ marginTop: -15 }}></View>
           <CardList data={articles}></CardList>
         </Screen>
       </KeyBoardAvoidingWrapper>
