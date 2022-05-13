@@ -104,9 +104,11 @@ export default function CustomTable({ rows, align, headCells, tb, pagination, ha
 
   return (
     <Paper sx={{ width: "100%" }}>
-      <TableContainer style={{height: '68.5vh'}}>
+      {/* <TableContainer style={{height: '68.5vh'}}> */}
+      <TableContainer style={{height: '60.5vh'}}>
         <Table
-          sx={{ minWidth: 750 }}
+          // sx={{ minWidth: 750}}
+          sx={{minWidth: 1000, tableLayout: "fixed" }}
           aria-labelledby="tableTitle"
           size="medium"
           className={tb}
@@ -144,7 +146,7 @@ export default function CustomTable({ rows, align, headCells, tb, pagination, ha
         justifyContent="space-between"
         sx={{ pt: "0.5%", pb: "0.5%" }}
       >
-        <Typography
+        <Typography className="hidden-class"
           style={{ marginLeft: "17px", fontSize: "15px", color: "#6C757D" }}
         >
           Showing {paginationData.itemsTotal == 0 ? 0 : ((paginationData.currentPage - 1) * paginationData.pageSize) + 1}&nbsp;
@@ -153,17 +155,17 @@ export default function CustomTable({ rows, align, headCells, tb, pagination, ha
         </Typography>
 
         <Stack
+          className="pagination-class"
           direction="row"
           alignItems="center"
           justifyContent="end"
           sx={{ mr: "17px" }}
         >
-          <Typography style={{ fontSize: "15px", color: "#6C757D" }}>
+          <Typography className="hidden-class" style={{ fontSize: "15px", color: "#6C757D" }}>
             Display
           </Typography>
-          <Box className="abc2" sx={{ width: "21%" }}>
+          <Box className="hidden-class" sx={{ width: "21%" }}>
             <TextField
-              className="abc"
               id="outlined-number"
               type="number"
               defaultValue={paginationData.pageSize}
@@ -188,6 +190,7 @@ export default function CustomTable({ rows, align, headCells, tb, pagination, ha
           </Box>
 
           <Pagination
+            siblingCount={0} 
             count={paginationData.pageTotal}
             shape="rounded"
             sx={{

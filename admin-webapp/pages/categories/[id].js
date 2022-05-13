@@ -16,13 +16,15 @@ const commonStyles = {
   width: "5rem",
   height: "5rem"
 };
-const ButtonEdit = ({ onClick }) => (
+const ButtonEdit = ({ className }) => (
   <Button
     id='submit-btn'
     variant="contained"
+    className={className}
     style={{
-      width: "10%",
-      marginLeft: "5%",
+      // width: "10%",
+      // marginLeft: "5%",
+      width: "100%",
       borderRadius: "6px",
       background: "#51CBFF"
     }}
@@ -81,7 +83,7 @@ export default function EditCategory({category, id}) {
 
   return (
     <Paper
-      className='edit-category'
+      id='edit-category'
       sx={{
         display: "flex",
         flexDirection: "column",
@@ -104,7 +106,7 @@ export default function EditCategory({category, id}) {
             placeHolder="Input text"
             onChangeEvent={handleOnChangeName}
             value={name}
-            button={<ButtonEdit />}
+            button={<ButtonEdit className="btn-top" />}
             errors={errors.name?.message}
             validate={{...register('name')}}
           />
@@ -115,6 +117,7 @@ export default function EditCategory({category, id}) {
             handleSetReset={handleSetReset}
             defaultImg={img}
           />
+          <ButtonEdit className="btn-bottom" />
         </Box>
       </form>
     </Paper>

@@ -14,13 +14,15 @@ const commonStyles = {
   width: "5rem",
   height: "5rem"
 };
-const ButtonCreate = ({ onClick }) => (
+const ButtonCreate = ({className}) => (
   <Button
     variant="contained"
     id="submit-btn"
+    className={className}
     style={{
-      width: "10%",
-      marginLeft: "5%",
+      // width: "10%",
+      // marginLeft: "5%",
+      width: "100%",
       borderRadius: "6px",
       background: "#51CBFF"
     }}
@@ -84,14 +86,14 @@ export default function AddCategory() {
     setResetData(value);
   };
 
-
   return (
     <Paper
-      className='add-category'
+      id='add-category'
       sx={{
         display: "flex",
         flexDirection: "column",
-        height: "100%"
+        height: "100%",
+        mt: "5%"
       }}
     >
       <form style={{ height: "100%", padding: "2%" }} onSubmit={handleSubmit(onSubmit)}>
@@ -110,7 +112,7 @@ export default function AddCategory() {
             placeHolder="Input text"
             onChangeEvent={handleOnChangeName}
             value={name}
-            button={<ButtonCreate />}
+            button={<ButtonCreate className="btn-top" />}
             errors={errors.name?.message}
             validate={{...register('name')}}
           />
@@ -121,6 +123,7 @@ export default function AddCategory() {
             handleSetReset={handleSetReset}
             defaultImg={img}
           />
+          <ButtonCreate className="btn-bottom" />
         </Box>
       </form>
     </Paper>

@@ -14,7 +14,7 @@ import { createTheme, styled, ThemeProvider } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { linksInfo } from './../components/linksInfo';
 import Copyright from "./copyright";
 import { MainListItems, SecondaryListItems } from "./listMenuSidebar";
@@ -78,6 +78,11 @@ export default function Dashboard({ children, firebase }) {
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
+  useEffect(()=> {
+    if(window.innerWidth <= 600)
+      setOpen(false);
+ }, [])
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -175,7 +180,8 @@ export default function Dashboard({ children, firebase }) {
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg" style={{ marginTop: '1.5%', height: '85.5%', borderRadius: '8px' }}>
+          {/* <Container maxWidth="lg" style={{ marginTop: '1.5%', height: '85.5%', borderRadius: '8px' }}> */}
+          <Container maxWidth="lg" style={{ marginTop: '1.5%', height: 'fit-content', borderRadius: '8px' }}>
           {children}
             {/* <Grid container spacing={3}>
               <Grid className="zxzx" item xs={12} md={8} lg={9}>

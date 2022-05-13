@@ -14,6 +14,8 @@ import * as Yup from "yup";
 import firebase from "../utils/firebase";
 import Input from "./input";
 import InputPassword from "./inputPassword";
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const commonStyles = {
   bgcolor: "background.paper",
@@ -57,6 +59,16 @@ export default function LoginForm() {
   const [inCorrect, setInCorrect] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const route = useRouter();
+  const [openBackdrop, setOpenBackdrop] = useState(false);
+
+  const handleCloseBackdrop = () => {
+    setOpenBackdrop(false);
+  };
+  
+  const handleToggleBackdrop = () => {
+    setOpenBackdrop(!openBackdrop);
+  };
+
   // form validation rules
   const validationSchema = Yup.object().shape({
     email: Yup.string().required("Email is required").email("Email is invalid"),
@@ -71,6 +83,7 @@ export default function LoginForm() {
   const { errors } = formState;
 
   function onSubmit(data) {
+    handleToggleBackdrop();
     if(isLogin) 
       handleOnSubmitLogin(data.email, data.password)
     else
@@ -102,6 +115,7 @@ export default function LoginForm() {
         // The AuthCredential type that was used.
         const credential = GoogleAuthProvider.credentialFromError(error);
         setInCorrect(true);
+        handleCloseBackdrop();
       });
   };
 
@@ -121,6 +135,7 @@ export default function LoginForm() {
         console.log(errorCode);
         console.log(errorMessage);
         setInCorrect(true);
+        handleCloseBackdrop();
       });
   };
 
@@ -137,23 +152,26 @@ export default function LoginForm() {
       // Signed in
       const user = userCredential.user;
       setIsLogin(!isLogin);
+      handleCloseBackdrop();
     })
     .catch((error) => {
       const errorCode = error.code;
       const errorMessage = error.message;
       console.log(errorMessage)
+      handleCloseBackdrop();
     });
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Box sx={{ ml: "20%", mt: "25%", pr: "20%" }}>
+      {/* <Box sx={{ ml: "20%", mt: "25%", pr: "20%" }}> */}
+      <Box className="login-inner-box">
         <Typography
           component="p"
           color="#667080"
           fontSize="32px"
           fontWeight="bold"
-          sx={{ p: 1 }}
+          // sx={{ p: 1 }}
         >
           {isLogin ? "Login" : "Register"}
         </Typography>
@@ -309,6 +327,15 @@ export default function LoginForm() {
           </Typography>
         </Box>
       </Box>
+      <div>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={openBackdrop}
+        onClick={handleCloseBackdrop}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+    </div>
     </form>
   );
 }

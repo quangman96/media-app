@@ -14,6 +14,8 @@ import {
   createRowsArticles,
   getArticlesData,
 } from "../../utils/paginationData";
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const align = [
   "left",
@@ -82,10 +84,18 @@ export default function Articles({ articles, pagination }) {
   const [paginationData, setPaginationData] = useState(pagination);
   const [searchBy, setSearchBy] = useState(searchByData[0].value);
   const [searchValue, setSearchValue] = useState("");
+  const [openBackdrop, setOpenBackdrop] = useState(false);
 
   useEffect(async () => {
     setRows(await createRowsArticles(articles, handleOnDelete, paginationData));
   }, []);
+
+  const handleCloseBackdrop = () => {
+    setOpenBackdrop(false);
+  };
+  const handleToggleBackdrop = () => {
+    setOpenBackdrop(!openBackdrop);
+  };
 
   const handleOnSort = async (orderBy, order) => {
     const field = (orderBy) => {
@@ -224,28 +234,27 @@ export default function Articles({ articles, pagination }) {
   };
 
   return (
-    <Box>
+    <Box id="articles-page">
       {rows ? (
         <>
-          <Box className="search-area" sx={{ width: "100%" }}>
+          <Box className="search-area" sx={{ width: "100%"}}>
             <Paper
               className={`${customStyles["pd-1"]} search-container`}
               sx={{
                 width: "100%",
                 mb: 2,
-                display: "flex",
-                justifyContent: "space-between",
+                mt: 2.2
               }}
             >
-              <Box sx={{width: 1, display: "flex" }}>
+              <Box sx={{width: 1, display: "flex", flexDirection: "column", p: "2%" }}>
                 <DropDown
                   className="search-by-data"
                   onChangeEvent={handleOnChange}
                   data={searchByData}
-                  sxBox={{ width: "10%", marginRight: "1%" }}
+                  sxBox={{ width: "100%"}}
                   sxSelect={{
                     "& .MuiSelect-select": {
-                      padding: "6%",
+                      padding: "2%",
                     },
                   }}
                 />
@@ -256,7 +265,8 @@ export default function Articles({ articles, pagination }) {
                   onChangeEvent={handleOnInputSearch}
                   icon={<SearchIcon sx={{ color: "#979797" }} />}
                 />
-                <Box sx={{width: "25%", display: "flex", columnGap: "12%", marginLeft: "2%", marginRight: "1%" }}>
+
+                <Box sx={{width: "100%", display: "flex", columnGap: "12%", marginTop: "3%"}}>
                   <ButtonSearch />
                   <ButtonAdd />
                 </Box>
@@ -277,8 +287,16 @@ export default function Articles({ articles, pagination }) {
           </Box>
         </>
       ) : (
-        <div>loading...</div>
+        <div>loading..</div>
       )}
+
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={openBackdrop}
+        onClick={handleCloseBackdrop}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </Box>
   );
 }

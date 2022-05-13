@@ -23,7 +23,7 @@ export default function MyApp(props) {
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head> */}
                   <Head>
-                <title>News Dashboard</title>
+                <title>Media Dashboard</title>
                 <link rel="shortcut icon" href="/login.png" />
 
                 {/* eslint-disable-next-line @next/next/no-css-tags */}

@@ -152,7 +152,7 @@ export default function Catelogies({ categories, pagination }) {
   };
 
   return (
-    <Box>
+    <Box id="categories-page">
       {rows ? (
         <>
           <Box className="search-area" sx={{ width: "100%" }}>
@@ -161,19 +161,23 @@ export default function Catelogies({ categories, pagination }) {
               sx={{
                 width: "100%",
                 mb: 2,
-                display: "flex",
-                justifyContent: "space-between",
+                mt: 2.2
+                // display: "flex",
+                // justifyContent: "space-between",
               }}
             >
-              <Box sx={{ width: 1, display: "flex" }}>
+              {/* <Box sx={{ width: 1, display: "flex" }}> */}
+              <Box sx={{width: 1, display: "flex", flexDirection: "column", p: "2%" }}>
                 <DropDown
                   className="search-by-data"
                   onChangeEvent={handleOnChange}
                   data={searchByData}
-                  sxBox={{ width: "10%", marginRight: "1%" }}
+                  // sxBox={{ width: "10%", marginRight: "1%" }}
+                  sxBox={{ width: "100%"}}
                   sxSelect={{
                     "& .MuiSelect-select": {
-                      padding: "6%",
+                      // padding: "6%",
+                      padding: "2%",
                     },
                   }}
                 />
@@ -185,7 +189,8 @@ export default function Catelogies({ categories, pagination }) {
                   icon={<SearchIcon sx={{ color: "#979797" }} />}
                 />
 
-              <Box sx={{width: "25%", display: "flex", columnGap: "12%", marginLeft: "2%", marginRight: "1%" }}>
+              {/* <Box sx={{width: "25%", display: "flex", columnGap: "12%", marginLeft: "2%", marginRight: "1%" }}> */}
+              <Box sx={{width: "100%", display: "flex", columnGap: "12%", marginTop: "3%"}}>
                   <ButtonSearch />
                   <ButtonAdd />
                 </Box>

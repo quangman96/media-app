@@ -119,14 +119,15 @@ export default function EditArticle({ categoryData, statusData, articlesData, ca
   };
   return (
     <Paper
-      className='edit-article'
+      id='edit-article'
       sx={{
         display: "flex",
         flexDirection: "column",
         height: "100%"
       }}
     >
-      <form style={{ height: "100%", padding: "2%" }}>
+      {/* <form style={{ height: "100%", padding: "2%" }}> */}
+      <form style={{ height: "100%", padding: "5%" }}>
         <Box
           sx={{ ...commonStyles, borderRadius: 1, width: 1, p: 2 }}
           style={{
@@ -138,13 +139,17 @@ export default function EditArticle({ categoryData, statusData, articlesData, ca
           }}
         >
           <Box
+            className="box-left"
             style={{
               display: "flex",
-              flexDirection: "row",
-              height: "100%"
+              // flexDirection: "row",
+              flexDirection: "column",
+              // height: "100%"
+              height: "fit-content"
             }}
           >
-            <Box style={{ width: "50%", paddingRight: "1%" }}>
+            {/* <Box style={{ width: "50%", paddingRight: "1%" }}> */}
+            <Box style={{ width: "100%", paddingRight: "1%" }}>
               <Grid
                 container
                 direction="column"
@@ -166,7 +171,7 @@ export default function EditArticle({ categoryData, statusData, articlesData, ca
                   <TextArea
                     label="Description"
                     placeHolder="Enter a description..."
-                    maxRows={windowWidth <= 1366 ? 6 : 8}
+                    maxRows={windowWidth <= 1366 ? 4 : 8}
                     style={{
                       width: "100%",
                       resize: "none",
@@ -219,7 +224,8 @@ export default function EditArticle({ categoryData, statusData, articlesData, ca
                 </Grid>
               </Grid>
             </Box>
-            <Box style={{ width: "50%", paddingLeft: "1%" }}>
+            {/* <Box style={{ width: "50%", paddingLeft: "1%" }}> */}
+            <Box className="box-right" style={{ width: "100%", marginTop: "5%" }}>
               <ImgDialog
                 onChangeEvent={handleOnChange}
                 keyObj={"image"}
@@ -230,9 +236,11 @@ export default function EditArticle({ categoryData, statusData, articlesData, ca
             </Box>
           </Box>
 
-          <Box sx={{ marginTop: "1.2%", marginBottom: "1%" }}>
+          {/* <Box sx={{ marginTop: "1.2%", marginBottom: "1%" }}> */}
+          <Box sx={{ marginTop: "5%", marginBottom: "5%", height: "100%" }}>
             <TextEditor
-              style={{ height: "27vh" }}
+              // style={{ height: "27vh" }}
+              style={{ height: "100%" }}
               onChangeEvent={handleOnChange}
               keyObj={"content"}
               reset={reset}
@@ -246,7 +254,8 @@ export default function EditArticle({ categoryData, statusData, articlesData, ca
               id='submit-btn'
               variant="contained"
               style={{
-                width: "10%",
+                // width: "10%",
+                width: "40%",
                 borderRadius: "6px",
                 background: "#51CBFF"
               }}
