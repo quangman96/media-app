@@ -1,0 +1,107 @@
+/* .pd-1 {
+    padding: 1%;
+}
+
+.pd-input{
+    width: 100% !important;
+}
+
+.pd-input input{
+    padding: 0 1%;
+}
+
+.td-img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 6px;
+}
+
+.tb thead th {
+    padding-left: 7px;
+    padding-right: 7px;
+    font-weight: bold;
+    color: #7D7D7D;
+}
+
+.tb tbody td:not(:first-child) {
+    padding-left: 7px;
+    padding-right: 7px;
+}
+
+.tb thead th:nth-child(1) {
+    padding-left: 15px;
+    width: 2%;
+}
+
+.tb thead th:nth-child(2) {
+    width: 11%;
+}
+
+.tb thead th:nth-child(3) {
+    padding-left: 27px;
+}
+
+.tb thead th:last-child {
+    width: 5.7%;
+    padding-left: 17px;
+}
+
+.tb tbody td {
+    height: 12.5vh;
+} */
+
+.pd-1 {
+    padding: 1%;
+}
+
+.pd-input{
+    width: 100% !important;
+}
+
+.pd-input input{
+    padding: 0 1%;
+}
+
+.td-img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 6px;
+}
+
+.tb thead th {
+    padding-left: 7px;
+    padding-right: 7px;
+    font-weight: bold;
+    color: #7D7D7D;
+}
+
+.tb tbody td:not(:first-child) {
+    padding-left: 7px;
+    padding-right: 7px;
+}
+
+.tb thead th:nth-child(1) {
+    padding-left: 15px;
+}
+
+.tb thead th:nth-child(1), .tb thead th:nth-child(2), .tb thead th:nth-child(3), .tb thead th:nth-child(4) {
+    width: 0;
+}
+
+.tb thead th:nth-child(2){
+    width: 21%;
+}
+
+.tb thead th:nth-child(3) {
+    padding-left: 27px;
+}
+
+.tb thead th:last-child {
+    padding-left: 17px;
+}
+
+.tb tbody td {
+    height: 12.5vh;
+}
