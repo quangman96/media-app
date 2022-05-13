@@ -10,11 +10,7 @@ import RenderHtml from "react-native-render-html";
 export default function Detail({ route }) {
   const data = route?.params?.data;
   const { width } = useWindowDimensions();
-  const CHIP = [
-    { name: "Category", theme: "light" },
-    { name: "Category", theme: "light" },
-    { name: "Category", theme: "light" },
-  ];
+
   return (
     <ScrollView contentContainerStyle={styles.grow}>
       <Screen>
@@ -26,16 +22,16 @@ export default function Detail({ route }) {
           <View style={styles.body}>
             <View style={styles.area}>
               <View style={styles.chip}>
-                <ChipList data={CHIP} size="big"></ChipList>
+                <ChipList data={data.categories || []} size="big"></ChipList>
               </View>
               <Text style={styles.title}>{data.title}</Text>
-              <View style={styles.owner}>
+              {/* <View style={styles.owner}>
                 <Image
                   style={styles.avatar}
                   source={require(`../../assets/images/user.png`)}
                 ></Image>
                 <AppText>Nguyen Quang Man</AppText>
-              </View>
+              </View> */}
               <AppText style={styles.text}>{data.description}</AppText>
 
               <RenderHtml
@@ -44,7 +40,6 @@ export default function Detail({ route }) {
               />
             </View>
           </View>
-          <View style={{ margin: -15 }}></View>
         </View>
       </Screen>
     </ScrollView>

@@ -8,6 +8,7 @@ export default function AppTextInput({
   width = "100%",
   style = "right",
   editable = true,
+  fade = false,
   ...otherProps
 }) {
   const iconStyle =
@@ -26,7 +27,15 @@ export default function AppTextInput({
       : { ...defaultStyles.text, width: "85%", marginLeft: 30 };
 
   return (
-    <View style={[styles.container, { width }]}>
+    <View
+      style={[
+        styles.container,
+        {
+          width,
+          backgroundColor: fade ? "whitesmoke" : defaultStyles.colors.white,
+        },
+      ]}
+    >
       <TextInput
         editable={editable}
         placeholderTextColor={defaultStyles.colors.placeholder}
@@ -47,7 +56,6 @@ export default function AppTextInput({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: defaultStyles.colors.white,
     position: "relative",
     height: 48,
     borderRadius: 6,

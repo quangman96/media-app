@@ -19,6 +19,7 @@ import {
   createUser,
   uploadImageAsync,
   getUserId,
+  auth,
 } from "../../firebase";
 import DropDownPicker from "react-native-dropdown-picker";
 import AppText from "../components/Text";
@@ -33,6 +34,7 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function User() {
+  const email = auth.currentUser.email;
   const user_id = getUserId();
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("MALE");
@@ -45,7 +47,7 @@ export default function User() {
     name: "",
     dob: new Date(),
     gender: "MALE",
-    email: "",
+    email,
     address: "",
   });
 
@@ -73,7 +75,6 @@ export default function User() {
         })
       );
       setItems(newList);
-
       if (res.length > 0) {
         const data = (res || [])[0];
         const genderCode = getGenderCode(genderList, data["gender"]);
@@ -276,6 +277,8 @@ export default function User() {
                 placeholder="Email address"
                 textContentType="emailAddress"
                 initValues={user["email"]}
+                editable={false}
+                fade={true}
               />
 
               <AppFormField

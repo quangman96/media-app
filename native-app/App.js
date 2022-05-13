@@ -30,6 +30,10 @@ export default function App() {
       backgroundColor: "white",
       height: 70,
     },
+    tabBarHideOnKeyboard: true,
+    tabBarOptions: {
+      keyboardHidesTabBar: true, //<=====
+    },
   };
   const TabNavigator = () => (
     <Tab.Navigator {...{ screenOptions }}>
