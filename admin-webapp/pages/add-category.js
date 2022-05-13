@@ -7,6 +7,8 @@ import firebase from "../utils/firebase";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import * as Yup from "yup";
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const commonStyles = {
   bgcolor: "background.paper",
@@ -39,6 +41,7 @@ export default function AddCategory() {
   const [name, setName] = useState("");
   const [img, setImg] = useState(defaultImg);
   const [resetData, setResetData] = useState(false);
+  const [openBackdrop, setOpenBackdrop] = useState(false);
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("Name of category is required"),
@@ -48,7 +51,15 @@ export default function AddCategory() {
   const { register, handleSubmit, formState, reset } = useForm(formOptions);
   const { errors } = formState;
 
+  const handleCloseBackdrop = () => {
+    setOpenBackdrop(false);
+  };
+  const handleToggleBackdrop = () => {
+    setOpenBackdrop(!openBackdrop);
+  };
+
   function onSubmit(data, e) {
+    handleToggleBackdrop();
     if(img instanceof File)
       firebase.uploadImg(img, handleAfterUploadImg);
     else
@@ -80,6 +91,7 @@ export default function AddCategory() {
     setName("");
     setImg(defaultImg);
     setResetData(true);
+    handleCloseBackdrop();
   };
 
   const handleSetReset = (value) => {
@@ -126,6 +138,14 @@ export default function AddCategory() {
           <ButtonCreate className="btn-bottom" />
         </Box>
       </form>
+
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={openBackdrop}
+        onClick={handleCloseBackdrop}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </Paper>
   );
 }

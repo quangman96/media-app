@@ -14,6 +14,8 @@ import {
   getCategoriesData,
 } from "../../utils/paginationData";
 import { where, orderBy } from "firebase/firestore";
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const align = ["left", "left", "center", "left", "left"];
 
@@ -26,14 +28,24 @@ export default function Catelogies({ categories, pagination }) {
   const [paginationData, setPaginationData] = useState(pagination);
   const [searchBy, setSearchBy] = useState(searchByData[0].value);
   const [searchValue, setSearchValue] = useState("");
+  const [openBackdrop, setOpenBackdrop] = useState(true);
 
   useEffect(async () => {
     setRows(
       await createRowsCategories(categories, handleOnDelete, paginationData)
     );
+    handleCloseBackdrop();
   }, []);
 
+  const handleCloseBackdrop = () => {
+    setOpenBackdrop(false);
+  };
+  const handleToggleBackdrop = () => {
+    setOpenBackdrop(!openBackdrop);
+  };
+
   const handleOnSearch = async (e, data) => {
+    handleToggleBackdrop();
     const value = data && data != undefined ? data : paginationData;
     const filted = await firebase.search(
       "categories",
@@ -46,6 +58,7 @@ export default function Catelogies({ categories, pagination }) {
     setRows(
       await createRowsCategories(filted.data, handleOnDelete, filted.pagination)
     );
+    handleCloseBackdrop();
   };
 
   const ButtonSearch = () => (
@@ -83,6 +96,7 @@ export default function Catelogies({ categories, pagination }) {
   );
 
   const handleOnDelete = async (id, currentPagination) => {
+    handleToggleBackdrop();
     await firebase.softDelete("categories", id);
     const data = await getCategoriesData(
       (currentPagination.currentPage - 1) * currentPagination.pageSize,
@@ -96,9 +110,11 @@ export default function Catelogies({ categories, pagination }) {
       currentPagination
     );
     setRows(rows);
+    handleCloseBackdrop();
   };
 
   const handleOnPagination = async (data) => {
+    handleToggleBackdrop();
     if (searchValue) {
       await handleOnSearch(null, data);
     } else {
@@ -113,9 +129,11 @@ export default function Catelogies({ categories, pagination }) {
       const rows = await createRowsCategories(results, handleOnDelete, data);
       setRows(rows);
     }
+    handleCloseBackdrop();
   };
 
   const handleOnSort = async (orderBy, order) => {
+    handleToggleBackdrop();
     const field = (orderBy) => {
       switch (orderBy) {
         case "No":
@@ -141,6 +159,7 @@ export default function Catelogies({ categories, pagination }) {
       paginationData
     );
     setRows(rows);
+    handleCloseBackdrop();
   };
 
   const handleOnChange = (e) => {
@@ -213,6 +232,14 @@ export default function Catelogies({ categories, pagination }) {
       ) : (
         <div>loading...</div>
       )}
+
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={openBackdrop}
+        onClick={handleCloseBackdrop}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </Box>
   );
 }

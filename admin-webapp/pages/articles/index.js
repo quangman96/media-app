@@ -84,10 +84,11 @@ export default function Articles({ articles, pagination }) {
   const [paginationData, setPaginationData] = useState(pagination);
   const [searchBy, setSearchBy] = useState(searchByData[0].value);
   const [searchValue, setSearchValue] = useState("");
-  const [openBackdrop, setOpenBackdrop] = useState(false);
+  const [openBackdrop, setOpenBackdrop] = useState(true);
 
   useEffect(async () => {
     setRows(await createRowsArticles(articles, handleOnDelete, paginationData));
+    handleCloseBackdrop();
   }, []);
 
   const handleCloseBackdrop = () => {
@@ -98,6 +99,7 @@ export default function Articles({ articles, pagination }) {
   };
 
   const handleOnSort = async (orderBy, order) => {
+    handleToggleBackdrop();
     const field = (orderBy) => {
       switch (orderBy) {
         case "No":
@@ -125,9 +127,11 @@ export default function Articles({ articles, pagination }) {
       paginationData
     );
     setRows(rows);
+    handleCloseBackdrop();
   };
 
   const handleOnSearch = async (e, data) => {
+    handleToggleBackdrop();
     const value = data && data != undefined ? data : paginationData;
     const filted = await firebase.search(
       "articles",
@@ -157,6 +161,7 @@ export default function Articles({ articles, pagination }) {
         )
       );
     }
+    handleCloseBackdrop();
   };
 
   const ButtonSearch = () => (
@@ -193,6 +198,7 @@ export default function Articles({ articles, pagination }) {
   );
 
   const handleOnDelete = async (id, newPagination) => {
+    handleToggleBackdrop();
     await firebase.softDelete("articles", id);
     const data = await getArticlesData(
       (newPagination.currentPage - 1) * newPagination.pageSize,
@@ -206,9 +212,11 @@ export default function Articles({ articles, pagination }) {
       newPagination
     );
     setRows(rows);
+    handleCloseBackdrop();
   };
 
   const handleOnPagination = async (data) => {
+    handleToggleBackdrop();
     if (searchValue) {
       await handleOnSearch(null, data);
     } else {
@@ -223,6 +231,7 @@ export default function Articles({ articles, pagination }) {
       const rows = await createRowsArticles(results, handleOnDelete, data);
       setRows(rows);
     }
+    handleCloseBackdrop();
   };
 
   const handleOnChange = (e) => {
@@ -286,9 +295,9 @@ export default function Articles({ articles, pagination }) {
             />
           </Box>
         </>
-      ) : (
-        <div>loading..</div>
-      )}
+      ) :
+       (<div>loading..</div>)
+      }
 
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}

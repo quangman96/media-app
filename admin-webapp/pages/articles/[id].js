@@ -15,6 +15,8 @@ import MultipleSelectChip from "../../components/multipleSelectChip";
 import TextArea from "../../components/textArea";
 import TextEditor from "../../components/textEditor";
 import firebase from "../../utils/firebase";
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -53,10 +55,18 @@ export default function EditArticle({ categoryData, statusData, articlesData, ca
       msg: ''
     }
   });
+  const [openBackdrop, setOpenBackdrop] = useState(false);
 
   useEffect(()=> {
     setWindowWidth(window.innerWidth);
  }, [])
+
+  const handleCloseBackdrop = () => {
+    setOpenBackdrop(false);
+  };
+  const handleToggleBackdrop = () => {
+    setOpenBackdrop(!openBackdrop);
+  };
 
   const handleAfterUploadImg = async (downloadURL) => {
     const time = new Date().getTime();
@@ -108,6 +118,7 @@ export default function EditArticle({ categoryData, statusData, articlesData, ca
     if(Object.values(errors).some(child => Object.values(child).includes(true)))
       return false;
 
+    handleToggleBackdrop();
     if(form.image instanceof File)
       firebase.uploadImg(form.image, handleAfterUploadImg);
     else
@@ -267,6 +278,13 @@ export default function EditArticle({ categoryData, statusData, articlesData, ca
           </Stack>
         </Box>
       </form>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={openBackdrop}
+        onClick={handleCloseBackdrop}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </Paper>
   );
 }
