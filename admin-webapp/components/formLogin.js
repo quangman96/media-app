@@ -92,6 +92,7 @@ export default function LoginForm() {
   }
 
   const handleOnSubmitGoogle = () => {
+    handleToggleBackdrop();
     const provider = new GoogleAuthProvider();
     const auth = firebase.auth;
 
