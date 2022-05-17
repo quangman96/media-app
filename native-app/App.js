@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Feather } from "@expo/vector-icons";
+import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useFonts } from "expo-font";
@@ -16,6 +16,7 @@ import Home from "./app/screens/Home";
 import Detail from "./app/screens/Detail";
 import Header from "./app/screens/Header";
 import { LogBox } from "react-native";
+import Article from "./app/screens/Article";
 
 LogBox.ignoreAllLogs();
 
@@ -81,6 +82,21 @@ export default function App() {
           ),
           header: () => null,
           headerLeft: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="Add Article"
+        component={Article}
+        options={{
+          unmountOnBlur: true,
+          tabBarIcon: ({ focused }) => (
+            <MaterialIcons
+              name="post-add"
+              size={26}
+              color={focused ? "#667080" : "#bbc0c8"}
+            />
+          ),
+          header: () => null,
         }}
       />
       <Tab.Screen
