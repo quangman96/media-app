@@ -9,6 +9,8 @@ export default function AppTextInput({
   style = "right",
   editable = true,
   fade = false,
+  height = 48,
+  multiline = false,
   ...otherProps
 }) {
   const iconStyle =
@@ -23,8 +25,8 @@ export default function AppTextInput({
 
   const textStyle =
     style === "right"
-      ? { ...defaultStyles.text, width: "85%" }
-      : { ...defaultStyles.text, width: "85%", marginLeft: 30 };
+      ? { ...defaultStyles.text, width: "85%", textAlignVertical : multiline ? "top" : "center" }
+      : { ...defaultStyles.text, width: "85%", marginLeft: 30, textAlignVertical : multiline ? "top" : "center" };
 
   return (
     <View
@@ -32,7 +34,8 @@ export default function AppTextInput({
         styles.container,
         {
           width,
-          backgroundColor: fade ? "whitesmoke" : defaultStyles.colors.white,
+          height,
+          backgroundColor: fade ? "whitesmoke" : defaultStyles.colors.white
         },
       ]}
     >
@@ -40,6 +43,7 @@ export default function AppTextInput({
         editable={editable}
         placeholderTextColor={defaultStyles.colors.placeholder}
         style={textStyle}
+        multiline={multiline}
         {...otherProps}
       />
       {icon && (
