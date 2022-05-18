@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Feather, MaterialIcons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useFonts } from "expo-font";
@@ -90,11 +90,11 @@ export default function App() {
         options={{
           unmountOnBlur: true,
           tabBarIcon: ({ focused }) => (
-            <MaterialIcons
-              name="post-add"
-              size={26}
-              color={focused ? "#667080" : "#bbc0c8"}
-            />
+            <Feather
+            name="file-plus"
+            size={26}
+            color={focused ? "#667080" : "#bbc0c8"}
+          />
           ),
           header: () => null,
         }}
