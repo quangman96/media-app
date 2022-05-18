@@ -83,7 +83,16 @@ export default function Card({ icon, cardObj, isSavedPage }) {
             <AppText numberOfLines={5} style={styles.description}>
               {cardObj["description"]}
             </AppText>
-            <Image style={styles.image} source={{ uri: cardObj["image"] }} />
+            <Image
+              style={styles.image}
+              source={
+                cardObj["image"]
+                  ? {
+                      uri: cardObj["image"],
+                    }
+                  : require("../../assets/images/inf.png")
+              }
+            />
           </View>
           <View style={styles.footer}>
             <ChipList key={cardObj.id} data={cardObj["categories"]}></ChipList>

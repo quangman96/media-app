@@ -17,7 +17,16 @@ export default function Detail({ route }) {
         <View style={styles.container}>
           <View style={{ margin: -20 }}></View>
           <View style={styles.header}>
-            <Image style={styles.image} source={{ uri: data["image"] }}></Image>
+            <Image
+              style={styles.image}
+              source={
+                data["image"]
+                  ? {
+                      uri: data["image"],
+                    }
+                  : require("../../assets/images/inf.png")
+              }
+            ></Image>
           </View>
           <View style={styles.body}>
             <View style={styles.area}>

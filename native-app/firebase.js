@@ -54,7 +54,7 @@ export const getDocRef = (table, id) => {
   return doc(db, table, id);
 };
 
-export async function uploadImageAsync(uri, callBack) {
+export async function uploadImageAsync(uri, callBack, type = "image") {
   // Why are we using XMLHttpRequest? See:
   // https://github.com/expo/expo/issues/2402#issuecomment-443726662
   const blob = await new Promise((resolve, reject) => {
@@ -71,7 +71,7 @@ export async function uploadImageAsync(uri, callBack) {
     xhr.send(null);
   });
 
-  const storagePath = `uploads/${`image-${new Date().getTime()}`}`;
+  const storagePath = `uploads/${`${type}-${new Date().getTime()}`}`;
   const storageRef = ref(storage, storagePath);
   const uploadTask = uploadBytesResumable(storageRef, blob);
 

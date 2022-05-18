@@ -15,6 +15,7 @@ import Search from "./app/screens/Search";
 import Home from "./app/screens/Home";
 import Detail from "./app/screens/Detail";
 import Header from "./app/screens/Header";
+import Player from "./app/screens/Player";
 import { LogBox } from "react-native";
 
 LogBox.ignoreAllLogs();
@@ -39,7 +40,7 @@ export default function App() {
     <Tab.Navigator {...{ screenOptions }}>
       <Tab.Screen
         name="Home"
-        component={Home}
+        children={() => <Home value={categories} />}
         options={{
           unmountOnBlur: true,
           tabBarIcon: ({ focused }) => (
@@ -101,10 +102,29 @@ export default function App() {
           headerStyle: { height: 300 },
         }}
       />
+      <Tab.Screen
+        name="Player"
+        component={Player}
+        options={{
+          unmountOnBlur: true,
+          tabBarIcon: ({ focused }) => (
+            <Feather
+              name="video"
+              size={26}
+              color={focused ? "#667080" : "#bbc0c8"}
+            />
+          ),
+          header: () => null,
+          headerTitle: () => <></>,
+          headerLeft: () => <></>,
+          headerStyle: { height: 300 },
+        }}
+      />
     </Tab.Navigator>
   );
   const [headerHeight, setHeaderHeight] = useState(115);
   const [childData, setChildData] = useState("");
+  const [categories, setCategory] = useState([]);
   const [userId, setUserId] = useState("");
   const getValue = () => childData;
   const [loaded] = useFonts({
@@ -112,6 +132,7 @@ export default function App() {
   });
 
   useEffect(() => {}, [childData]);
+  useEffect(() => {}, [categories]);
 
   if (!loaded) {
     return null;
@@ -154,7 +175,11 @@ export default function App() {
           component={TabNavigator}
           options={{
             headerTitle: () => (
-              <Header passChildData={setChildData} title={getTitle()} />
+              <Header
+                passInput={setChildData}
+                passCategory={setCategory}
+                title={getTitle()}
+              />
             ),
             headerLeft: () => <></>,
           }}
