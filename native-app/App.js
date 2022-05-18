@@ -17,6 +17,7 @@ import Detail from "./app/screens/Detail";
 import Header from "./app/screens/Header";
 import Player from "./app/screens/Player";
 import { LogBox } from "react-native";
+import Article from "./app/screens/Article";
 
 LogBox.ignoreAllLogs();
 
@@ -82,6 +83,21 @@ export default function App() {
           ),
           header: () => null,
           headerLeft: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="Add Article"
+        component={Article}
+        options={{
+          unmountOnBlur: true,
+          tabBarIcon: ({ focused }) => (
+            <Feather
+            name="file-plus"
+            size={26}
+            color={focused ? "#667080" : "#bbc0c8"}
+          />
+          ),
+          header: () => null,
         }}
       />
       <Tab.Screen

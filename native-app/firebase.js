@@ -269,3 +269,16 @@ export const tranferCategory = (list, categoryList) => {
   });
   return array;
 };
+
+export const createArticle = async (data) => {
+  const saveData = {
+    ...data,
+    create_at: new Date().getTime(),
+    create_by: userId,
+    change_at: new Date().getTime(),
+    change_by: userId,
+    id_delete: false,
+  };
+
+  return await create("articles", saveData);
+};
