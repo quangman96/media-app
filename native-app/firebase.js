@@ -12,12 +12,7 @@ import {
   updateDoc,
 } from "firebase/firestore/lite";
 
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from "firebase/storage";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -54,65 +49,29 @@ export const getDocRef = (table, id) => {
   return doc(db, table, id);
 };
 
-export async function uploadImageAsync(uri, callBack, type = "image") {
-  // Why are we using XMLHttpRequest? See:
-  // https://github.com/expo/expo/issues/2402#issuecomment-443726662
+export const uploadFileAsync = async (uri, callBack, type = "image") => {
   const blob = await new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.onload = function () {
+    xhr.onload = () => {
       resolve(xhr.response);
     };
-    xhr.onerror = function (e) {
-      console.log(e);
-      reject(new TypeError("Network request failed"));
+    xhr.onerror = (e) => {
+      reject(new TypeError(e));
     };
     xhr.responseType = "blob";
     xhr.open("GET", uri, true);
     xhr.send(null);
   });
-
   const storagePath = `uploads/${`${type}-${new Date().getTime()}`}`;
   const storageRef = ref(storage, storagePath);
-  const uploadTask = uploadBytesResumable(storageRef, blob);
 
-  uploadTask.on(
-    "state_changed",
-    (snapshot) => {
-      // progrss function ....
-      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      console.log("Upload is " + progress + "% done");
-    },
-    (error) => {
-      // error function ....
-      console.log(error);
-      return f;
-    },
-    () => {
-      // complete function ....
-      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-        callBack(downloadURL, type);
-      });
-    }
+  uploadBytes(storageRef, blob).then((snap) =>
+    getDownloadURL(snap.ref)
+      .then((downloadURL) => callBack(downloadURL, type))
+      .catch((e) => console.log(e))
   );
-
-  const snapshot = await ref.put(blob);
-
-  // We're done with the blob, close and release it
   blob.close();
-
-  return await snapshot.ref.getDownloadURL();
-}
-
-export const saveMediaToStorage = (media, path) => (dispatch) =>
-  new Promise((resolve, reject) => {
-    const fileRef = firebase.storege().ref().child(path);
-
-    fetch(media)
-      .then((response) => response.blob())
-      .then((blob) => fileRef.put(blob))
-      .then((task) => task.ref.getDownloadURL())
-      .then((downloadURL) => resolve(downloadURL));
-  });
+};
 
 export const getAll = async (table) => {
   const ref = getTableRef(table);

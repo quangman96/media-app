@@ -14,7 +14,7 @@ import * as Yup from "yup";
 import {
   getAll,
   getMasterData,
-  uploadImageAsync,
+  uploadFileAsync,
   createArticle,
 } from "../../firebase";
 import DropDownPicker from "react-native-dropdown-picker";
@@ -114,7 +114,7 @@ export default function Article() {
       });
       setImageLoading(true);
       if (!result.cancelled) {
-        uploadImageAsync(result.uri, handleUpload);
+        uploadFileAsync(result.uri, handleUpload);
       } else {
         setImageLoading(false);
       }
@@ -129,13 +129,13 @@ export default function Article() {
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Videos,
         allowsEditing: true,
-        aspect: [4, 4],
+        aspect: [16, 9],
         quality: 1,
         base64: true,
       });
       setVideoLoading(true);
       if (!result.cancelled) {
-        uploadImageAsync(result.uri, handleUpload, "video");
+        uploadFileAsync(result.uri, handleUpload, "video");
       } else {
         setVideoLoading(false);
       }
@@ -334,13 +334,13 @@ export default function Article() {
                         useNativeControls
                         resizeMode="contain"
                         isLooping
+                        shouldPlay
                       />
                     )}
                   </View>
                 )}
               </TouchableOpacity>
 
-              {/* <Editor style={{width: "100%", borderColor: "#979797", borderWidth: 1}} /> */}
               <Editor
                 value={article["content"]}
                 callback={handleOnEditorChange}
