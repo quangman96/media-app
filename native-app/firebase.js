@@ -214,14 +214,14 @@ export const createSavedData = async (user_id, articles_id) => {
 export const softDelete = async (table, id) => {
   const docRef = getDocRef(table, id);
   await deleteDoc(docRef).catch((e) => {
-    console.log("No such document exist!");
+    console.log(e);
   });
 };
 
 export const updateById = async (table, data, id) => {
   const docRef = getDocRef(table, id);
   await updateDoc(docRef, data).catch((e) => {
-    console.log("No such document exist!");
+    console.log(e);
   });
 };
 
