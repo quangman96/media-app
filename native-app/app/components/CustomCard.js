@@ -14,7 +14,13 @@ export default function CustomCard({ cardObj }) {
   return (
     <TouchableOpacity onPress={handleClickCard}>
       <ImageBackground
-        source={{ uri: cardObj["image"] }}
+        source={
+          cardObj["image"]
+            ? {
+                uri: cardObj["image"],
+              }
+            : require("../../assets/images/inf.png")
+        }
         imageStyle={{ borderRadius: 20 }}
         resizeMode="cover"
         style={[styles.container, { width: width - 90 }]}

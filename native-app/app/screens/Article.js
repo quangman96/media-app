@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Screen from "../components/Screens";
 import { AppFormField, AppForm, SubmitButton } from "../components/forms";
 import {
@@ -10,34 +10,31 @@ import {
   ToastAndroid,
 } from "react-native";
 import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import * as Yup from "yup";
 import {
   getAll,
-  getUserProfile,
   getMasterData,
-  updateOne,
-  createUser,
   uploadImageAsync,
-  getUserId,
-  auth,
   createArticle,
 } from "../../firebase";
 import DropDownPicker from "react-native-dropdown-picker";
 import AppText from "../components/Text";
 import * as ImagePicker from "expo-image-picker";
 import Editor from "../components/Editor";
+import { Video } from "expo-av";
 
 const validationSchema = Yup.object().shape({
   title: Yup.string().required().required("Title is required"),
 });
 
 export default function Article() {
+  const video = useRef(null);
   const [statusOpen, setStatusOpen] = useState(false);
   const [statusValue, setStatusValue] = useState("");
   const [statusItems, setStatusItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isImageLoading, setImageLoading] = useState(false);
+  const [isVideoLoading, setVideoLoading] = useState(false);
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [categoryValue, setCategoryValue] = useState([]);
   const [categoriesItems, setCategoriesItems] = useState([]);
@@ -49,6 +46,7 @@ export default function Article() {
     categories: [],
     status: "",
     image: "",
+    video: "",
     content: "",
   });
 
@@ -96,6 +94,7 @@ export default function Article() {
         content: "",
       };
       setDefaultArticle(data);
+
       setArticle(data);
 
       setTimeout(() => {
@@ -108,7 +107,7 @@ export default function Article() {
   const pickImage = async () => {
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [4, 4],
         quality: 1,
@@ -125,11 +124,32 @@ export default function Article() {
     }
   };
 
-  const handleUpload = (result) => {
+  const pickVideo = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+        allowsEditing: true,
+        aspect: [4, 4],
+        quality: 1,
+        base64: true,
+      });
+      setVideoLoading(true);
+      if (!result.cancelled) {
+        uploadImageAsync(result.uri, handleUpload, "video");
+      } else {
+        setVideoLoading(false);
+      }
+    } catch (e) {
+      setVideoLoading(false);
+    }
+  };
+
+  const handleUpload = (result, type = "image") => {
     if (result) {
-      setArticle({ ...article, image: result });
+      setArticle({ ...article, [type]: result });
     }
     setImageLoading(false);
+    setVideoLoading(false);
   };
 
   const handleUpdate = async (values, { setStatus, resetForm }) => {
@@ -162,7 +182,7 @@ export default function Article() {
 
   const handleOnEditorChange = (html) => {
     setContentHtml(html);
-  }
+  };
 
   if (isLoading) {
     return (
@@ -282,8 +302,49 @@ export default function Article() {
                 )}
               </TouchableOpacity>
 
+              <View style={{ width: "100%" }}>
+                <AppText style={styles.label}>Video</AppText>
+              </View>
+              <TouchableOpacity onPress={pickVideo}>
+                {isVideoLoading && (
+                  <View style={[styles.img, styles.horizontal]}>
+                    <ActivityIndicator
+                      size={70}
+                      style={{ opacity: 0.5 }}
+                      animating={true}
+                      color="tomato"
+                    />
+                  </View>
+                )}
+                {!isVideoLoading && (
+                  <View>
+                    {!article["video"] && (
+                      <Image
+                        style={styles.img}
+                        source={require("../../assets/images/video.png")}
+                      />
+                    )}
+                    {article["video"] && (
+                      <Video
+                        ref={video}
+                        style={styles.video}
+                        source={{
+                          uri: article["video"],
+                        }}
+                        useNativeControls
+                        resizeMode="contain"
+                        isLooping
+                      />
+                    )}
+                  </View>
+                )}
+              </TouchableOpacity>
+
               {/* <Editor style={{width: "100%", borderColor: "#979797", borderWidth: 1}} /> */}
-              <Editor value={article['content']} callback={handleOnEditorChange} />
+              <Editor
+                value={article["content"]}
+                callback={handleOnEditorChange}
+              />
               <View style={{ padding: 5 }}></View>
               <SubmitButton title="Create" />
               <View style={{ paddingBottom: 30 }}></View>
@@ -313,6 +374,7 @@ const styles = StyleSheet.create({
     width: 330,
     height: 200,
     marginBottom: 20,
+    backgroundColor: "#F3F5F7",
   },
   container: {
     flex: 1,
@@ -332,5 +394,10 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     lineHeight: 22,
     marginBottom: 10,
+  },
+  video: {
+    alignSelf: "center",
+    width: 330,
+    height: 200,
   },
 });

@@ -40,7 +40,7 @@ export default function App() {
     <Tab.Navigator {...{ screenOptions }}>
       <Tab.Screen
         name="Home"
-        component={Home}
+        children={() => <Home value={categories} />}
         options={{
           unmountOnBlur: true,
           tabBarIcon: ({ focused }) => (
@@ -91,10 +91,10 @@ export default function App() {
           unmountOnBlur: true,
           tabBarIcon: ({ focused }) => (
             <Feather
-            name="file-plus"
-            size={26}
-            color={focused ? "#667080" : "#bbc0c8"}
-          />
+              name="file-plus"
+              size={26}
+              color={focused ? "#667080" : "#bbc0c8"}
+            />
           ),
           header: () => null,
         }}
@@ -121,6 +121,7 @@ export default function App() {
   );
   const [headerHeight, setHeaderHeight] = useState(115);
   const [childData, setChildData] = useState("");
+  const [categories, setCategory] = useState([]);
   const [userId, setUserId] = useState("");
   const getValue = () => childData;
   const [loaded] = useFonts({
@@ -128,6 +129,7 @@ export default function App() {
   });
 
   useEffect(() => {}, [childData]);
+  useEffect(() => {}, [categories]);
 
   if (!loaded) {
     return null;
@@ -170,7 +172,11 @@ export default function App() {
           component={TabNavigator}
           options={{
             headerTitle: () => (
-              <Header passChildData={setChildData} title={getTitle()} />
+              <Header
+                passInput={setChildData}
+                passCategory={setCategory}
+                title={getTitle()}
+              />
             ),
             headerLeft: () => <></>,
           }}

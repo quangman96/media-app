@@ -54,7 +54,7 @@ export const getDocRef = (table, id) => {
   return doc(db, table, id);
 };
 
-export async function uploadImageAsync(uri, callBack) {
+export async function uploadImageAsync(uri, callBack, type = "image") {
   // Why are we using XMLHttpRequest? See:
   // https://github.com/expo/expo/issues/2402#issuecomment-443726662
   const blob = await new Promise((resolve, reject) => {
@@ -71,7 +71,7 @@ export async function uploadImageAsync(uri, callBack) {
     xhr.send(null);
   });
 
-  const storagePath = `uploads/${`image-${new Date().getTime()}`}`;
+  const storagePath = `uploads/${`${type}-${new Date().getTime()}`}`;
   const storageRef = ref(storage, storagePath);
   const uploadTask = uploadBytesResumable(storageRef, blob);
 
@@ -90,7 +90,7 @@ export async function uploadImageAsync(uri, callBack) {
     () => {
       // complete function ....
       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-        callBack(downloadURL);
+        callBack(downloadURL, type);
       });
     }
   );
@@ -102,6 +102,17 @@ export async function uploadImageAsync(uri, callBack) {
 
   return await snapshot.ref.getDownloadURL();
 }
+
+export const saveMediaToStorage = (media, path) => (dispatch) =>
+  new Promise((resolve, reject) => {
+    const fileRef = firebase.storege().ref().child(path);
+
+    fetch(media)
+      .then((response) => response.blob())
+      .then((blob) => fileRef.put(blob))
+      .then((task) => task.ref.getDownloadURL())
+      .then((downloadURL) => resolve(downloadURL));
+  });
 
 export const getAll = async (table) => {
   const ref = getTableRef(table);

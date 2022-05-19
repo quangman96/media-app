@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
     "splash": {
-      "image": "./assets/images/logo.png",
+      "image": "./assets/images/banner.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -22,7 +22,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/logo.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#ff6347"
       },
       "package": "ait.nativeapp"
     },
