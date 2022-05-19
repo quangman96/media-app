@@ -187,7 +187,7 @@ export default function App() {
           options={{
             title: "",
             headerStyle: {
-              // height: 80,
+              height: 85,
             },
             headerLeftContainerStyle: {
               marginBottom: 20,

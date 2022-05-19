@@ -1,13 +1,14 @@
 import { StyleSheet, Text, View, Image, ScrollView } from "react-native";
-import React from "react";
+import React, { useRef } from "react";
 import AppText from "../components/Text";
 import Screen from "../components/Screens";
 import ChipList from "../components/ChipList";
-
 import { useWindowDimensions } from "react-native";
 import RenderHtml from "react-native-render-html";
+import { Video } from "expo-av";
 
 export default function Detail({ route }) {
+  const video = useRef(null);
   const data = route?.params?.data;
   const { width } = useWindowDimensions();
 
@@ -42,7 +43,21 @@ export default function Detail({ route }) {
                 <AppText>Nguyen Quang Man</AppText>
               </View> */}
               <AppText style={styles.text}>{data.description}</AppText>
-
+              {data.video && (
+                <View style={styles.videoArea}>
+                  <Video
+                    ref={video}
+                    style={styles.video}
+                    source={{
+                      uri: data["video"],
+                    }}
+                    useNativeControls
+                    resizeMode="contain"
+                    isLooping
+                    shouldPlay
+                  />
+                </View>
+              )}
               <RenderHtml
                 contentWidth={width}
                 source={{ html: `${data.content}` }}
@@ -104,5 +119,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "400",
     lineHeight: 15,
+  },
+  videoArea: {
+    marginLeft: 0,
+    marginTop: 10,
+    marginRight: 5,
+  },
+  video: {
+    alignSelf: "center",
+    width: "100%",
+    height: 200,
   },
 });
