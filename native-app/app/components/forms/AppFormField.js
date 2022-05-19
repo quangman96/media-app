@@ -14,6 +14,7 @@ export default function AppFormField({
   style,
   initValues,
   editable,
+  customErrors,
   ...otherProps
 }) {
   const { setFieldTouched, handleChange, errors, touched } = useFormikContext();
@@ -29,7 +30,7 @@ export default function AppFormField({
         onBlur={() => setFieldTouched(name)}
         {...props}
       />
-      <ErrorMessage error={errors[name]} visible={touched[name]} />
+      <ErrorMessage error={errors[name] ? errors[name] : customErrors} visible={touched[name]} />
     </View>
   );
 }

@@ -35,7 +35,7 @@ export default function Home() {
     }
 
     async function getArticleList() {
-      const articleList = await getArticles(user_id);
+      const articleList = await getArticles(user_id, true);
       setArticles(articleList);
       const newArticleList = [...articleList].reverse();
       setsetArticlesHorizontal(newArticleList.slice(0, 4));

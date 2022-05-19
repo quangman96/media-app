@@ -91,10 +91,10 @@ export default function App() {
           unmountOnBlur: true,
           tabBarIcon: ({ focused }) => (
             <Feather
-            name="file-plus"
-            size={26}
-            color={focused ? "#667080" : "#bbc0c8"}
-          />
+              name="file-plus"
+              size={26}
+              color={focused ? "#667080" : "#bbc0c8"}
+            />
           ),
           header: () => null,
         }}
@@ -186,6 +186,16 @@ export default function App() {
             headerLeftContainerStyle: {
               marginBottom: 20,
             },
+          }}
+        />
+        <Stack.Screen
+          name="Article"
+          component={Article}
+          options={{
+            title: "Edit Article",
+            headerStyle: {
+              height: 85
+            }
           }}
         />
       </Stack.Navigator>
