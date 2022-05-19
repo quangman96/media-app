@@ -15,7 +15,6 @@ import Search from "./app/screens/Search";
 import Home from "./app/screens/Home";
 import Detail from "./app/screens/Detail";
 import Header from "./app/screens/Header";
-import Player from "./app/screens/Player";
 import { LogBox } from "react-native";
 import Article from "./app/screens/Article";
 
@@ -92,10 +91,10 @@ export default function App() {
           unmountOnBlur: true,
           tabBarIcon: ({ focused }) => (
             <Feather
-            name="file-plus"
-            size={26}
-            color={focused ? "#667080" : "#bbc0c8"}
-          />
+              name="file-plus"
+              size={26}
+              color={focused ? "#667080" : "#bbc0c8"}
+            />
           ),
           header: () => null,
         }}
@@ -108,24 +107,6 @@ export default function App() {
           tabBarIcon: ({ focused }) => (
             <Feather
               name="user"
-              size={26}
-              color={focused ? "#667080" : "#bbc0c8"}
-            />
-          ),
-          header: () => null,
-          headerTitle: () => <></>,
-          headerLeft: () => <></>,
-          headerStyle: { height: 300 },
-        }}
-      />
-      <Tab.Screen
-        name="Player"
-        component={Player}
-        options={{
-          unmountOnBlur: true,
-          tabBarIcon: ({ focused }) => (
-            <Feather
-              name="video"
               size={26}
               color={focused ? "#667080" : "#bbc0c8"}
             />

@@ -90,7 +90,7 @@ export async function uploadImageAsync(uri, callBack, type = "image") {
     () => {
       // complete function ....
       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-        callBack(downloadURL);
+        callBack(downloadURL, type);
       });
     }
   );
@@ -102,6 +102,17 @@ export async function uploadImageAsync(uri, callBack, type = "image") {
 
   return await snapshot.ref.getDownloadURL();
 }
+
+export const saveMediaToStorage = (media, path) => (dispatch) =>
+  new Promise((resolve, reject) => {
+    const fileRef = firebase.storege().ref().child(path);
+
+    fetch(media)
+      .then((response) => response.blob())
+      .then((blob) => fileRef.put(blob))
+      .then((task) => task.ref.getDownloadURL())
+      .then((downloadURL) => resolve(downloadURL));
+  });
 
 export const getAll = async (table) => {
   const ref = getTableRef(table);
