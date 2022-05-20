@@ -17,7 +17,7 @@ import {
   getMasterData,
   updateOne,
   createUser,
-  uploadImageAsync,
+  uploadFileAsync,
   getUserId,
   auth,
 } from "../../firebase";
@@ -107,7 +107,7 @@ export default function User() {
       });
       setImageLoading(true);
       if (!result.cancelled) {
-        uploadImageAsync(result.uri, handleUpload);
+        uploadFileAsync(result.uri, handleUpload);
       } else {
         setImageLoading(false);
       }

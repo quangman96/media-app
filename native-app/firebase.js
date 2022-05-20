@@ -12,12 +12,7 @@ import {
   updateDoc,
 } from "firebase/firestore/lite";
 
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from "firebase/storage";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -54,54 +49,29 @@ export const getDocRef = (table, id) => {
   return doc(db, table, id);
 };
 
-export async function uploadImageAsync(uri, callBack) {
-  // Why are we using XMLHttpRequest? See:
-  // https://github.com/expo/expo/issues/2402#issuecomment-443726662
+export const uploadFileAsync = async (uri, callBack, type = "image") => {
   const blob = await new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.onload = function () {
+    xhr.onload = () => {
       resolve(xhr.response);
     };
-    xhr.onerror = function (e) {
-      console.log(e);
-      reject(new TypeError("Network request failed"));
+    xhr.onerror = (e) => {
+      reject(new TypeError(e));
     };
     xhr.responseType = "blob";
     xhr.open("GET", uri, true);
     xhr.send(null);
   });
-
-  const storagePath = `uploads/${`image-${new Date().getTime()}`}`;
+  const storagePath = `uploads/${`${type}-${new Date().getTime()}`}`;
   const storageRef = ref(storage, storagePath);
-  const uploadTask = uploadBytesResumable(storageRef, blob);
 
-  uploadTask.on(
-    "state_changed",
-    (snapshot) => {
-      // progrss function ....
-      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      console.log("Upload is " + progress + "% done");
-    },
-    (error) => {
-      // error function ....
-      console.log(error);
-      return f;
-    },
-    () => {
-      // complete function ....
-      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-        callBack(downloadURL);
-      });
-    }
+  uploadBytes(storageRef, blob).then((snap) =>
+    getDownloadURL(snap.ref)
+      .then((downloadURL) => callBack(downloadURL, type))
+      .catch((e) => console.log(e))
   );
-
-  const snapshot = await ref.put(blob);
-
-  // We're done with the blob, close and release it
   blob.close();
-
-  return await snapshot.ref.getDownloadURL();
-}
+};
 
 export const getAll = async (table) => {
   const ref = getTableRef(table);
@@ -179,6 +149,16 @@ export const getUserByUserId = async (user_id) => {
   }));
 };
 
+export const getArticleByUserId = async (user_id) => {
+  console.log(user_id);
+  const q = query(getTableRef("articles"), where("user_id", "==", user_id));
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.docs.map((doc) => ({
+    ...doc.data(),
+    id: doc.id,
+  }));
+};
+
 export const getArticles = async (user_id, keepCategoryId = false) => {
   const articles = await getAll("articles");
   const categoryList = await getAll("categories");
@@ -195,7 +175,11 @@ export const getArticles = async (user_id, keepCategoryId = false) => {
   articles.forEach((e) => {
     resultData.push({
       ...e,
-      categories: tranferCategory(e["categories"], categoryList, keepCategoryId),
+      categories: tranferCategory(
+        e["categories"],
+        categoryList,
+        keepCategoryId
+      ),
     });
   });
   return resultData;
@@ -227,6 +211,21 @@ export const getSavedDataByUser = async (user_id) => {
   return resultData;
 };
 
+export const getArticleByUser = async (user_id) => {
+  const articles = await getArticleByUserId(user_id);
+  console.log(articles.length);
+  const categoryList = await getAll("categories");
+
+  const resultData = [];
+  articles.forEach((e) => {
+    resultData.push({
+      ...e,
+      categories: tranferCategory(e["categories"], categoryList),
+    });
+  });
+  return resultData;
+};
+
 export const createSavedData = async (user_id, articles_id) => {
   const obj = {
     articles_id,
@@ -244,14 +243,14 @@ export const createSavedData = async (user_id, articles_id) => {
 export const softDelete = async (table, id) => {
   const docRef = getDocRef(table, id);
   await deleteDoc(docRef).catch((e) => {
-    console.log("No such document exist!");
+    console.log(e);
   });
 };
 
 export const updateById = async (table, data, id) => {
   const docRef = getDocRef(table, id);
   await updateDoc(docRef, data).catch((e) => {
-    console.log("No such document exist!");
+    console.log(e);
   });
 };
 
@@ -273,13 +272,12 @@ export const tranferCategory = (list, categoryList, keepCategoryId = false) => {
 };
 
 export const createArticle = async (data) => {
-  const uid = auth.currentUser.uid;
   const saveData = {
     ...data,
     create_at: new Date().getTime(),
-    create_by: uid,
+    create_by: userId,
     change_at: new Date().getTime(),
-    change_by: uid,
+    change_by: userId,
     id_delete: false,
   };
 

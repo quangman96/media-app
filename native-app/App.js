@@ -15,8 +15,9 @@ import Search from "./app/screens/Search";
 import Home from "./app/screens/Home";
 import Detail from "./app/screens/Detail";
 import Header from "./app/screens/Header";
-import { LogBox } from "react-native";
+import MyList from "./app/screens/MyList";
 import Article from "./app/screens/Article";
+import { LogBox } from "react-native";
 
 LogBox.ignoreAllLogs();
 
@@ -40,7 +41,7 @@ export default function App() {
     <Tab.Navigator {...{ screenOptions }}>
       <Tab.Screen
         name="Home"
-        component={Home}
+        children={() => <Home value={categories} />}
         options={{
           unmountOnBlur: true,
           tabBarIcon: ({ focused }) => (
@@ -84,7 +85,7 @@ export default function App() {
           headerLeft: () => null,
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Add Article"
         component={Article}
         options={{
@@ -92,6 +93,21 @@ export default function App() {
           tabBarIcon: ({ focused }) => (
             <Feather
               name="file-plus"
+              size={26}
+              color={focused ? "#667080" : "#bbc0c8"}
+            />
+          ),
+          header: () => null,
+        }}
+      /> */}
+      <Tab.Screen
+        name="My Article"
+        component={MyList}
+        options={{
+          unmountOnBlur: true,
+          tabBarIcon: ({ focused }) => (
+            <Feather
+              name="list"
               size={26}
               color={focused ? "#667080" : "#bbc0c8"}
             />
@@ -121,6 +137,7 @@ export default function App() {
   );
   const [headerHeight, setHeaderHeight] = useState(115);
   const [childData, setChildData] = useState("");
+  const [categories, setCategory] = useState([]);
   const [userId, setUserId] = useState("");
   const getValue = () => childData;
   const [loaded] = useFonts({
@@ -128,6 +145,7 @@ export default function App() {
   });
 
   useEffect(() => {}, [childData]);
+  useEffect(() => {}, [categories]);
 
   if (!loaded) {
     return null;
@@ -170,7 +188,11 @@ export default function App() {
           component={TabNavigator}
           options={{
             headerTitle: () => (
-              <Header passChildData={setChildData} title={getTitle()} />
+              <Header
+                passInput={setChildData}
+                passCategory={setCategory}
+                title={getTitle()}
+              />
             ),
             headerLeft: () => <></>,
           }}
@@ -181,7 +203,7 @@ export default function App() {
           options={{
             title: "",
             headerStyle: {
-              // height: 80,
+              height: 85,
             },
             headerLeftContainerStyle: {
               marginBottom: 20,
@@ -192,7 +214,7 @@ export default function App() {
           name="Article"
           component={Article}
           options={{
-            title: "Edit Article",
+            title: "Add Article",
             headerStyle: {
               height: 110,
             },

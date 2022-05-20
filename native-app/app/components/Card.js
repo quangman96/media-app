@@ -13,7 +13,7 @@ import defaultStyles from "../config/styles";
 import { useNavigation } from "@react-navigation/core";
 import { createSavedData, deleteSavedData, getUserId } from "../../firebase";
 
-export default function Card({ icon, cardObj, isSavedPage }) {
+export default function Card({ icon, cardObj, isSavedPage, isMyListPage }) {
   const user_id = getUserId();
   const [isSaved, setSaved] = useState(cardObj["is_saved"]);
   const [isDelete, setIsDelete] = useState(false);
@@ -49,9 +49,13 @@ export default function Card({ icon, cardObj, isSavedPage }) {
   };
 
   const handleClickCard = () => {
-    // navigation.navigate("Detail", { data: cardObj });
+    navigation.navigate("Detail", { data: cardObj });
+  };
+
+  const handleClickEditButton = () => {
     navigation.navigate("Article", { data: cardObj });
   };
+
   return (
     !isDelete && (
       <TouchableOpacity style={styles.area} onPress={handleClickCard}>
@@ -60,7 +64,27 @@ export default function Card({ icon, cardObj, isSavedPage }) {
             <AppText numberOfLines={2} style={styles.label}>
               {cardObj["title"]}
             </AppText>
-            {isSaved ? (
+            {isMyListPage && (
+              <View style={styles.iconGroup}>
+                <TouchableOpacity onPress={() => handleClickEditButton()}>
+                  <Feather
+                    name={"edit"}
+                    size={22}
+                    color={defaultStyles.colors.icon}
+                    style={styles.iconInGroup}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => {}}>
+                  <Feather
+                    name={"trash"}
+                    size={22}
+                    color={defaultStyles.colors.icon}
+                    style={styles.icon}
+                  />
+                </TouchableOpacity>
+              </View>
+            )}
+            {isSaved && !isMyListPage && (
               <TouchableOpacity onPress={() => handleClickButton(false)}>
                 <Feather
                   name={"bookmark"}
@@ -69,7 +93,8 @@ export default function Card({ icon, cardObj, isSavedPage }) {
                   style={styles.icon}
                 />
               </TouchableOpacity>
-            ) : (
+            )}
+            {!isSaved && !isMyListPage && (
               <TouchableOpacity onPress={() => handleClickButton(true)}>
                 <Feather
                   name={"bookmark"}
@@ -84,7 +109,16 @@ export default function Card({ icon, cardObj, isSavedPage }) {
             <AppText numberOfLines={5} style={styles.description}>
               {cardObj["description"]}
             </AppText>
-            <Image style={styles.image} source={{ uri: cardObj["image"] }} />
+            <Image
+              style={styles.image}
+              source={
+                cardObj["image"]
+                  ? {
+                      uri: cardObj["image"],
+                    }
+                  : require("../../assets/images/inf.png")
+              }
+            />
           </View>
           <View style={styles.footer}>
             <ChipList key={cardObj.id} data={cardObj["categories"]}></ChipList>
@@ -137,7 +171,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   label: {
-    width: 270,
+    width: 260,
     color: "#667080",
     fontSize: 14,
     fontWeight: "700",
@@ -159,6 +193,12 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginTop: 5,
   },
+  iconInGroup: {
+    alignSelf: "center",
+    marginTop: 5,
+    marginRight: 5,
+    marginLeft: 5,
+  },
   time: {
     alignSelf: "center",
     position: "absolute",
@@ -167,5 +207,9 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: "500",
     lineHeight: 22,
+  },
+  iconGroup: {
+    flex: 1,
+    flexDirection: "row",
   },
 });

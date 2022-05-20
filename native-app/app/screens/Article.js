@@ -1,5 +1,7 @@
+import { useNavigation } from "@react-navigation/core";
+import { Video } from "expo-av";
 import * as ImagePicker from "expo-image-picker";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -9,11 +11,12 @@ import {
   View,
 } from "react-native";
 import {
+  createArticle,
   getAll,
   getMasterData,
-  uploadImageAsync,
-  createArticle,
   updateById,
+  uploadFileAsync,
+  getUserId,
 } from "../../firebase";
 import Editor from "../components/Editor";
 import { AppForm, AppFormField, SubmitButton } from "../components/forms";
@@ -21,13 +24,14 @@ import AppFormDropDown from "../components/forms/AppFormDropDown";
 import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
 import Screen from "../components/Screens";
 import AppText from "../components/Text";
-import { useNavigation } from "@react-navigation/core";
 
 export default function Article({ route }) {
   const navigation = useNavigation();
+  const video = useRef(null);
   const [statusItems, setStatusItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isImageLoading, setImageLoading] = useState(false);
+  const [isVideoLoading, setVideoLoading] = useState(false);
   const [categoriesItems, setCategoriesItems] = useState([]);
   const [defaultArticle, setDefaultArticle] = useState({});
   const [contentHtml, setContentHtml] = useState("");
@@ -39,6 +43,7 @@ export default function Article({ route }) {
     categories: [],
     status: "",
     image: "",
+    video: "",
     content: "",
   });
 
@@ -87,6 +92,7 @@ export default function Article({ route }) {
           categories: categoriesId,
           status: editData["status"],
           image: editData["image"],
+          video: editData["video"],
           content: editData["content"],
         };
         setContentHtml(editData["content"]);
@@ -102,6 +108,7 @@ export default function Article({ route }) {
       }
 
       setDefaultArticle(data);
+
       setArticle(data);
 
       setTimeout(() => {
@@ -114,14 +121,14 @@ export default function Article({ route }) {
   const pickImage = async () => {
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [4, 4],
         quality: 1,
       });
       setImageLoading(true);
       if (!result.cancelled) {
-        uploadImageAsync(result.uri, handleUpload);
+        uploadFileAsync(result.uri, handleUpload);
       } else {
         setImageLoading(false);
       }
@@ -131,14 +138,36 @@ export default function Article({ route }) {
     }
   };
 
-  const handleUpload = (result) => {
+  const pickVideo = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+        allowsEditing: true,
+        aspect: [16, 9],
+        quality: 1,
+        base64: true,
+      });
+      setVideoLoading(true);
+      if (!result.cancelled) {
+        uploadFileAsync(result.uri, handleUpload, "video");
+      } else {
+        setVideoLoading(false);
+      }
+    } catch (e) {
+      setVideoLoading(false);
+    }
+  };
+
+  const handleUpload = (result, type = "image") => {
     if (result) {
-      setArticle({ ...article, image: result });
+      setArticle({ ...article, [type]: result });
     }
     setImageLoading(false);
+    setVideoLoading(false);
   };
 
   const handleUpdate = async (values, { setStatus, resetForm }) => {
+    console.log("============================================")
     setTitleErrors("");
     setCategoriesErrors("");
     let isError = false;
@@ -160,16 +189,17 @@ export default function Article({ route }) {
       description: values["description"],
       content: contentHtml,
       image: article.image,
+      video: article.video,
       is_delete: false,
       sort_no: "",
       status: article["status"],
+      user_id: await getUserId()
     };
 
     if (article["id"]) {
       await updateById("articles", data, article["id"]);
       ToastAndroid.show("Edit article successfully !!!", ToastAndroid.SHORT);
       navigation.navigate("Main", { screen: "Home" });
-      // navigation.push("Main", { screen: "Home" });
       return;
     } else await createArticle(data);
     resetForm({});
@@ -181,6 +211,7 @@ export default function Article({ route }) {
       categories: [defaultArticle["categories"][0]],
       status: defaultArticle["status"],
       image: null,
+      video: null,
       content: null,
     });
     setContentHtml("");
@@ -303,6 +334,45 @@ export default function Article({ route }) {
                 )}
               </TouchableOpacity>
 
+              <View style={{ width: "100%" }}>
+                <AppText style={styles.label}>Video</AppText>
+              </View>
+              <TouchableOpacity onPress={pickVideo}>
+                {isVideoLoading && (
+                  <View style={[styles.img, styles.horizontal]}>
+                    <ActivityIndicator
+                      size={70}
+                      style={{ opacity: 0.5 }}
+                      animating={true}
+                      color="tomato"
+                    />
+                  </View>
+                )}
+                {!isVideoLoading && (
+                  <View>
+                    {!article["video"] && (
+                      <Image
+                        style={styles.img}
+                        source={require("../../assets/images/video.png")}
+                      />
+                    )}
+                    {article["video"] && (
+                      <Video
+                        ref={video}
+                        style={styles.video}
+                        source={{
+                          uri: article["video"],
+                        }}
+                        useNativeControls
+                        resizeMode="contain"
+                        isLooping
+                        shouldPlay
+                      />
+                    )}
+                  </View>
+                )}
+              </TouchableOpacity>
+
               <Editor
                 value={article["content"]}
                 callback={handleOnEditorChange}
@@ -329,6 +399,7 @@ const styles = StyleSheet.create({
     width: 330,
     height: 200,
     marginBottom: 20,
+    backgroundColor: "#F3F5F7",
   },
   container: {
     flex: 1,
@@ -348,5 +419,10 @@ const styles = StyleSheet.create({
   },
   status: {
     marginTop: 10,
+  },
+  video: {
+    alignSelf: "center",
+    width: 330,
+    height: 200,
   },
 });

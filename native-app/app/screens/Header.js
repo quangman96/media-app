@@ -8,38 +8,40 @@ import {
   TextInput,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import ChipList from "../components/ChipList";
+import AppText from "../components/Text";
 
 import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/core";
-import { auth } from "../../firebase";
+import { auth, getAll } from "../../firebase";
+import { ScrollView } from "react-native-gesture-handler";
 
-export default function Header({ title, passChildData }) {
-  const buttons = [
-    {
-      name: "Popular",
-      theme: "dark",
-    },
-    {
-      name: "All",
-      theme: "light",
-    },
-    {
-      name: "For you",
-      theme: "light",
-    },
-  ];
+export default function Header({ title, passInput, passCategory }) {
   const [text, onChangeText] = useState("");
+  const [categories, onCategoryChange] = useState([]);
+  const [buttons, setButtons] = useState([]);
   const { width } = useWindowDimensions();
   const name = title === "User" ? "Profile" : title;
   const navigation = useNavigation();
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      passChildData(text);
+      passInput(text);
     }, 500);
     return () => clearTimeout(delayDebounceFn);
   }, [text]);
+
+  useEffect(() => {
+    async function getCategoryList() {
+      const res = await getAll("categories");
+      if (res.length > 0) {
+        const temp = res.map((e) =>
+          Object.assign({ name: e.name, focus: false })
+        );
+        setButtons(temp);
+      }
+    }
+    getCategoryList();
+  }, []);
 
   const showToast = () => {
     ToastAndroid.show("Logout successfully !!!", ToastAndroid.SHORT);
@@ -52,6 +54,17 @@ export default function Header({ title, passChildData }) {
         showToast();
       })
       .catch((e) => console.log(e));
+  };
+
+  const handleCreateArticle = () => {
+    navigation.navigate("Article", { data: null });
+  };
+
+  const handleClickCard = (index) => {
+    const temp = [...buttons];
+    temp[index]["focus"] = !temp[index]["focus"];
+    setButtons(temp);
+    passCategory(temp);
   };
 
   return (
@@ -69,6 +82,17 @@ export default function Header({ title, passChildData }) {
             }}
           >
             {<Feather name={"log-out"} size={30} color={"#0386D0"} />}
+          </TouchableOpacity>
+        )}
+        {title === "My Article" && (
+          <TouchableOpacity
+            onPress={handleCreateArticle}
+            style={{
+              alignSelf: "flex-end",
+              marginRight: "12%",
+            }}
+          >
+            {<Feather name={"file-plus"} size={30} color={"#0386D0"} />}
           </TouchableOpacity>
         )}
         {title === "Search" && (
@@ -97,12 +121,50 @@ export default function Header({ title, passChildData }) {
           <View styles={styles.view}>
             <Text style={styles.title}>Home</Text>
             <View style={{ marginTop: 10 }}></View>
-            <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            <ScrollView
+              showsHorizontalScrollIndicator={false}
+              horizontal={true}
             >
-              <View style={styles.chips}></View>
-              <ChipList data={buttons} size="medium"></ChipList>
-            </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <View style={styles.chips}></View>
+                <View style={styles.chipBody}>
+                  {(buttons || []).map((prop, key) => {
+                    return (
+                      key < 4 && (
+                        <TouchableOpacity
+                          disabled={false}
+                          onPress={() => handleClickCard(key)}
+                        >
+                          <View
+                            style={[
+                              styles.theme,
+                              {
+                                backgroundColor: prop["focus"]
+                                  ? "#667080"
+                                  : "#EEF1F4",
+                              },
+                            ]}
+                          >
+                            <AppText
+                              style={
+                                styles[prop["focus"] ? "fontDark" : "fontLight"]
+                              }
+                            >
+                              {prop["name"]}
+                            </AppText>
+                          </View>
+                        </TouchableOpacity>
+                      )
+                    );
+                  })}
+                </View>
+              </View>
+            </ScrollView>
             <View style={{ marginTop: 20 }}></View>
           </View>
         )}
@@ -156,5 +218,32 @@ const styles = StyleSheet.create({
   icon: {
     marginTop: 10,
     marginRight: 10,
+  },
+  chipBody: {
+    flexDirection: "row",
+  },
+  theme: {
+    paddingRight: 10,
+    paddingLeft: 10,
+    height: 40,
+    minWidth: 100,
+    justifyContent: "center",
+    backgroundColor: "#EEF1F4",
+    borderRadius: 20,
+    marginRight: 20,
+  },
+  fontLight: {
+    alignSelf: "center",
+    color: "#667080",
+    fontSize: 14,
+    fontWeight: "700",
+    lineHeight: 22,
+  },
+  fontDark: {
+    alignSelf: "center",
+    color: "white",
+    fontSize: 14,
+    fontWeight: "700",
+    lineHeight: 22,
   },
 });
