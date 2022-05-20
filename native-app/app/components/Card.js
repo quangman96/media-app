@@ -49,7 +49,8 @@ export default function Card({ icon, cardObj, isSavedPage }) {
   };
 
   const handleClickCard = () => {
-    navigation.navigate("Detail", { data: cardObj });
+    // navigation.navigate("Detail", { data: cardObj });
+    navigation.navigate("Article", { data: cardObj });
   };
   return (
     !isDelete && (

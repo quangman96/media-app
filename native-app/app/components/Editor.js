@@ -85,11 +85,11 @@ export default function Editor({ value, callback }) {
             { background: [] },
             { align: [] },
             "image",
-            "blockquote",
-            "code-block",
-            "link",
+            // "link",
             { list: "ordered" },
             { list: "bullet" },
+            "blockquote",
+            "code-block",
           ]}
         />
 

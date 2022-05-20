@@ -194,8 +194,14 @@ export default function App() {
           options={{
             title: "Edit Article",
             headerStyle: {
-              height: 85
-            }
+              height: 110,
+            },
+            headerTintColor: "#667080",
+            headerTitleStyle: {
+              fontWeight: "bold",
+              fontSize: 35,
+              fontFamily: "Inter",
+            },
           }}
         />
       </Stack.Navigator>

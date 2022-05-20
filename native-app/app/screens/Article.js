@@ -169,6 +169,7 @@ export default function Article({ route }) {
       await updateById("articles", data, article["id"]);
       ToastAndroid.show("Edit article successfully !!!", ToastAndroid.SHORT);
       navigation.navigate("Main", { screen: "Home" });
+      // navigation.push("Main", { screen: "Home" });
       return;
     } else await createArticle(data);
     resetForm({});

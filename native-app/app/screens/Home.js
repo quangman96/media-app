@@ -1,10 +1,11 @@
 import { StyleSheet, ActivityIndicator, View } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Screen from "../components/Screens";
 import CardList from "../components/CardList";
 import HorizontalList from "../components/HorizontalList";
 import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
 import { getMasterData, getAll, getArticles, getUserId } from "../../firebase";
+import {useFocusEffect } from '@react-navigation/native';
 
 export default function Home() {
   const user_id = getUserId();
@@ -14,45 +15,89 @@ export default function Home() {
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    async function getButtonList() {
-      const res = await getMasterData("CATEGORY");
-      const buttonList = [];
-      res.forEach((e, i) => {
-        if (i === 0) {
-          buttonList.push({
-            name: e["name"],
-            theme: "dark",
-          });
-        } else {
-          buttonList.push({
-            name: e["name"],
-            theme: "light",
-          });
-        }
-      });
-      setButtons(buttonList);
-    }
+  useFocusEffect(
+    useCallback(() => {
+      setIsLoading(true);
+      async function getButtonList() {
+        const res = await getMasterData("CATEGORY");
+        const buttonList = [];
+        res.forEach((e, i) => {
+          if (i === 0) {
+            buttonList.push({
+              name: e["name"],
+              theme: "dark",
+            });
+          } else {
+            buttonList.push({
+              name: e["name"],
+              theme: "light",
+            });
+          }
+        });
+        setButtons(buttonList);
+      }
+  
+      async function getArticleList() {
+        const articleList = await getArticles(user_id, true);
+        setArticles(articleList);
+        const newArticleList = [...articleList].reverse();
+        setsetArticlesHorizontal(newArticleList.slice(0, 4));
+  
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 0);
+      }
+  
+      async function getCategoryList() {
+        const res = await getAll("categories");
+        setCategories(res);
+        getArticleList();
+      }
+      getButtonList();
+      getCategoryList();
+    }, [])
+  );
 
-    async function getArticleList() {
-      const articleList = await getArticles(user_id, true);
-      setArticles(articleList);
-      const newArticleList = [...articleList].reverse();
-      setsetArticlesHorizontal(newArticleList.slice(0, 4));
 
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 0);
-    }
+  // useEffect(() => {
+  //   async function getButtonList() {
+  //     const res = await getMasterData("CATEGORY");
+  //     const buttonList = [];
+  //     res.forEach((e, i) => {
+  //       if (i === 0) {
+  //         buttonList.push({
+  //           name: e["name"],
+  //           theme: "dark",
+  //         });
+  //       } else {
+  //         buttonList.push({
+  //           name: e["name"],
+  //           theme: "light",
+  //         });
+  //       }
+  //     });
+  //     setButtons(buttonList);
+  //   }
 
-    async function getCategoryList() {
-      const res = await getAll("categories");
-      setCategories(res);
-      getArticleList();
-    }
-    getButtonList();
-    getCategoryList();
-  }, []);
+  //   async function getArticleList() {
+  //     const articleList = await getArticles(user_id, true);
+  //     setArticles(articleList);
+  //     const newArticleList = [...articleList].reverse();
+  //     setsetArticlesHorizontal(newArticleList.slice(0, 4));
+
+  //     setTimeout(() => {
+  //       setIsLoading(false);
+  //     }, 0);
+  //   }
+
+  //   async function getCategoryList() {
+  //     const res = await getAll("categories");
+  //     setCategories(res);
+  //     getArticleList();
+  //   }
+  //   getButtonList();
+  //   getCategoryList();
+  // }, []);
 
   if (isLoading) {
     return (
