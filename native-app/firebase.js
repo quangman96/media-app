@@ -159,7 +159,7 @@ export const getArticleByUserId = async (user_id) => {
   }));
 };
 
-export const getArticles = async (user_id) => {
+export const getArticles = async (user_id, keepCategoryId = false) => {
   const articles = await getAll("articles");
   const categoryList = await getAll("categories");
   const saved = await getSavedData(user_id);
@@ -175,7 +175,11 @@ export const getArticles = async (user_id) => {
   articles.forEach((e) => {
     resultData.push({
       ...e,
-      categories: tranferCategory(e["categories"], categoryList),
+      categories: tranferCategory(
+        e["categories"],
+        categoryList,
+        keepCategoryId
+      ),
     });
   });
   return resultData;
@@ -254,12 +258,14 @@ export const deleteSavedData = async (saved_id) => {
   softDelete("user_saved", saved_id);
 };
 
-export const tranferCategory = (list, categoryList) => {
+export const tranferCategory = (list, categoryList, keepCategoryId = false) => {
   const array = [];
   (list || []).forEach((e) => {
     const obj = categoryList.find((z) => z.id === e);
     if (obj) {
-      array.push(obj["name"]);
+      keepCategoryId
+        ? array.push({ label: obj["name"], value: obj["id"] })
+        : array.push(obj["name"]);
     }
   });
   return array;

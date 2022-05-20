@@ -13,7 +13,7 @@ export default function ChipList({ data, size = "small" }) {
                 key={key}
                 size={size}
                 theme={prop["theme"]}
-                label={prop["name"] || prop}
+                label={prop["name"] || prop["label"] || prop}
               ></Chip>
             </TouchableOpacity>
           )

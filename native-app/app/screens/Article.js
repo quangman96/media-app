@@ -1,45 +1,42 @@
-import React, { useState, useEffect, useRef } from "react";
-import Screen from "../components/Screens";
-import { AppFormField, AppForm, SubmitButton } from "../components/forms";
+import { useNavigation } from "@react-navigation/core";
+import { Video } from "expo-av";
+import * as ImagePicker from "expo-image-picker";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
-  View,
-  StyleSheet,
   Image,
-  TouchableOpacity,
+  StyleSheet,
   ToastAndroid,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
-import * as Yup from "yup";
 import {
+  createArticle,
   getAll,
   getMasterData,
+  updateById,
   uploadFileAsync,
-  createArticle,
+  getUserId,
 } from "../../firebase";
-import DropDownPicker from "react-native-dropdown-picker";
-import AppText from "../components/Text";
-import * as ImagePicker from "expo-image-picker";
 import Editor from "../components/Editor";
-import { Video } from "expo-av";
+import { AppForm, AppFormField, SubmitButton } from "../components/forms";
+import AppFormDropDown from "../components/forms/AppFormDropDown";
+import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
+import Screen from "../components/Screens";
+import AppText from "../components/Text";
 
-const validationSchema = Yup.object().shape({
-  title: Yup.string().required().required("Title is required"),
-});
-
-export default function Article() {
+export default function Article({ route }) {
+  const navigation = useNavigation();
   const video = useRef(null);
-  const [statusOpen, setStatusOpen] = useState(false);
-  const [statusValue, setStatusValue] = useState("");
   const [statusItems, setStatusItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isImageLoading, setImageLoading] = useState(false);
   const [isVideoLoading, setVideoLoading] = useState(false);
-  const [categoryOpen, setCategoryOpen] = useState(false);
-  const [categoryValue, setCategoryValue] = useState([]);
   const [categoriesItems, setCategoriesItems] = useState([]);
   const [defaultArticle, setDefaultArticle] = useState({});
   const [contentHtml, setContentHtml] = useState("");
+  const [categoriesErrors, setCategoriesErrors] = useState("");
+  const [titleErrors, setTitleErrors] = useState("");
   const [article, setArticle] = useState({
     title: "",
     description: "",
@@ -80,19 +77,36 @@ export default function Article() {
         })
       );
 
+      let data = {};
+      const editData = route?.params?.data;
       setCategoriesItems(categoriesData);
-      setCategoryValue([categoriesData[0].value]);
-
       setStatusItems(statusData);
-      setStatusValue(statusData[0].value);
-      const data = {
-        title: "",
-        description: "",
-        categories: [categoriesData[0].value],
-        status: statusData[0].value,
-        image: "",
-        content: "",
-      };
+      if (editData) {
+        const categoriesId = (editData?.categories || []).map(
+          (child) => child.value
+        );
+        data = {
+          id: editData["id"],
+          title: editData["title"],
+          description: editData["description"],
+          categories: categoriesId,
+          status: editData["status"],
+          image: editData["image"],
+          video: editData["video"],
+          content: editData["content"],
+        };
+        setContentHtml(editData["content"]);
+      } else {
+        data = {
+          title: "",
+          description: "",
+          categories: [categoriesData[0].value],
+          status: statusData[0].value,
+          image: "",
+          content: "",
+        };
+      }
+
       setDefaultArticle(data);
 
       setArticle(data);
@@ -153,29 +167,53 @@ export default function Article() {
   };
 
   const handleUpdate = async (values, { setStatus, resetForm }) => {
+    console.log("============================================")
+    setTitleErrors("");
+    setCategoriesErrors("");
+    let isError = false;
+    if (!values["title"] || values["title"].length == 0) {
+      isError = true;
+      setTitleErrors("Title is required");
+    }
+
+    if (article["categories"].length == 0) {
+      isError = true;
+      setCategoriesErrors("Pick at least 1");
+    }
+
+    if (isError) return;
+
     const data = {
-      categories: categoryValue,
+      categories: article["categories"],
       title: values["title"],
       description: values["description"],
       content: contentHtml,
       image: article.image,
+      video: article.video,
       is_delete: false,
       sort_no: "",
-      status: values["status"],
+      status: article["status"],
+      user_id: await getUserId()
     };
-    await createArticle(data);
+
+    if (article["id"]) {
+      await updateById("articles", data, article["id"]);
+      ToastAndroid.show("Edit article successfully !!!", ToastAndroid.SHORT);
+      navigation.navigate("Main", { screen: "Home" });
+      return;
+    } else await createArticle(data);
     resetForm({});
     setStatus({ success: true });
     setArticle({
+      ...article,
       title: null,
       description: null,
       categories: [defaultArticle["categories"][0]],
       status: defaultArticle["status"],
       image: null,
+      video: null,
       content: null,
     });
-    setCategoryValue([defaultArticle["categories"][0]]);
-    setStatusValue(defaultArticle["status"]);
     setContentHtml("");
     ToastAndroid.show("Create article successfully !!!", ToastAndroid.SHORT);
   };
@@ -205,11 +243,7 @@ export default function Article() {
           }}
         >
           <View style={styles.body}>
-            <AppForm
-              initialValues={article}
-              onSubmit={handleUpdate}
-              validationSchema={validationSchema}
-            >
+            <AppForm initialValues={article} onSubmit={handleUpdate}>
               <AppFormField
                 label="Title"
                 autoCapitalize="none"
@@ -217,6 +251,7 @@ export default function Article() {
                 name="title"
                 placeholder="Input text"
                 initValues={article["title"]}
+                customErrors={titleErrors}
               />
 
               <AppFormField
@@ -228,51 +263,48 @@ export default function Article() {
                 initValues={article["description"]}
                 numberOfLines={4}
                 multiline={true}
-                height={76}
+                height={80}
               />
 
-              {/* <View style={styles.inline}> */}
-              <View style={styles.dropdown}>
-                <AppText style={styles.label}>Category</AppText>
-                <DropDownPicker
-                  open={categoryOpen}
-                  value={categoryValue}
-                  items={categoriesItems}
-                  setOpen={setCategoryOpen}
-                  setValue={setCategoryValue}
-                  setItems={setCategoriesItems}
-                  multiple={true}
-                  zIndex={2}
-                  mode="BADGE"
-                  badgeDotColors={[
-                    "#e76f51",
-                    "#00b4d8",
-                    "#e9c46a",
-                    "#e76f51",
-                    "#8ac926",
-                    "#00b4d8",
-                    "#e9c46a",
-                  ]}
-                />
-              </View>
+              <AppFormDropDown
+                label="Category"
+                style={{
+                  borderColor: "#979797",
+                }}
+                multiple={true}
+                zIndex={2}
+                mode="BADGE"
+                badgeDotColors={[
+                  "#e76f51",
+                  "#00b4d8",
+                  "#e9c46a",
+                  "#e76f51",
+                  "#8ac926",
+                  "#00b4d8",
+                  "#e9c46a",
+                ]}
+                value={article["categories"]}
+                items={categoriesItems}
+                onChangeValue={(value) =>
+                  setArticle({ ...article, categories: value })
+                }
+                errors={categoriesErrors}
+              />
 
-              <View style={[styles.dropdown, { marginTop: 10 }]}>
-                <AppText style={styles.label}>Status</AppText>
-                <DropDownPicker
-                  style={{
-                    borderColor: "#979797",
-                  }}
-                  zIndex={1}
-                  open={statusOpen}
-                  value={statusValue}
-                  items={statusItems}
-                  setOpen={setStatusOpen}
-                  setValue={setStatusValue}
-                  setItems={setStatusItems}
-                  listMode="SCROLLVIEW"
-                />
-              </View>
-              {/* </View> */}
+              <AppFormDropDown
+                label="Status"
+                style={{
+                  borderColor: "#979797",
+                }}
+                styleView={styles.status}
+                zIndex={1}
+                listMode="SCROLLVIEW"
+                value={article["status"]}
+                items={statusItems}
+                onChangeValue={(value) =>
+                  setArticle({ ...article, status: value })
+                }
+              />
 
               <TouchableOpacity onPress={pickImage}>
                 {isImageLoading && (
@@ -346,8 +378,8 @@ export default function Article() {
                 callback={handleOnEditorChange}
               />
               <View style={{ padding: 5 }}></View>
-              <SubmitButton title="Create" />
-              <View style={{ paddingBottom: 30 }}></View>
+              <SubmitButton title={route?.params?.data ? "Edit" : "Create"} />
+              <View style={{ paddingBottom: 15 }}></View>
             </AppForm>
           </View>
         </Screen>
@@ -362,13 +394,6 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingLeft: 30,
     alignItems: "center",
-  },
-  inline: {
-    position: "relative",
-    width: "100%",
-    padding: 0,
-    flexDirection: "row",
-    justifyContent: "space-between",
   },
   img: {
     width: 330,
@@ -385,15 +410,15 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     padding: 10,
   },
-  dropdown: {
-    width: "100%",
-  },
   label: {
     color: "#667080",
     fontSize: 14,
     fontWeight: "400",
     lineHeight: 22,
     marginBottom: 10,
+  },
+  status: {
+    marginTop: 10,
   },
   video: {
     alignSelf: "center",

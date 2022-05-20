@@ -25,8 +25,13 @@ export default function AppTextInput({
 
   const textStyle =
     style === "right"
-      ? { ...defaultStyles.text, width: "85%", textAlignVertical : multiline ? "top" : "center" }
-      : { ...defaultStyles.text, width: "85%", marginLeft: 30, textAlignVertical : multiline ? "top" : "center" };
+      ? { ...defaultStyles.text, width: "85%" }
+      : { ...defaultStyles.text, width: "85%", marginLeft: 30 };
+
+  const textMultiLineStyle = [
+    textStyle,
+    { textAlignVertical: "top", paddingTop: 5, paddingBottom: 5 },
+  ];
 
   return (
     <View
@@ -35,14 +40,14 @@ export default function AppTextInput({
         {
           width,
           height,
-          backgroundColor: fade ? "whitesmoke" : defaultStyles.colors.white
+          backgroundColor: fade ? "whitesmoke" : defaultStyles.colors.white,
         },
       ]}
     >
       <TextInput
         editable={editable}
         placeholderTextColor={defaultStyles.colors.placeholder}
-        style={textStyle}
+        style={multiline ? textMultiLineStyle : textStyle}
         multiline={multiline}
         {...otherProps}
       />
