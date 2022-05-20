@@ -149,6 +149,16 @@ export const getUserByUserId = async (user_id) => {
   }));
 };
 
+export const getArticleByUserId = async (user_id) => {
+  console.log(user_id);
+  const q = query(getTableRef("articles"), where("user_id", "==", user_id));
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.docs.map((doc) => ({
+    ...doc.data(),
+    id: doc.id,
+  }));
+};
+
 export const getArticles = async (user_id) => {
   const articles = await getAll("articles");
   const categoryList = await getAll("categories");
@@ -194,6 +204,21 @@ export const getSavedDataByUser = async (user_id) => {
     }
   });
 
+  return resultData;
+};
+
+export const getArticleByUser = async (user_id) => {
+  const articles = await getArticleByUserId(user_id);
+  console.log(articles.length);
+  const categoryList = await getAll("categories");
+
+  const resultData = [];
+  articles.forEach((e) => {
+    resultData.push({
+      ...e,
+      categories: tranferCategory(e["categories"], categoryList),
+    });
+  });
   return resultData;
 };
 
