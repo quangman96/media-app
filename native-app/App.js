@@ -15,8 +15,9 @@ import Search from "./app/screens/Search";
 import Home from "./app/screens/Home";
 import Detail from "./app/screens/Detail";
 import Header from "./app/screens/Header";
-import { LogBox } from "react-native";
+import MyList from "./app/screens/MyList";
 import Article from "./app/screens/Article";
+import { LogBox } from "react-native";
 
 LogBox.ignoreAllLogs();
 
@@ -84,7 +85,7 @@ export default function App() {
           headerLeft: () => null,
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Add Article"
         component={Article}
         options={{
@@ -92,6 +93,21 @@ export default function App() {
           tabBarIcon: ({ focused }) => (
             <Feather
               name="file-plus"
+              size={26}
+              color={focused ? "#667080" : "#bbc0c8"}
+            />
+          ),
+          header: () => null,
+        }}
+      /> */}
+      <Tab.Screen
+        name="My Article"
+        component={MyList}
+        options={{
+          unmountOnBlur: true,
+          tabBarIcon: ({ focused }) => (
+            <Feather
+              name="list"
               size={26}
               color={focused ? "#667080" : "#bbc0c8"}
             />
@@ -184,6 +200,20 @@ export default function App() {
         <Stack.Screen
           name="Detail"
           component={Detail}
+          options={{
+            title: "",
+            headerStyle: {
+              height: 85,
+            },
+            headerLeftContainerStyle: {
+              marginBottom: 20,
+            },
+          }}
+        />
+
+        <Stack.Screen
+          name="Article"
+          component={Article}
           options={{
             title: "",
             headerStyle: {

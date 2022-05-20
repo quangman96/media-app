@@ -56,6 +56,10 @@ export default function Header({ title, passInput, passCategory }) {
       .catch((e) => console.log(e));
   };
 
+  const handleCreateArticle = () => {
+    navigation.navigate("Article", { data: null });
+  };
+
   const handleClickCard = (index) => {
     const temp = [...buttons];
     temp[index]["focus"] = !temp[index]["focus"];
@@ -78,6 +82,17 @@ export default function Header({ title, passInput, passCategory }) {
             }}
           >
             {<Feather name={"log-out"} size={30} color={"#0386D0"} />}
+          </TouchableOpacity>
+        )}
+        {title === "My Article" && (
+          <TouchableOpacity
+            onPress={handleCreateArticle}
+            style={{
+              alignSelf: "flex-end",
+              marginRight: "12%",
+            }}
+          >
+            {<Feather name={"file-plus"} size={30} color={"#0386D0"} />}
           </TouchableOpacity>
         )}
         {title === "Search" && (
