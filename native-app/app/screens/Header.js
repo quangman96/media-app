@@ -57,7 +57,7 @@ export default function Header({ title, passInput, passCategory }) {
   };
 
   const handleCreateArticle = () => {
-    navigation.navigate("Article", { data: null });
+    navigation.navigate("AddArticle", { data: null });
   };
 
   const handleClickCard = (index) => {

@@ -107,7 +107,7 @@ export const createUser = async (data) => {
     create_by: userId,
     change_at: new Date().getTime(),
     change_by: userId,
-    id_delete: false,
+    is_delete: false,
   };
   const tableRef = getTableRef("user_profile");
   return await addDoc(tableRef, saveData);
@@ -150,8 +150,11 @@ export const getUserByUserId = async (user_id) => {
 };
 
 export const getArticleByUserId = async (user_id) => {
-  console.log(user_id);
-  const q = query(getTableRef("articles"), where("user_id", "==", user_id));
+  const q = query(
+    getTableRef("articles"),
+    where("user_id", "==", user_id),
+    where("is_delete", "==", false)
+  );
   const querySnapshot = await getDocs(q);
   return querySnapshot.docs.map((doc) => ({
     ...doc.data(),
@@ -159,7 +162,7 @@ export const getArticleByUserId = async (user_id) => {
   }));
 };
 
-export const getArticles = async (user_id, keepCategoryId = false) => {
+export const getArticles = async (user_id) => {
   const articles = await getAll("articles");
   const categoryList = await getAll("categories");
   const saved = await getSavedData(user_id);
@@ -175,11 +178,7 @@ export const getArticles = async (user_id, keepCategoryId = false) => {
   articles.forEach((e) => {
     resultData.push({
       ...e,
-      categories: tranferCategory(
-        e["categories"],
-        categoryList,
-        keepCategoryId
-      ),
+      categories: tranferCategory(e["categories"], categoryList),
     });
   });
   return resultData;
@@ -211,16 +210,19 @@ export const getSavedDataByUser = async (user_id) => {
   return resultData;
 };
 
-export const getArticleByUser = async (user_id) => {
+export const getArticleByUser = async (user_id, keepCategoryId = false) => {
   const articles = await getArticleByUserId(user_id);
-  console.log(articles.length);
   const categoryList = await getAll("categories");
 
   const resultData = [];
   articles.forEach((e) => {
     resultData.push({
       ...e,
-      categories: tranferCategory(e["categories"], categoryList),
+      categories: tranferCategory(
+        e["categories"],
+        categoryList,
+        keepCategoryId
+      ),
     });
   });
   return resultData;
@@ -240,10 +242,17 @@ export const createSavedData = async (user_id, articles_id) => {
   return create("user_saved", obj);
 };
 
+// export const softDelete = async (table, id) => {
+//   const docRef = getDocRef(table, id);
+//   await deleteDoc(docRef).catch((e) => {
+//     console.log(e);
+//   });
+// };
+
 export const softDelete = async (table, id) => {
   const docRef = getDocRef(table, id);
-  await deleteDoc(docRef).catch((e) => {
-    console.log(e);
+  await updateDoc(docRef, { is_delete: true }).catch((e) => {
+    console.log("No such document exist!");
   });
 };
 
@@ -278,7 +287,7 @@ export const createArticle = async (data) => {
     create_by: userId,
     change_at: new Date().getTime(),
     change_by: userId,
-    id_delete: false,
+    is_delete: false,
   };
 
   return await create("articles", saveData);

@@ -10,10 +10,11 @@ export default function MyList() {
   const user_id = getUserId();
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState([]);
+  const [cntDelete, setCntDelete] = useState(0);
 
   useEffect(() => {
     async function getSavedData(id) {
-      const res = await getArticleByUser(id);
+      const res = await getArticleByUser(id, true);
       res.forEach((e) => (e["is_saved"] = true));
       setData(res);
       setTimeout(() => {
@@ -22,6 +23,10 @@ export default function MyList() {
     }
     getSavedData(user_id);
   }, []);
+
+  const handleOnDeleteArticle = () => {
+    setCntDelete(cntDelete + 1);
+  }
 
   if (isLoading) {
     return (
@@ -39,9 +44,9 @@ export default function MyList() {
       <KeyBoardAvoidingWrapper>
         <Screen style={{ backgroundColor: "#EEF1F4" }}>
           <View style={styles.result}>
-            <AppText>Result: {data?.length || 0}</AppText>
+            <AppText>Result: {data?.length - cntDelete || 0}</AppText>
           </View>
-          <CardList isMyListPage={true} data={data}></CardList>
+          <CardList isMyListPage={true} data={data} callBack={handleOnDeleteArticle}></CardList>
         </Screen>
       </KeyBoardAvoidingWrapper>
     );

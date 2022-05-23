@@ -210,11 +210,29 @@ export default function App() {
             },
           }}
         />
+
         <Stack.Screen
-          name="Article"
+          name="AddArticle"
           component={Article}
           options={{
             title: "Add Article",
+            headerStyle: {
+              height: 110,
+            },
+            headerTintColor: "#667080",
+            headerTitleStyle: {
+              fontWeight: "bold",
+              fontSize: 35,
+              fontFamily: "Inter",
+            },
+          }}
+        />
+
+        <Stack.Screen
+          name="EditArticle"
+          component={Article}
+          options={{
+            title: "Edit Article",
             headerStyle: {
               height: 110,
             },

@@ -6,6 +6,7 @@ export default function CardList({
   data,
   isSavedPage = false,
   isMyListPage = false,
+  callBack
 }) {
   return (
     <View style={styles.body}>
@@ -16,6 +17,7 @@ export default function CardList({
             isMyListPage={isMyListPage}
             key={key}
             cardObj={prop}
+            callBack={callBack}
           ></Card>
         );
       })}
