@@ -45,6 +45,7 @@ export default function Card({ icon, cardObj, isSavedPage, isMyListPage, callBac
       setTimeout(() => {
         isSavedPage && setIsDelete(true);
       }, 100);
+      callBack();
     }
     setSaved(!isSaved);
   };
