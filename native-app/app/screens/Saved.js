@@ -5,21 +5,27 @@ import CardList from "../components/CardList";
 import AppText from "../components/Text";
 import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
 import { getSavedDataByUser, getUserId } from "../../firebase";
+import CustomFlatList from "../components/CustomFlatList";
 
 export default function Saved(props) {
   const user_id = getUserId();
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState([]);
+  const [isLoadMore, setIsLoadMore] = useState(false);
+  const [lastId, setLastId] = useState(null);
+
+  async function getSavedData(id, lastItemId = null) {
+    // const res = await getSavedDataByUser(id);
+    const res = await getSavedDataByUser(id);
+    res.forEach((e) => (e["is_saved"] = true));
+    setData(res);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 0);
+  }
 
   useEffect(() => {
-    async function getSavedData(id) {
-      const res = await getSavedDataByUser(id);
-      res.forEach((e) => (e["is_saved"] = true));
-      setData(res);
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 0);
-    }
+
     getSavedData(user_id);
   }, []);
 

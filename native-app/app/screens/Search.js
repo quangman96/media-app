@@ -5,6 +5,7 @@ import CardList from "../components/CardList";
 import AppText from "../components/Text";
 import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
 import { getMasterData, getAll, getArticles, getUserId } from "../../firebase";
+import CustomFlatList from "../components/CustomFlatList";
 
 export default function Search({ value }) {
   const user_id = getUserId();
@@ -12,6 +13,9 @@ export default function Search({ value }) {
   const [articles, setArticles] = useState([]);
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadMore, setIsLoadMore] = useState(false);
+  const [lastId, setLastId] = useState(null);
+  const [loadCnt, setLoadCnt] = useState(0);
 
   const tranferCategory = (list) => {
     const array = [];
@@ -23,6 +27,39 @@ export default function Search({ value }) {
     });
     return array;
   };
+
+  async function getArticleList(lastItemId = null) {
+    // const {data : articleList , lastDocId} = await getArticles(user_id);
+    const numItemLoad = 3;
+    setIsLoadMore(true);
+
+    if (value) {
+      const { data: articleList } = await getArticles(user_id);
+      const temp = articleList.filter((e) =>
+        e.title.toLowerCase().includes(value.toLowerCase())
+      );
+      const filtered = temp.slice(0, loadCnt * numItemLoad + numItemLoad);
+      setArticles(filtered);
+    } else {
+      const { data: articleList, lastDocId } = await getArticles(
+        user_id,
+        lastItemId,
+        numItemLoad
+      );
+
+      const resIdList = articleList.map(e => e.id)
+      const dataIdList = articles.map(e => e.id)
+      const isFound = dataIdList.some(e=> resIdList.includes(e))
+      const newList = isFound ? articles : [...articles, ...articleList];
+      setArticles(newList);
+      setLastId(lastDocId);
+    }
+
+    setTimeout(() => {
+      setIsLoading(false);
+      setIsLoadMore(false);
+    }, 0);
+  }
 
   useEffect(() => {
     async function getButtonList() {
@@ -44,22 +81,6 @@ export default function Search({ value }) {
       setButtons(buttonList);
     }
 
-    async function getArticleList() {
-      const articleList = await getArticles(user_id);
-      if (value) {
-        const temp = articleList.filter((e) =>
-          e.title.toLowerCase().includes(value.toLowerCase())
-        );
-        setArticles(temp);
-      } else {
-        setArticles(articleList);
-      }
-
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 0);
-    }
-
     async function getCategoryList() {
       const res = await getAll("categories");
       setCategories(res);
@@ -73,8 +94,13 @@ export default function Search({ value }) {
     }
   }, []);
 
-  if (isLoading) {
-    return (
+  const handleOnEndReached = async () => {
+    await getArticleList(lastId);
+    setLoadCnt(loadCnt + 1);
+  };
+
+  const renderLoader = () => {
+    return isLoadMore ? (
       <View style={[styles.container, styles.horizontal]}>
         <ActivityIndicator
           style={{ opacity: 0.5 }}
@@ -83,17 +109,33 @@ export default function Search({ value }) {
           color="tomato"
         />
       </View>
-    );
+    ) : null;
+  };
+
+  if (isLoading) {
+    return renderLoader();
   } else {
     return (
-      <KeyBoardAvoidingWrapper>
-        <Screen style={{ backgroundColor: "#EEF1F4" }}>
+      <CustomFlatList
+        data={articles}
+        onEndReachedThreshold={0}
+        onEndReached={handleOnEndReached}
+        ListHeaderComponent={
           <View style={styles.result}>
             <AppText>Result: {articles?.length || 0}</AppText>
           </View>
-          <CardList data={articles}></CardList>
-        </Screen>
-      </KeyBoardAvoidingWrapper>
+        }
+        ListFooterComponent={renderLoader}
+      ></CustomFlatList>
+
+      // <KeyBoardAvoidingWrapper>
+      //   <Screen style={{ backgroundColor: "#EEF1F4" }}>
+      //     <View style={styles.result}>
+      //       <AppText>Result: {articles?.length || 0}</AppText>
+      //     </View>
+      //     <CardList data={articles}></CardList>
+      //   </Screen>
+      // </KeyBoardAvoidingWrapper>
     );
   }
 }
@@ -115,9 +157,10 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   result: {
-    marginLeft: 20,
+    // marginLeft: 20,
     marginTop: 10,
-    marginBottom: -10,
+    // marginBottom: -10,
+    marginBottom: 10,
   },
   title: {
     color: "#667080",

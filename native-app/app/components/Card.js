@@ -58,7 +58,6 @@ export default function Card({ icon, cardObj, isSavedPage, isMyListPage, callBac
   };
 
   const handleClickDeleteButton = () => {
-    console.log("handleClickDeleteButton");
     Alert.alert("Delete Post", "Are you sure you want to delete this post?", [
       {
         text: "Cancel",

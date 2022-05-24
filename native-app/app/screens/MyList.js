@@ -5,31 +5,58 @@ import CardList from "../components/CardList";
 import AppText from "../components/Text";
 import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
 import { getArticleByUser, getUserId } from "../../firebase";
+import CustomFlatList from "../components/CustomFlatList";
 
 export default function MyList() {
   const user_id = getUserId();
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState([]);
   const [cntDelete, setCntDelete] = useState(0);
+  const [lastId, setLastId] = useState(null);
+  const [isLoadMore, setIsLoadMore] = useState(false);
+
+  async function getSavedData(id, lastItemId = null) {
+    // const res = await getArticleByUser(id, true);
+    setIsLoadMore(true);
+    const { data: res, lastDocId } = await getArticleByUser(
+      id,
+      lastItemId,
+      3,
+      true
+    );
+    res.forEach((e) => (e["is_saved"] = true));
+    const resIdList = res.map(e => e.id)
+    const dataIdList = data.map(e => e.id)
+    const isFound = dataIdList.some(e=> resIdList.includes(e))
+    const newList = isFound ? data : [...data, ...res];
+    setLastId(lastDocId);
+    setData(newList);
+    setTimeout(() => {
+      setIsLoading(false);
+      setIsLoadMore(false);
+    }, 0);
+  }
+
+  const isDifferent = (e, first = false) => {
+    console.log(e);
+    // Object.values(e).every(isDifferent)
+    return true;
+  }
 
   useEffect(() => {
-    async function getSavedData(id) {
-      const res = await getArticleByUser(id, true);
-      res.forEach((e) => (e["is_saved"] = true));
-      setData(res);
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 0);
-    }
     getSavedData(user_id);
   }, []);
 
   const handleOnDeleteArticle = () => {
     setCntDelete(cntDelete + 1);
-  }
+  };
 
-  if (isLoading) {
-    return (
+  const handleOnEndReached = async () => {
+    await getSavedData(user_id, lastId);
+  };
+
+  const renderLoader = () => {
+    return isLoadMore ? (
       <View style={[styles.container, styles.horizontal]}>
         <ActivityIndicator
           style={{ opacity: 0.5 }}
@@ -38,17 +65,39 @@ export default function MyList() {
           color="tomato"
         />
       </View>
-    );
+    ) : null;
+  };
+
+  if (isLoading) {
+    return renderLoader();
   } else {
     return (
-      <KeyBoardAvoidingWrapper>
-        <Screen style={{ backgroundColor: "#EEF1F4" }}>
+      <CustomFlatList
+        isMyListPage={true}
+        data={data}
+        callBack={handleOnDeleteArticle}
+        onEndReachedThreshold={0}
+        onEndReached={handleOnEndReached}
+        ListHeaderComponent={
           <View style={styles.result}>
             <AppText>Result: {data?.length - cntDelete || 0}</AppText>
           </View>
-          <CardList isMyListPage={true} data={data} callBack={handleOnDeleteArticle}></CardList>
-        </Screen>
-      </KeyBoardAvoidingWrapper>
+        }
+        ListFooterComponent={renderLoader}
+      ></CustomFlatList>
+
+      // <KeyBoardAvoidingWrapper>
+      //   <Screen style={{ backgroundColor: "#EEF1F4" }}>
+      //     <View style={styles.result}>
+      //       <AppText>Result: {data?.length - cntDelete || 0}</AppText>
+      //     </View>
+      //     <CardList
+      //       isMyListPage={true}
+      //       data={data}
+      //       callBack={handleOnDeleteArticle}
+      //     ></CardList>
+      //   </Screen>
+      // </KeyBoardAvoidingWrapper>
     );
   }
 }
@@ -64,8 +113,9 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   result: {
-    marginLeft: 20,
+    // marginLeft: 20,
     marginTop: 10,
-    marginBottom: -10,
+    // marginBottom: -10,
+    marginBottom: 10,
   },
 });
