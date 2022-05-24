@@ -194,8 +194,14 @@ export const getArticles = async (user_id, lastId, limitItems = 0) => {
   return { data: resultData, lastDocId };
 };
 
-export const getSavedDataByUser = async (user_id) => {
-  const savedData = await getSavedData(user_id);
+export const getSavedDataByUser = async (user_id, lastId, limitItems = 0) => {
+  // const savedData = await getSavedData(user_id);
+  const { docs: savedData, lastDocId } = await getDocsLazyLoading(
+    "user_saved",
+    lastId,
+    limitItems,
+    where("user_id", "==", user_id)
+  );
   const arrSaved = [];
   savedData.forEach((e) => {
     arrSaved.push({
@@ -206,6 +212,7 @@ export const getSavedDataByUser = async (user_id) => {
   const articleList = await getAll("articles");
   const categoryList = await getAll("categories");
   const resultData = [];
+
   arrSaved.forEach((e) => {
     const obj = articleList.find((z) => z.id === e.id && z.is_delete === false);
     if (obj) {
@@ -217,7 +224,7 @@ export const getSavedDataByUser = async (user_id) => {
     }
   });
 
-  return resultData;
+  return {data: resultData, lastDocId};
 };
 
 export const getArticleByUser = async (user_id, lastId, limitItems = 0, keepCategoryId = false) => {
@@ -258,12 +265,12 @@ export const createSavedData = async (user_id, articles_id) => {
   return create("user_saved", obj);
 };
 
-// export const softDelete = async (table, id) => {
-//   const docRef = getDocRef(table, id);
-//   await deleteDoc(docRef).catch((e) => {
-//     console.log(e);
-//   });
-// };
+export const deleteById = async (table, id) => {
+  const docRef = getDocRef(table, id);
+  await deleteDoc(docRef).catch((e) => {
+    console.log(e);
+  });
+};
 
 export const softDelete = async (table, id) => {
   const docRef = getDocRef(table, id);
@@ -280,7 +287,7 @@ export const updateById = async (table, data, id) => {
 };
 
 export const deleteSavedData = async (saved_id) => {
-  softDelete("user_saved", saved_id);
+  deleteById("user_saved", saved_id);
 };
 
 export const tranferCategory = (list, categoryList, keepCategoryId = false) => {

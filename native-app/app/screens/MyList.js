@@ -37,12 +37,6 @@ export default function MyList() {
     }, 0);
   }
 
-  const isDifferent = (e, first = false) => {
-    console.log(e);
-    // Object.values(e).every(isDifferent)
-    return true;
-  }
-
   useEffect(() => {
     getSavedData(user_id);
   }, []);
