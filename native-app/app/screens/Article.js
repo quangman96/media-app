@@ -167,7 +167,6 @@ export default function Article({ route }) {
   };
 
   const handleUpdate = async (values, { setStatus, resetForm }) => {
-    console.log("============================================")
     setTitleErrors("");
     setCategoriesErrors("");
     let isError = false;
@@ -189,17 +188,17 @@ export default function Article({ route }) {
       description: values["description"],
       content: contentHtml,
       image: article.image,
-      video: article.video,
+      video: article.video || "",
       is_delete: false,
       sort_no: "",
       status: article["status"],
-      user_id: await getUserId()
+      user_id: await getUserId(),
     };
 
     if (article["id"]) {
       await updateById("articles", data, article["id"]);
       ToastAndroid.show("Edit article successfully !!!", ToastAndroid.SHORT);
-      navigation.navigate("Main", { screen: "Home" });
+      navigation.navigate("Main", { screen: "My Article" });
       return;
     } else await createArticle(data);
     resetForm({});

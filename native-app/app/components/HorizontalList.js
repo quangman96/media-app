@@ -18,6 +18,8 @@ export default function HorizontalList({ data }) {
 const styles = StyleSheet.create({
   body: {
     alignItems: "center",
-    margin: 20,
+    //margin: 20,
+    marginTop: 20,
+    marginBottom: 20,
   },
 });

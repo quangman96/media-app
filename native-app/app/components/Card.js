@@ -5,15 +5,16 @@ import {
   Image,
   TouchableOpacity,
   ToastAndroid,
+  Alert,
 } from "react-native";
 import AppText from "../components/Text";
 import ChipList from "../components/ChipList";
 import { Feather } from "@expo/vector-icons";
 import defaultStyles from "../config/styles";
 import { useNavigation } from "@react-navigation/core";
-import { createSavedData, deleteSavedData, getUserId } from "../../firebase";
+import { createSavedData, deleteSavedData, getUserId, softDelete } from "../../firebase";
 
-export default function Card({ icon, cardObj, isSavedPage, isMyListPage }) {
+export default function Card({ icon, cardObj, isSavedPage, isMyListPage, callBack }) {
   const user_id = getUserId();
   const [isSaved, setSaved] = useState(cardObj["is_saved"]);
   const [isDelete, setIsDelete] = useState(false);
@@ -53,7 +54,23 @@ export default function Card({ icon, cardObj, isSavedPage, isMyListPage }) {
   };
 
   const handleClickEditButton = () => {
-    navigation.navigate("Article", { data: cardObj });
+    navigation.navigate("EditArticle", { data: cardObj });
+  };
+
+  const handleClickDeleteButton = () => {
+    Alert.alert("Delete Post", "Are you sure you want to delete this post?", [
+      {
+        text: "Cancel",
+      },
+      { text: "OK", onPress: () => handleOnOkDelete() },
+    ]);
+  };
+
+  const handleOnOkDelete = async () => {
+    await softDelete("articles", cardObj['id']);
+    setIsDelete(true);
+    ToastAndroid.show("Delete article successfully !!!", ToastAndroid.SHORT);
+    callBack();
   };
 
   return (
@@ -74,7 +91,7 @@ export default function Card({ icon, cardObj, isSavedPage, isMyListPage }) {
                     style={styles.iconInGroup}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => {}}>
+                <TouchableOpacity onPress={() => handleClickDeleteButton()}>
                   <Feather
                     name={"trash"}
                     size={22}
