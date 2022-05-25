@@ -6,6 +6,8 @@ export default function HorizontalList({ data }) {
   return (
     <View style={styles.body}>
       <FlatList
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
         horizontal={true}
         data={data}
         renderItem={({ item }) => <CustomCard cardObj={item}></CustomCard>}

@@ -22,6 +22,8 @@ export default function CardList({
   return (
     <View style={styles.body}>
       <FlatList
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ flexGrow: 1 }}
         style={styles.flatList}
         data={data}

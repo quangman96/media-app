@@ -18,6 +18,7 @@ import Header from "./app/screens/Header";
 import MyList from "./app/screens/MyList";
 import Article from "./app/screens/Article";
 import { LogBox } from "react-native";
+import { StatusBar  } from "react-native";
 
 LogBox.ignoreAllLogs();
 
@@ -171,6 +172,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
+      <StatusBar barStyle="dark-content" hidden={false} backgroundColor="transparent" translucent={true} />
       <Stack.Navigator
         screenOptions={{
           headerStyle: {
