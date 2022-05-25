@@ -15,6 +15,8 @@ import { useNavigation } from "@react-navigation/core";
 import { auth, getAll } from "../../firebase";
 import { ScrollView } from "react-native-gesture-handler";
 
+import * as Analytics from "expo-firebase-analytics";
+
 export default function Header({ title, passInput, passCategory }) {
   const [text, onChangeText] = useState("");
   const [categories, onCategoryChange] = useState([]);
@@ -47,9 +49,11 @@ export default function Header({ title, passInput, passCategory }) {
     ToastAndroid.show("Logout successfully !!!", ToastAndroid.SHORT);
   };
   const handleSignOut = () => {
+    const { uid, email } = auth.currentUser;
     auth
       .signOut()
       .then(() => {
+        Analytics.logEvent("logout", { uid, email, time: new Date() });
         navigation.replace("Login");
         showToast();
       })

@@ -13,6 +13,7 @@ import {
 } from "firebase/firestore/lite";
 
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import { getAnalytics } from "firebase/analytics";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -25,6 +26,7 @@ const firebaseConfig = {
   storageBucket: "new-app-97a36.appspot.com",
   messagingSenderId: "764737355711",
   appId: "1:764737355711:web:e79cbb3584d7c2c4deeb0a",
+  measurementId: "G-DSZW3M6PGV",
 };
 
 // Initialize Firebase
@@ -35,6 +37,8 @@ if (firebase.apps.length === 0) {
 } else {
   app = firebase.app();
 }
+export const analytics = getAnalytics(app);
+
 export const auth = firebase.auth();
 export const db = getFirestore(app);
 export const storage = getStorage(app);
@@ -150,7 +154,6 @@ export const getUserByUserId = async (user_id) => {
 };
 
 export const getArticleByUserId = async (user_id) => {
-  console.log(user_id);
   const q = query(getTableRef("articles"), where("user_id", "==", user_id));
   const querySnapshot = await getDocs(q);
   return querySnapshot.docs.map((doc) => ({
@@ -213,7 +216,6 @@ export const getSavedDataByUser = async (user_id) => {
 
 export const getArticleByUser = async (user_id) => {
   const articles = await getArticleByUserId(user_id);
-  console.log(articles.length);
   const categoryList = await getAll("categories");
 
   const resultData = [];

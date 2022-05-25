@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Feather } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -7,6 +7,7 @@ import "react-native-gesture-handler";
 import {
   NavigationContainer,
   useNavigationState,
+  useNavigationContainerRef,
 } from "@react-navigation/native";
 import Login from "./app/screens/Login";
 import User from "./app/screens/User";
@@ -19,11 +20,15 @@ import MyList from "./app/screens/MyList";
 import Article from "./app/screens/Article";
 import { LogBox } from "react-native";
 
+import * as Analytics from "expo-firebase-analytics";
+
 LogBox.ignoreAllLogs();
 
 export default function App() {
   const Tab = createBottomTabNavigator();
   const Stack = createStackNavigator();
+  const routeNameRef = useRef();
+  const navigationRef = useNavigationContainerRef();
   const screenOptions = {
     tabBarLabel: () => {
       return null;
@@ -170,7 +175,21 @@ export default function App() {
   };
 
   return (
-    <NavigationContainer>
+    <NavigationContainer
+      ref={navigationRef}
+      onReady={() => {
+        routeNameRef.current = navigationRef.getCurrentRoute().name;
+      }}
+      onStateChange={() => {
+        const previousRouteName = routeNameRef.current;
+        const currentRouteName = navigationRef.getCurrentRoute().name;
+
+        if (previousRouteName !== currentRouteName) {
+          Analytics.logEvent("screen_view", { currentRouteName });
+        }
+        routeNameRef.current = currentRouteName;
+      }}
+    >
       <Stack.Navigator
         screenOptions={{
           headerStyle: {

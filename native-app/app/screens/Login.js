@@ -12,6 +12,7 @@ import { AppFormField, AppForm, SubmitButton } from "../components/forms";
 import AppText from "../components/Text";
 import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
 import { auth, getAll, setUserId } from "../../firebase";
+import * as Analytics from "expo-firebase-analytics";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string().required().email().label("Email"),
@@ -49,7 +50,9 @@ export default function Login({ navigation }) {
     auth
       .createUserWithEmailAndPassword(email, password)
       .then((userCredential) => {
-        const user = userCredential.user;
+        const { uid, email } = userCredential.user;
+        Analytics.logEvent("sign_up", { uid, email, time: new Date() });
+
         setinitValues(values);
         setPage(0);
         showToast("register");
@@ -63,8 +66,9 @@ export default function Login({ navigation }) {
       .signInWithEmailAndPassword(email, password)
       .then((userCredential) => {
         showToast("login");
-        const user = userCredential.user;
-        setUserId(user.uid);
+        const { uid, email } = userCredential.user;
+        Analytics.logEvent("login", { uid, email, time: new Date() });
+        setUserId(uid);
         navigation.navigate("Main", { screen: "Home" });
       })
       .catch((error) => console.log(error.message));

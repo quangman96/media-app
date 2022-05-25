@@ -20,6 +20,7 @@
       "supportsTablet": true
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#ff6347"
@@ -27,7 +28,18 @@
       "package": "ait.nativeapp"
     },
     "web": {
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "config": {
+        "firebase": {
+          "apiKey": "AIzaSyAHmHrFuHJuyzex74mgycMI79BCgFIAHlQ",
+          "authDomain": "new-app-97a36.firebaseapp.com",
+          "projectId": "new-app-97a36",
+          "storageBucket": "new-app-97a36.appspot.com",
+          "messagingSenderId": "764737355711",
+          "appId": "1:764737355711:web:e79cbb3584d7c2c4deeb0a",
+          "measurementId": "G-DSZW3M6PGV"
+        }
+      }
     }
   }
 }

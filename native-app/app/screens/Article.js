@@ -17,6 +17,7 @@ import {
   updateById,
   uploadFileAsync,
   getUserId,
+  auth,
 } from "../../firebase";
 import Editor from "../components/Editor";
 import { AppForm, AppFormField, SubmitButton } from "../components/forms";
@@ -26,6 +27,7 @@ import Screen from "../components/Screens";
 import AppText from "../components/Text";
 
 export default function Article({ route }) {
+  const { uid, email } = auth.currentUser;
   const navigation = useNavigation();
   const video = useRef(null);
   const [statusItems, setStatusItems] = useState([]);
@@ -167,7 +169,6 @@ export default function Article({ route }) {
   };
 
   const handleUpdate = async (values, { setStatus, resetForm }) => {
-    console.log("============================================")
     setTitleErrors("");
     setCategoriesErrors("");
     let isError = false;
@@ -193,11 +194,17 @@ export default function Article({ route }) {
       is_delete: false,
       sort_no: "",
       status: article["status"],
-      user_id: await getUserId()
+      user_id: await getUserId(),
     };
 
     if (article["id"]) {
       await updateById("articles", data, article["id"]);
+      Analytics.logEvent("article_edit", {
+        uid,
+        email,
+        article_id: article["id"],
+        time: new Date(),
+      });
       ToastAndroid.show("Edit article successfully !!!", ToastAndroid.SHORT);
       navigation.navigate("Main", { screen: "Home" });
       return;
@@ -213,6 +220,12 @@ export default function Article({ route }) {
       image: null,
       video: null,
       content: null,
+    });
+    Analytics.logEvent("article_create", {
+      uid,
+      email,
+      // article_id: article["id"],
+      time: new Date(),
     });
     setContentHtml("");
     ToastAndroid.show("Create article successfully !!!", ToastAndroid.SHORT);
