@@ -6,6 +6,8 @@ export default function HorizontalList({ data }) {
   return (
     <View style={styles.body}>
       <FlatList
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
         horizontal={true}
         data={data}
         renderItem={({ item }) => <CustomCard cardObj={item}></CustomCard>}
@@ -18,6 +20,8 @@ export default function HorizontalList({ data }) {
 const styles = StyleSheet.create({
   body: {
     alignItems: "center",
-    margin: 20,
+    //margin: 20,
+    marginTop: 20,
+    marginBottom: 20,
   },
 });

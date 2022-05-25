@@ -4,12 +4,16 @@ import {
   getFirestore,
   collection,
   getDocs,
+  getDoc,
   addDoc,
   deleteDoc,
   query,
   where,
   doc,
   updateDoc,
+  orderBy,
+  startAfter,
+  limit,
 } from "firebase/firestore/lite";
 
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
@@ -111,7 +115,7 @@ export const createUser = async (data) => {
     create_by: userId,
     change_at: new Date().getTime(),
     change_by: userId,
-    id_delete: false,
+    is_delete: false,
   };
   const tableRef = getTableRef("user_profile");
   return await addDoc(tableRef, saveData);
@@ -154,7 +158,11 @@ export const getUserByUserId = async (user_id) => {
 };
 
 export const getArticleByUserId = async (user_id) => {
-  const q = query(getTableRef("articles"), where("user_id", "==", user_id));
+  const q = query(
+    getTableRef("articles"),
+    where("user_id", "==", user_id),
+    where("is_delete", "==", false)
+  );
   const querySnapshot = await getDocs(q);
   return querySnapshot.docs.map((doc) => ({
     ...doc.data(),
@@ -162,8 +170,14 @@ export const getArticleByUserId = async (user_id) => {
   }));
 };
 
-export const getArticles = async (user_id, keepCategoryId = false) => {
-  const articles = await getAll("articles");
+export const getArticles = async (user_id, lastId, limitItems = 0) => {
+  // const articles = await getAll("articles");
+  const { docs: articles, lastDocId } = await getDocsLazyLoading(
+    "articles",
+    lastId,
+    limitItems
+  );
+
   const categoryList = await getAll("categories");
   const saved = await getSavedData(user_id);
 
@@ -178,18 +192,20 @@ export const getArticles = async (user_id, keepCategoryId = false) => {
   articles.forEach((e) => {
     resultData.push({
       ...e,
-      categories: tranferCategory(
-        e["categories"],
-        categoryList,
-        keepCategoryId
-      ),
+      categories: tranferCategory(e["categories"], categoryList),
     });
   });
-  return resultData;
+  return { data: resultData, lastDocId };
 };
 
-export const getSavedDataByUser = async (user_id) => {
-  const savedData = await getSavedData(user_id);
+export const getSavedDataByUser = async (user_id, lastId, limitItems = 0) => {
+  // const savedData = await getSavedData(user_id);
+  const { docs: savedData, lastDocId } = await getDocsLazyLoading(
+    "user_saved",
+    lastId,
+    limitItems,
+    where("user_id", "==", user_id)
+  );
   const arrSaved = [];
   savedData.forEach((e) => {
     arrSaved.push({
@@ -200,6 +216,7 @@ export const getSavedDataByUser = async (user_id) => {
   const articleList = await getAll("articles");
   const categoryList = await getAll("categories");
   const resultData = [];
+
   arrSaved.forEach((e) => {
     const obj = articleList.find((z) => z.id === e.id && z.is_delete === false);
     if (obj) {
@@ -211,21 +228,35 @@ export const getSavedDataByUser = async (user_id) => {
     }
   });
 
-  return resultData;
+  return { data: resultData, lastDocId };
 };
 
-export const getArticleByUser = async (user_id) => {
-  const articles = await getArticleByUserId(user_id);
+export const getArticleByUser = async (
+  user_id,
+  lastId,
+  limitItems = 0,
+  keepCategoryId = false
+) => {
+  const { docs: articles, lastDocId } = await getDocsLazyLoading(
+    "articles",
+    lastId,
+    limitItems,
+    where("user_id", "==", user_id)
+  );
   const categoryList = await getAll("categories");
 
   const resultData = [];
   articles.forEach((e) => {
     resultData.push({
       ...e,
-      categories: tranferCategory(e["categories"], categoryList),
+      categories: tranferCategory(
+        e["categories"],
+        categoryList,
+        keepCategoryId
+      ),
     });
   });
-  return resultData;
+  return { data: resultData, lastDocId };
 };
 
 export const createSavedData = async (user_id, articles_id) => {
@@ -242,10 +273,17 @@ export const createSavedData = async (user_id, articles_id) => {
   return create("user_saved", obj);
 };
 
-export const softDelete = async (table, id) => {
+export const deleteById = async (table, id) => {
   const docRef = getDocRef(table, id);
   await deleteDoc(docRef).catch((e) => {
     console.log(e);
+  });
+};
+
+export const softDelete = async (table, id) => {
+  const docRef = getDocRef(table, id);
+  await updateDoc(docRef, { is_delete: true }).catch((e) => {
+    console.log("No such document exist!");
   });
 };
 
@@ -257,7 +295,7 @@ export const updateById = async (table, data, id) => {
 };
 
 export const deleteSavedData = async (saved_id) => {
-  softDelete("user_saved", saved_id);
+  deleteById("user_saved", saved_id);
 };
 
 export const tranferCategory = (list, categoryList, keepCategoryId = false) => {
@@ -280,8 +318,72 @@ export const createArticle = async (data) => {
     create_by: userId,
     change_at: new Date().getTime(),
     change_by: userId,
-    id_delete: false,
+    is_delete: false,
   };
 
   return await create("articles", saveData);
+};
+
+export const getByQuery = async (table, ...condition) => {
+  const q = query(getTableRef(table), ...condition);
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.docs.map((doc) => ({
+    ...doc.data(),
+    id: doc.id,
+  }));
+};
+
+export const getDocsLazyLoading = async (
+  table,
+  lastDocId,
+  limitItems = 0,
+  ...condition
+) => {
+  let docs = [];
+  let newLastDocId = null;
+  try {
+    if (lastDocId) {
+      const lastDoc = await getDoc(getDocRef(table, lastDocId));
+      if (limitItems > 0)
+        docs = await getByQuery(
+          table,
+          ...condition,
+          where("is_delete", "==", false),
+          orderBy("create_at"),
+          startAfter(lastDoc),
+          limit(limitItems)
+        );
+      else
+        docs = await getByQuery(
+          table,
+          ...condition,
+          where("is_delete", "==", false),
+          orderBy("create_at"),
+          startAfter(lastDoc)
+        );
+    } else {
+      if (limitItems > 0)
+        docs = await getByQuery(
+          table,
+          ...condition,
+          where("is_delete", "==", false),
+          orderBy("create_at"),
+          limit(limitItems)
+        );
+      else
+        docs = await getByQuery(
+          table,
+          ...condition,
+          where("is_delete", "==", false),
+          orderBy("create_at")
+        );
+    }
+    newLastDocId = docs[docs.length - 1]?.id || null;
+    return {
+      docs,
+      lastDocId: newLastDocId,
+    };
+  } catch (error) {
+    console.log(error);
+  }
 };

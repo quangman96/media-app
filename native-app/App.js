@@ -19,6 +19,7 @@ import Header from "./app/screens/Header";
 import MyList from "./app/screens/MyList";
 import Article from "./app/screens/Article";
 import { LogBox } from "react-native";
+import { StatusBar } from "react-native";
 
 import * as Analytics from "expo-firebase-analytics";
 
@@ -163,13 +164,13 @@ export default function App() {
     const currentRoute =
       routes[routes.length - 1].state?.routeNames[currentRouteIndex];
     if (currentRoute === "Search") {
-      setHeaderHeight(180);
+      setHeaderHeight(165);
     } else if (currentRoute === "Home") {
       setHeaderHeight(150);
     } else if (!currentRoute) {
       setHeaderHeight(150);
     } else {
-      setHeaderHeight(115);
+      setHeaderHeight(105);
     }
     return currentRoute || "Home";
   };
@@ -190,6 +191,12 @@ export default function App() {
         routeNameRef.current = currentRouteName;
       }}
     >
+      <StatusBar
+        barStyle="dark-content"
+        hidden={false}
+        backgroundColor="transparent"
+        translucent={true}
+      />
       <Stack.Navigator
         screenOptions={{
           headerStyle: {
@@ -229,11 +236,29 @@ export default function App() {
             },
           }}
         />
+
         <Stack.Screen
-          name="Article"
+          name="AddArticle"
           component={Article}
           options={{
             title: "Add Article",
+            headerStyle: {
+              height: 110,
+            },
+            headerTintColor: "#667080",
+            headerTitleStyle: {
+              fontWeight: "bold",
+              fontSize: 35,
+              fontFamily: "Inter",
+            },
+          }}
+        />
+
+        <Stack.Screen
+          name="EditArticle"
+          component={Article}
+          options={{
+            title: "Edit Article",
             headerStyle: {
               height: 110,
             },

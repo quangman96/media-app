@@ -1,10 +1,26 @@
-import { StyleSheet, ActivityIndicator, View } from "react-native";
+import {
+  StyleSheet,
+  ActivityIndicator,
+  View,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
+  ScrollView,
+  FlatList,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import Screen from "../components/Screens";
 import CardList from "../components/CardList";
 import HorizontalList from "../components/HorizontalList";
 import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
-import { getMasterData, getAll, getArticles, getUserId } from "../../firebase";
+import {
+  getMasterData,
+  getAll,
+  getArticles,
+  getUserId,
+  getDocsLazyLoading,
+} from "../../firebase";
+import CustomFlatList from "../components/CustomFlatList";
 
 export default function Home({ value }) {
   const user_id = getUserId();
@@ -14,7 +30,34 @@ export default function Home({ value }) {
   const [articlesHorizontal, setArticlesHorizontal] = useState([]);
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadMore, setIsLoadMore] = useState(false);
+  const [lastId, setLastId] = useState(null);
+  const [loadCnt, setLoadCnt] = useState(0);
+  const [isFilterCategories, setIsFilterCategories] = useState(false);
   const isHaveChild = (arr1, arr2) => arr1.some((e) => ~arr2.indexOf(e));
+
+  async function getArticleList(lastItemId = null) {
+    setIsLoadMore(true);
+    const { data: articleList, lastDocId } = await getArticles(
+      user_id,
+      isFilterCategories ? null : lastItemId,
+      isFilterCategories ? 0 : 3
+    );
+
+    const prevData = isFilterCategories ? [] : articles;
+    const resIdList = articleList.map(e => e.id)
+    const dataIdList = prevData.map(e => e.id)
+    const isFound = dataIdList.some(e=> resIdList.includes(e))
+    const newList = isFound ? articles : [...articles, ...articleList];
+    setLastId(lastDocId);
+    setArticlesDF(newList);
+    filterArticleList([...newList]);
+
+    setTimeout(() => {
+      setIsLoading(false);
+      setIsLoadMore(false);
+    }, 0);
+  }
 
   useEffect(() => {
     async function getButtonList() {
@@ -36,16 +79,6 @@ export default function Home({ value }) {
       setButtons(buttonList);
     }
 
-    async function getArticleList() {
-      const articleList = await getArticles(user_id);
-      setArticlesDF(articleList);
-      filterArticleList([...articleList]);
-
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 0);
-    }
-
     async function getCategoryList() {
       const res = await getAll("categories");
       setCategories(res);
@@ -55,7 +88,7 @@ export default function Home({ value }) {
     getCategoryList();
   }, []);
 
-  useEffect(() => {}, [value]);
+  useEffect(() => setIsFilterCategories(!isFilterCategories), [value]);
 
   const filterArticleList = (arrList) => {
     const arr = [];
@@ -64,11 +97,15 @@ export default function Home({ value }) {
         arr.push(e.name);
       }
     });
+
     if (arr.length > 0) {
       const newArr = arrList.filter((e) => isHaveChild(arr, e.categories));
-      setArticles(newArr);
-      if (newArr.length > 1) {
-        setHorizontalList(newArr);
+      console.log(newArr.length)
+      const filtered = newArr.slice(0, loadCnt * 3 + 3);
+      console.log(filtered.length)
+      setArticles(filtered);
+      if (filtered.length > 1) {
+        setHorizontalList(filtered);
       }
     } else {
       setArticles(arrList);
@@ -83,8 +120,13 @@ export default function Home({ value }) {
     setArticlesHorizontal(newArticleList.slice(0, 4));
   };
 
-  if (isLoading) {
-    return (
+  const handleOnEndReached = async () => {
+    await getArticleList(lastId);
+    setLoadCnt(loadCnt + 1);
+  };
+
+  const renderLoader = () => {
+    return isLoadMore ? (
       <View style={[styles.container, styles.horizontal]}>
         <ActivityIndicator
           style={{ opacity: 0.5 }}
@@ -93,16 +135,40 @@ export default function Home({ value }) {
           color="tomato"
         />
       </View>
-    );
+    ) : null;
+
+    //  isLoadMore ? (
+    //   <View style={styles.loaderStyle}>
+    //     <ActivityIndicator size="large" color="#aaa" />
+    //   </View>
+    // ) : null;
+  };
+
+  if (isLoading) {
+    return renderLoader();
   } else {
     return (
-      <KeyBoardAvoidingWrapper>
-        <Screen style={{ backgroundColor: "#EEF1F4" }}>
+      <CustomFlatList
+        data={articles}
+        onEndReachedThreshold={0}
+        onEndReached={handleOnEndReached}
+        ListHeaderComponent={
           <HorizontalList data={articlesHorizontal}></HorizontalList>
-          <View style={{ marginTop: -15 }}></View>
-          <CardList data={articles}></CardList>
-        </Screen>
-      </KeyBoardAvoidingWrapper>
+        }
+        ListFooterComponent={renderLoader}
+      ></CustomFlatList>
+
+      // <KeyBoardAvoidingWrapper>
+      //   <Screen style={{ backgroundColor: "#EEF1F4" }}>
+      //     <HorizontalList data={articlesHorizontal}></HorizontalList>
+      //     <View style={{ marginTop: -15 }}></View>
+      //     <CardList
+      //       data={articles}
+      //       onEndReachedThreshold={0.001}
+      //       onEndReached={handleOnEndReached}
+      //     ></CardList>
+      //   </Screen>
+      // </KeyBoardAvoidingWrapper>
     );
   }
 }
@@ -140,5 +206,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     padding: 10,
+  },
+  loaderStyle: {
+    marginVertical: 16,
+    alignItems: "center",
   },
 });

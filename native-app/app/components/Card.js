@@ -5,6 +5,7 @@ import {
   Image,
   TouchableOpacity,
   ToastAndroid,
+  Alert,
 } from "react-native";
 import AppText from "../components/Text";
 import ChipList from "../components/ChipList";
@@ -20,7 +21,7 @@ import {
 
 import * as Analytics from "expo-firebase-analytics";
 
-export default function Card({ icon, cardObj, isSavedPage, isMyListPage }) {
+export default function Card({ cardObj, isSavedPage, isMyListPage, callBack }) {
   const { uid, email } = auth.currentUser;
   const user_id = getUserId();
   const [isSaved, setSaved] = useState(cardObj["is_saved"]);
@@ -52,6 +53,7 @@ export default function Card({ icon, cardObj, isSavedPage, isMyListPage }) {
       setTimeout(() => {
         isSavedPage && setIsDelete(true);
       }, 100);
+      callBack();
     }
     setSaved(!isSaved);
   };
@@ -68,7 +70,23 @@ export default function Card({ icon, cardObj, isSavedPage, isMyListPage }) {
   };
 
   const handleClickEditButton = () => {
-    navigation.navigate("Article", { data: cardObj });
+    navigation.navigate("EditArticle", { data: cardObj });
+  };
+
+  const handleClickDeleteButton = () => {
+    Alert.alert("Delete Post", "Are you sure you want to delete this post?", [
+      {
+        text: "Cancel",
+      },
+      { text: "OK", onPress: () => handleOnOkDelete() },
+    ]);
+  };
+
+  const handleOnOkDelete = async () => {
+    await softDelete("articles", cardObj["id"]);
+    setIsDelete(true);
+    ToastAndroid.show("Delete article successfully !!!", ToastAndroid.SHORT);
+    callBack();
   };
 
   return (
@@ -89,7 +107,7 @@ export default function Card({ icon, cardObj, isSavedPage, isMyListPage }) {
                     style={styles.iconInGroup}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => {}}>
+                <TouchableOpacity onPress={() => handleClickDeleteButton()}>
                   <Feather
                     name={"trash"}
                     size={22}
