@@ -16,6 +16,7 @@ import {
   createSavedData,
   deleteSavedData,
   getUserId,
+  softDelete,
   auth,
 } from "../../firebase";
 
@@ -53,7 +54,7 @@ export default function Card({ cardObj, isSavedPage, isMyListPage, callBack }) {
       setTimeout(() => {
         isSavedPage && setIsDelete(true);
       }, 100);
-      callBack();
+      if (typeof callBack == "function") callBack();
     }
     setSaved(!isSaved);
   };
@@ -86,7 +87,7 @@ export default function Card({ cardObj, isSavedPage, isMyListPage, callBack }) {
     await softDelete("articles", cardObj["id"]);
     setIsDelete(true);
     ToastAndroid.show("Delete article successfully !!!", ToastAndroid.SHORT);
-    callBack();
+    if (typeof callBack == "function") callBack();
   };
 
   return (
