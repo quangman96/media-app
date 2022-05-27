@@ -20,7 +20,7 @@ import {
   softDelete,
 } from "../../firebase";
 import { Video } from "expo-av";
-import VideoPlayer from "expo-video-player";
+// import VideoPlayer from "expo-video-player";
 import YoutubePlayer from "react-native-youtube-iframe";
 // import VideoPlayer from "react-native-video-player";
 

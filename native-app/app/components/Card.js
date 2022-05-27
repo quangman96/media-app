@@ -17,15 +17,13 @@ import {
   deleteSavedData,
   getUserId,
   softDelete,
+  auth,
 } from "../../firebase";
 
-export default function Card({
-  icon,
-  cardObj,
-  isSavedPage,
-  isMyListPage,
-  callBack,
-}) {
+import * as Analytics from "expo-firebase-analytics";
+
+export default function Card({ cardObj, isSavedPage, isMyListPage, callBack }) {
+  const { uid, email } = auth.currentUser;
   const user_id = getUserId();
   const [isSaved, setSaved] = useState(cardObj["is_saved"]);
   const [isDelete, setIsDelete] = useState(false);
@@ -62,6 +60,13 @@ export default function Card({
   };
 
   const handleClickCard = () => {
+    Analytics.logEvent("article_view", {
+      uid,
+      email,
+      article_id: cardObj.id,
+      time: new Date(),
+    });
+
     navigation.navigate("Detail", { data: cardObj });
   };
 
@@ -79,7 +84,6 @@ export default function Card({
   };
 
   const handleOnOkDelete = async () => {
-    console.log("handleOnOkDelete");
     await softDelete("articles", cardObj["id"]);
     setIsDelete(true);
     ToastAndroid.show("Delete article successfully !!!", ToastAndroid.SHORT);
@@ -185,19 +189,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flex: 0.5,
     marginTop: 10,
-    // marginBottom: 5,
   },
   body: {
     flex: 2,
     flexDirection: "row",
     marginTop: 5,
-    // paddingRight: 5,
-    // marginBottom: 5,
   },
   footer: {
     flex: 1,
     flexDirection: "row",
-    // marginTop: 5,
     marginBottom: 10,
   },
   label: {

@@ -17,6 +17,7 @@ import {
 } from "firebase/firestore/lite";
 
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import { getAnalytics } from "firebase/analytics";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -29,6 +30,7 @@ const firebaseConfig = {
   storageBucket: "new-app-97a36.appspot.com",
   messagingSenderId: "764737355711",
   appId: "1:764737355711:web:e79cbb3584d7c2c4deeb0a",
+  measurementId: "G-DSZW3M6PGV",
 };
 
 // Initialize Firebase
@@ -39,6 +41,8 @@ if (firebase.apps.length === 0) {
 } else {
   app = firebase.app();
 }
+export const analytics = getAnalytics(app);
+
 export const auth = firebase.auth();
 export const db = getFirestore(app);
 export const storage = getStorage(app);
@@ -224,11 +228,15 @@ export const getSavedDataByUser = async (user_id, lastId, limitItems = 0) => {
     }
   });
 
-  return {data: resultData, lastDocId};
+  return { data: resultData, lastDocId };
 };
 
-export const getArticleByUser = async (user_id, lastId, limitItems = 0, keepCategoryId = false) => {
-  // const articles = await getArticleByUserId(user_id);
+export const getArticleByUser = async (
+  user_id,
+  lastId,
+  limitItems = 0,
+  keepCategoryId = false
+) => {
   const { docs: articles, lastDocId } = await getDocsLazyLoading(
     "articles",
     lastId,
@@ -325,7 +333,12 @@ export const getByQuery = async (table, ...condition) => {
   }));
 };
 
-export const getDocsLazyLoading = async (table, lastDocId, limitItems = 0, ...condition) => {
+export const getDocsLazyLoading = async (
+  table,
+  lastDocId,
+  limitItems = 0,
+  ...condition
+) => {
   let docs = [];
   let newLastDocId = null;
   try {
