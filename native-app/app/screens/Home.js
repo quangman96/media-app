@@ -1,25 +1,7 @@
-import {
-  StyleSheet,
-  ActivityIndicator,
-  View,
-  KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-  Keyboard,
-  ScrollView,
-  FlatList,
-} from "react-native";
+import { StyleSheet, ActivityIndicator, View } from "react-native";
 import React, { useState, useEffect } from "react";
-import Screen from "../components/Screens";
-import CardList from "../components/CardList";
 import HorizontalList from "../components/HorizontalList";
-import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
-import {
-  getMasterData,
-  getAll,
-  getArticles,
-  getUserId,
-  getDocsLazyLoading,
-} from "../../firebase";
+import { getMasterData, getAll, getArticles, getUserId } from "../../firebase";
 import CustomFlatList from "../components/CustomFlatList";
 
 export default function Home({ value }) {

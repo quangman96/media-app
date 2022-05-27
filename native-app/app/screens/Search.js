@@ -1,9 +1,6 @@
 import { StyleSheet, View, ActivityIndicator } from "react-native";
 import React, { useState, useEffect } from "react";
-import Screen from "../components/Screens";
-import CardList from "../components/CardList";
 import AppText from "../components/Text";
-import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
 import { getMasterData, getAll, getArticles, getUserId } from "../../firebase";
 import CustomFlatList from "../components/CustomFlatList";
 
@@ -29,7 +26,6 @@ export default function Search({ value }) {
   };
 
   async function getArticleList(lastItemId = null) {
-    // const {data : articleList , lastDocId} = await getArticles(user_id);
     const numItemLoad = 3;
     setIsLoadMore(true);
 
@@ -47,9 +43,9 @@ export default function Search({ value }) {
         numItemLoad
       );
 
-      const resIdList = articleList.map(e => e.id)
-      const dataIdList = articles.map(e => e.id)
-      const isFound = dataIdList.some(e=> resIdList.includes(e))
+      const resIdList = articleList.map((e) => e.id);
+      const dataIdList = articles.map((e) => e.id);
+      const isFound = dataIdList.some((e) => resIdList.includes(e));
       const newList = isFound ? articles : [...articles, ...articleList];
       setArticles(newList);
       setLastId(lastDocId);
@@ -127,15 +123,6 @@ export default function Search({ value }) {
         }
         ListFooterComponent={renderLoader}
       ></CustomFlatList>
-
-      // <KeyBoardAvoidingWrapper>
-      //   <Screen style={{ backgroundColor: "#EEF1F4" }}>
-      //     <View style={styles.result}>
-      //       <AppText>Result: {articles?.length || 0}</AppText>
-      //     </View>
-      //     <CardList data={articles}></CardList>
-      //   </Screen>
-      // </KeyBoardAvoidingWrapper>
     );
   }
 }
@@ -157,9 +144,7 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   result: {
-    // marginLeft: 20,
     marginTop: 10,
-    // marginBottom: -10,
     marginBottom: 10,
   },
   title: {

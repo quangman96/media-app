@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, ActivityIndicator } from "react-native";
-import Screen from "../components/Screens";
-import CardList from "../components/CardList";
 import AppText from "../components/Text";
-import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
 import { getSavedDataByUser, getUserId } from "../../firebase";
 import CustomFlatList from "../components/CustomFlatList";
 
@@ -78,15 +75,6 @@ export default function Saved(props) {
         }
         ListFooterComponent={renderLoader}
       ></CustomFlatList>
-
-      // <KeyBoardAvoidingWrapper>
-      //   <Screen style={{ backgroundColor: "#EEF1F4" }}>
-      //     <View style={styles.result}>
-      //       <AppText>Result: {data?.length || 0}</AppText>
-      //     </View>
-      //     <CardList isSavedPage={true} data={data}></CardList>
-      //   </Screen>
-      // </KeyBoardAvoidingWrapper>
     );
   }
 }
@@ -102,9 +90,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   result: {
-    // marginLeft: 20,
     marginTop: 10,
-    // marginBottom: -10,
     marginBottom: 10,
   },
 });
