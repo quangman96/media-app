@@ -1,25 +1,7 @@
-import {
-  StyleSheet,
-  ActivityIndicator,
-  View,
-  KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-  Keyboard,
-  ScrollView,
-  FlatList,
-} from "react-native";
+import { StyleSheet, ActivityIndicator, View } from "react-native";
 import React, { useState, useEffect } from "react";
-import Screen from "../components/Screens";
-import CardList from "../components/CardList";
 import HorizontalList from "../components/HorizontalList";
-import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
-import {
-  getMasterData,
-  getAll,
-  getArticles,
-  getUserId,
-  getDocsLazyLoading,
-} from "../../firebase";
+import { getMasterData, getAll, getArticles, getUserId } from "../../firebase";
 import CustomFlatList from "../components/CustomFlatList";
 
 export default function Home({ value }) {
@@ -43,8 +25,9 @@ export default function Home({ value }) {
       3
     );
 
+    const prevData = isFilterCategories ? [] : articles;
     const resIdList = articleList.map((e) => e.id);
-    const dataIdList = articles.map((e) => e.id);
+    const dataIdList = prevData.map((e) => e.id);
     const isFound = dataIdList.some((e) => resIdList.includes(e));
     const newList = isFound ? articles : [...articles, ...articleList];
     setLastId(lastDocId);
@@ -132,12 +115,6 @@ export default function Home({ value }) {
         />
       </View>
     ) : null;
-
-    //  isLoadMore ? (
-    //   <View style={styles.loaderStyle}>
-    //     <ActivityIndicator size="large" color="#aaa" />
-    //   </View>
-    // ) : null;
   };
 
   if (isLoading) {

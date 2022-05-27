@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, ActivityIndicator } from "react-native";
-import Screen from "../components/Screens";
-import CardList from "../components/CardList";
 import AppText from "../components/Text";
-import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
 import { getArticleByUser, getUserId } from "../../firebase";
 import CustomFlatList from "../components/CustomFlatList";
 
@@ -25,9 +22,9 @@ export default function MyList() {
       true
     );
     res.forEach((e) => (e["is_saved"] = true));
-    const resIdList = res.map(e => e.id)
-    const dataIdList = data.map(e => e.id)
-    const isFound = dataIdList.some(e=> resIdList.includes(e))
+    const resIdList = res.map((e) => e.id);
+    const dataIdList = data.map((e) => e.id);
+    const isFound = dataIdList.some((e) => resIdList.includes(e));
     const newList = isFound ? data : [...data, ...res];
     setLastId(lastDocId);
     setData(newList);
@@ -79,19 +76,6 @@ export default function MyList() {
         }
         ListFooterComponent={renderLoader}
       ></CustomFlatList>
-
-      // <KeyBoardAvoidingWrapper>
-      //   <Screen style={{ backgroundColor: "#EEF1F4" }}>
-      //     <View style={styles.result}>
-      //       <AppText>Result: {data?.length - cntDelete || 0}</AppText>
-      //     </View>
-      //     <CardList
-      //       isMyListPage={true}
-      //       data={data}
-      //       callBack={handleOnDeleteArticle}
-      //     ></CardList>
-      //   </Screen>
-      // </KeyBoardAvoidingWrapper>
     );
   }
 }
@@ -107,9 +91,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   result: {
-    // marginLeft: 20,
     marginTop: 10,
-    // marginBottom: -10,
     marginBottom: 10,
   },
 });

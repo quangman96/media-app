@@ -14,11 +14,7 @@ export default function FilteredArticles(props) {
 
   async function getArticleList() {
     setIsLoadMore(true);
-    const { data: articleList} = await getArticles(
-      user_id,
-      null,
-      0
-    );
+    const { data: articleList } = await getArticles(user_id, null, 0);
     filterArticleList(articleList);
 
     setTimeout(() => {

@@ -20,10 +20,9 @@
       "supportsTablet": true
     },
     "android": {
-      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/logo.png",
-        "backgroundColor": "#ff6347"
+        "backgroundColor": "#ffffff"
       },
       "package": "ait.nativeapp"
     },
