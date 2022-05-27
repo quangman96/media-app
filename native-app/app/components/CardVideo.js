@@ -79,7 +79,9 @@ export default function CardVideo({ cardObj }) {
             source={{
               uri: cardObj["video"],
             }}
-            // posterSource={{ uri: "https://picsum.photos/200/300" }}
+            // posterSource={{ uri: "https://picsum.photos/500/300" }}
+            // posterSource={require(`../../assets/images/button-icon-20.png`)}
+            // posterResizeMode={'repeat'}
             // usePoster={true}
             useNativeControls
             resizeMode="contain"
@@ -117,28 +119,30 @@ export default function CardVideo({ cardObj }) {
           // </View>
         )}
 
-        <AppText style={styles.time}>
-          {calculateTime(cardObj["create_at"])}
-        </AppText>
+        <View style={styles.content}>
+          <AppText style={styles.time}>
+            {calculateTime(cardObj["create_at"])}
+          </AppText>
 
-        <AppText numberOfLines={2} style={styles.title}>
-          {cardObj["title"]}
-        </AppText>
+          <AppText numberOfLines={2} style={styles.title}>
+            {cardObj["title"]}
+          </AppText>
 
-        <AppText numberOfLines={3} style={styles.description}>
-          {cardObj["description"]}
-        </AppText>
+          {/* <AppText numberOfLines={3} style={styles.description}>
+            {cardObj["description"]}
+          </AppText> */}
 
-        <View style={styles.footer}>
-          <ChipList
-            isFull={true}
-            customStyles={styles.categories}
-            key={cardObj.id}
-            data={cardObj["categories"]}
-          ></ChipList>
-          {/* <AppText style={styles.time}>
+          <View style={styles.footer}>
+            <ChipList
+              isFull={true}
+              customStyles={styles.categories}
+              key={cardObj.id}
+              data={cardObj["categories"]}
+            ></ChipList>
+            {/* <AppText style={styles.time}>
             {calculateTime(cardObj["create_at"])}
           </AppText> */}
+          </View>
         </View>
       </View>
     </TouchableOpacity>
@@ -154,17 +158,23 @@ const styles = StyleSheet.create({
     width: "100%",
     flex: 1,
     minHeight: 170,
-    paddingRight: 20,
-    paddingLeft: 20,
-    marginBottom: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
+    // paddingRight: 20,
+    // paddingLeft: 20,
+    // marginBottom: 20,
+    // backgroundColor: "white",
+    // backgroundColor: "red",
+    // borderRadius: 20,
   },
   video: {
-    alignSelf: "center",
-    width: "100%",
-    height: 200,
-    marginTop: 10,
+    flex: 1,
+    // alignSelf: "center",
+    // // marginTop: 10,
+    aspectRatio: 16 / 9,
+    width: '100%',
+  },
+  content: {
+    margin: 15,
+    // backgroundColor: 'red'
   },
   title: {
     color: "#667080",
@@ -184,7 +194,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     width: "100%",
     // marginTop: 5,
-    marginBottom: 10,
+    // marginBottom: 10,
   },
   categories: {
     flexWrap: "wrap",

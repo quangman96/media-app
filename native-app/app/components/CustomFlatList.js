@@ -22,7 +22,7 @@ export default function CardList({
   ...rest
 }) {
   return (
-    <View style={styles.body}>
+    <View style={[styles.body, isVideoPage ? styles.video : styles.normal]}>
       <FlatList
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
@@ -51,10 +51,15 @@ export default function CardList({
 const styles = StyleSheet.create({
   body: {
     alignItems: "center",
+    flex: 1,
+  },
+  normal: {
     marginTop: 5,
     marginLeft: 20,
     marginRight: 20,
-    flex: 1,
+  },
+  video: {
+    backgroundColor: 'white'
   },
   flatList: {
     width: "100%",

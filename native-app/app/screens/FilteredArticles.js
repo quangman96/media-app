@@ -87,6 +87,7 @@ export default function FilteredArticles(props) {
 const styles = StyleSheet.create({
   flatList: {
     marginTop: 20,
+    width: '100%'
   },
   container: {
     flex: 1,
