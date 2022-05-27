@@ -43,8 +43,9 @@ export default function Home({ value }) {
       3
     );
 
+    const prevData = isFilterCategories ? [] : articles;
     const resIdList = articleList.map((e) => e.id);
-    const dataIdList = articles.map((e) => e.id);
+    const dataIdList = prevData.map((e) => e.id);
     const isFound = dataIdList.some((e) => resIdList.includes(e));
     const newList = isFound ? articles : [...articles, ...articleList];
     setLastId(lastDocId);
@@ -132,12 +133,6 @@ export default function Home({ value }) {
         />
       </View>
     ) : null;
-
-    //  isLoadMore ? (
-    //   <View style={styles.loaderStyle}>
-    //     <ActivityIndicator size="large" color="#aaa" />
-    //   </View>
-    // ) : null;
   };
 
   if (isLoading) {
