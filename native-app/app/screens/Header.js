@@ -62,16 +62,19 @@ export default function Header({ title, passInput, passCategory }) {
 
   const handleClickCard = (index) => {
     const temp = [...buttons];
-    temp[index]["focus"] = !temp[index]["focus"];
-    setButtons(temp);
-    passCategory(temp);
+    // temp[index]["focus"] = !temp[index]["focus"];
+    // setButtons(temp);
+    // passCategory(temp);
+    temp.forEach((btn) => (btn["focus"] = false));
+    temp[index]["focus"] = true;
+    navigation.navigate("FilteredArticles", { value: temp });
   };
 
   return (
     <View style={[styles.header, { width: width }]}>
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        {title !== "Search" && title !== "Home" && (
-          <Text style={styles.title}>{name}</Text>
+        {title !== "Search" && title !== "Home" && title !== "Video" && (
+          <Text style={[styles.title]}>{name}</Text>
         )}
         {title === "User" && (
           <TouchableOpacity
@@ -117,9 +120,9 @@ export default function Header({ title, passInput, passCategory }) {
             <View style={{ marginLeft: 20, marginBottom: 12 }}></View>
           </View>
         )}
-        {title === "Home" && (
+        {(title === "Home" || title === "Video") && (
           <View styles={styles.view}>
-            <Text style={styles.title}>Home</Text>
+            <Text style={styles.title}>{title}</Text>
             <View style={{ marginTop: 10 }}></View>
             <ScrollView
               showsHorizontalScrollIndicator={false}
@@ -135,31 +138,50 @@ export default function Header({ title, passInput, passCategory }) {
                 <View style={styles.chipBody}>
                   {(buttons || []).map((prop, key) => {
                     return (
-                      key < 4 && (
-                        <TouchableOpacity
-                          disabled={false}
-                          onPress={() => handleClickCard(key)}
+                      <TouchableOpacity
+                        disabled={false}
+                        onPress={() => handleClickCard(key)}
+                      >
+                        <View
+                          style={[
+                            styles.theme,
+                            {
+                              backgroundColor: "#EEF1F4",
+                            },
+                          ]}
                         >
-                          <View
-                            style={[
-                              styles.theme,
-                              {
-                                backgroundColor: prop["focus"]
-                                  ? "#667080"
-                                  : "#EEF1F4",
-                              },
-                            ]}
-                          >
-                            <AppText
-                              style={
-                                styles[prop["focus"] ? "fontDark" : "fontLight"]
-                              }
-                            >
-                              {prop["name"]}
-                            </AppText>
-                          </View>
-                        </TouchableOpacity>
-                      )
+                          <AppText style={styles["fontLight"]}>
+                            {prop["name"]}
+                          </AppText>
+                        </View>
+                      </TouchableOpacity>
+                      // key < 4 && (
+                      //   <TouchableOpacity
+                      //     disabled={false}
+                      //     onPress={() => handleClickCard(key)}
+                      //   >
+                      //     <View
+                      //       style={[
+                      //         styles.theme,
+                      //         {
+                      //           // backgroundColor: prop["focus"]
+                      //           //   ? "#667080"
+                      //           //   : "#EEF1F4",
+                      //           backgroundColor: "#EEF1F4",
+                      //         },
+                      //       ]}
+                      //     >
+                      //       <AppText
+                      //         style={
+                      //           // styles[prop["focus"] ? "fontDark" : "fontLight"]
+                      //           styles["fontLight"]
+                      //         }
+                      //       >
+                      //         {prop["name"]}
+                      //       </AppText>
+                      //     </View>
+                      //   </TouchableOpacity>
+                      // )
                     );
                   })}
                 </View>

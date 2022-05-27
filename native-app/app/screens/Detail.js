@@ -43,7 +43,7 @@ export default function Detail({ route }) {
                 <AppText>Nguyen Quang Man</AppText>
               </View> */}
               <AppText style={styles.text}>{data.description}</AppText>
-              {data.video && (
+              {data?.video?.length > 0 && (
                 <View style={styles.videoArea}>
                   <Video
                     ref={video}

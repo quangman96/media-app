@@ -12,9 +12,20 @@ import ChipList from "../components/ChipList";
 import { Feather } from "@expo/vector-icons";
 import defaultStyles from "../config/styles";
 import { useNavigation } from "@react-navigation/core";
-import { createSavedData, deleteSavedData, getUserId, softDelete } from "../../firebase";
+import {
+  createSavedData,
+  deleteSavedData,
+  getUserId,
+  softDelete,
+} from "../../firebase";
 
-export default function Card({ icon, cardObj, isSavedPage, isMyListPage, callBack }) {
+export default function Card({
+  icon,
+  cardObj,
+  isSavedPage,
+  isMyListPage,
+  callBack,
+}) {
   const user_id = getUserId();
   const [isSaved, setSaved] = useState(cardObj["is_saved"]);
   const [isDelete, setIsDelete] = useState(false);
@@ -45,7 +56,7 @@ export default function Card({ icon, cardObj, isSavedPage, isMyListPage, callBac
       setTimeout(() => {
         isSavedPage && setIsDelete(true);
       }, 100);
-      callBack();
+      if (typeof callBack == "function") callBack();
     }
     setSaved(!isSaved);
   };
@@ -68,10 +79,11 @@ export default function Card({ icon, cardObj, isSavedPage, isMyListPage, callBac
   };
 
   const handleOnOkDelete = async () => {
-    await softDelete("articles", cardObj['id']);
+    console.log("handleOnOkDelete");
+    await softDelete("articles", cardObj["id"]);
     setIsDelete(true);
     ToastAndroid.show("Delete article successfully !!!", ToastAndroid.SHORT);
-    callBack();
+    if (typeof callBack == "function") callBack();
   };
 
   return (

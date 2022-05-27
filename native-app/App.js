@@ -18,7 +18,9 @@ import Header from "./app/screens/Header";
 import MyList from "./app/screens/MyList";
 import Article from "./app/screens/Article";
 import { LogBox } from "react-native";
-import { StatusBar  } from "react-native";
+import { StatusBar } from "react-native";
+import VideoScreen from "./app/screens/Video";
+import FilteredArticles from './app/screens/FilteredArticles';
 
 LogBox.ignoreAllLogs();
 
@@ -86,21 +88,6 @@ export default function App() {
           headerLeft: () => null,
         }}
       />
-      {/* <Tab.Screen
-        name="Add Article"
-        component={Article}
-        options={{
-          unmountOnBlur: true,
-          tabBarIcon: ({ focused }) => (
-            <Feather
-              name="file-plus"
-              size={26}
-              color={focused ? "#667080" : "#bbc0c8"}
-            />
-          ),
-          header: () => null,
-        }}
-      /> */}
       <Tab.Screen
         name="My Article"
         component={MyList}
@@ -109,6 +96,21 @@ export default function App() {
           tabBarIcon: ({ focused }) => (
             <Feather
               name="list"
+              size={26}
+              color={focused ? "#667080" : "#bbc0c8"}
+            />
+          ),
+          header: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="Video"
+        children={() => <VideoScreen value={categories} />}
+        options={{
+          unmountOnBlur: true,
+          tabBarIcon: ({ focused }) => (
+            <Feather
+              name="youtube"
               size={26}
               color={focused ? "#667080" : "#bbc0c8"}
             />
@@ -160,7 +162,7 @@ export default function App() {
       routes[routes.length - 1].state?.routeNames[currentRouteIndex];
     if (currentRoute === "Search") {
       setHeaderHeight(180);
-    } else if (currentRoute === "Home") {
+    } else if (currentRoute === "Home" || currentRoute === "Video") {
       setHeaderHeight(150);
     } else if (!currentRoute) {
       setHeaderHeight(150);
@@ -172,7 +174,12 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <StatusBar barStyle="dark-content" hidden={false} backgroundColor="transparent" translucent={true} />
+      <StatusBar
+        barStyle="dark-content"
+        hidden={false}
+        backgroundColor="transparent"
+        translucent={true}
+      />
       <Stack.Navigator
         screenOptions={{
           headerStyle: {
@@ -235,6 +242,22 @@ export default function App() {
           component={Article}
           options={{
             title: "Edit Article",
+            headerStyle: {
+              height: 110,
+            },
+            headerTintColor: "#667080",
+            headerTitleStyle: {
+              fontWeight: "bold",
+              fontSize: 35,
+              fontFamily: "Inter",
+            },
+          }}
+        />
+
+        <Stack.Screen
+          name="FilteredArticles"
+          component={FilteredArticles}
+          options={{
             headerStyle: {
               height: 110,
             },

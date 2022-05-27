@@ -21,8 +21,9 @@ import {
   getDocsLazyLoading,
 } from "../../firebase";
 import CustomFlatList from "../components/CustomFlatList";
+import { example } from "../mock/videoData";
 
-export default function Home({ value }) {
+export default function VideoScreen({ value }) {
   const user_id = getUserId();
   const [buttons, setButtons] = useState([]);
   const [articles, setArticles] = useState([]);
@@ -33,18 +34,20 @@ export default function Home({ value }) {
   const [isLoadMore, setIsLoadMore] = useState(false);
   const [lastId, setLastId] = useState(null);
   const [loadCnt, setLoadCnt] = useState(0);
+  const [isFilterCategories, setIsFilterCategories] = useState(false);
   const isHaveChild = (arr1, arr2) => arr1.some((e) => ~arr2.indexOf(e));
 
   async function getArticleList(lastItemId = null) {
     setIsLoadMore(true);
     const { data: articleList, lastDocId } = await getArticles(
       user_id,
-      lastItemId,
-      3
+      isFilterCategories ? null : lastItemId,
+      isFilterCategories ? 0 : 3
     );
 
+    const prevData = isFilterCategories ? [] : articles;
     const resIdList = articleList.map((e) => e.id);
-    const dataIdList = articles.map((e) => e.id);
+    const dataIdList = prevData.map((e) => e.id);
     const isFound = dataIdList.some((e) => resIdList.includes(e));
     const newList = isFound ? articles : [...articles, ...articleList];
     setLastId(lastDocId);
@@ -86,7 +89,7 @@ export default function Home({ value }) {
     getCategoryList();
   }, []);
 
-  useEffect(() => {}, [value]);
+  useEffect(() => setIsFilterCategories(!isFilterCategories), [value]);
 
   const filterArticleList = (arrList) => {
     const arr = [];
@@ -145,54 +148,21 @@ export default function Home({ value }) {
   } else {
     return (
       <CustomFlatList
-        data={articles}
-        onEndReachedThreshold={0}
-        onEndReached={handleOnEndReached}
-        ListHeaderComponent={
-          <HorizontalList data={articlesHorizontal}></HorizontalList>
-        }
+        style={styles.customFlatList}
+        isVideoPage={true}
+        data={example}
+        // callBack={handleOnUnSaved}
+        // onEndReachedThreshold={0}
+        // onEndReached={handleOnEndReached}
         ListFooterComponent={renderLoader}
       ></CustomFlatList>
-
-      // <KeyBoardAvoidingWrapper>
-      //   <Screen style={{ backgroundColor: "#EEF1F4" }}>
-      //     <HorizontalList data={articlesHorizontal}></HorizontalList>
-      //     <View style={{ marginTop: -15 }}></View>
-      //     <CardList
-      //       data={articles}
-      //       onEndReachedThreshold={0.001}
-      //       onEndReached={handleOnEndReached}
-      //     ></CardList>
-      //   </Screen>
-      // </KeyBoardAvoidingWrapper>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  header: {
-    minHeight: 145,
-    backgroundColor: "white",
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-    marginTop: -10,
-  },
-  body: {
-    alignItems: "center",
-    margin: 20,
-  },
-  chips: {
-    flexDirection: "row",
-    marginLeft: 20,
-    marginTop: 10,
-  },
-  title: {
-    color: "#667080",
-    fontSize: 32,
-    fontWeight: "700",
-    lineHeight: 36,
-    marginTop: 40,
-    marginLeft: 20,
+  customFlatList: {
+    marginTop: 20,
   },
   container: {
     flex: 1,
@@ -202,9 +172,5 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     padding: 10,
-  },
-  loaderStyle: {
-    marginVertical: 16,
-    alignItems: "center",
   },
 });
