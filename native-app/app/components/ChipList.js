@@ -2,11 +2,25 @@ import { StyleSheet, View, TouchableOpacity } from "react-native";
 import Chip from "./Chip";
 import React from "react";
 
-export default function ChipList({ data, size = "small" }) {
+export default function ChipList({
+  data,
+  size = "small",
+  customStyles,
+  isFull = false,
+}) {
   return (
-    <View style={styles.body}>
+    <View style={[styles.body, customStyles]}>
       {(data || []).map((prop, key) => {
-        return (
+        return isFull ? (
+          <TouchableOpacity disabled={false}>
+            <Chip
+              key={key}
+              size={size}
+              theme={prop["theme"]}
+              label={prop["name"] || prop["label"] || prop}
+            ></Chip>
+          </TouchableOpacity>
+        ) : (
           key < 4 && (
             <TouchableOpacity disabled={false}>
               <Chip
