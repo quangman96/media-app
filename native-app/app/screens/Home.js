@@ -45,9 +45,9 @@ export default function Home({ value }) {
     );
 
     const prevData = isFilterCategories ? [] : articles;
-    const resIdList = articleList.map(e => e.id)
-    const dataIdList = prevData.map(e => e.id)
-    const isFound = dataIdList.some(e=> resIdList.includes(e))
+    const resIdList = articleList.map((e) => e.id);
+    const dataIdList = prevData.map((e) => e.id);
+    const isFound = dataIdList.some((e) => resIdList.includes(e));
     const newList = isFound ? articles : [...articles, ...articleList];
     setLastId(lastDocId);
     setArticlesDF(newList);
@@ -100,9 +100,7 @@ export default function Home({ value }) {
 
     if (arr.length > 0) {
       const newArr = arrList.filter((e) => isHaveChild(arr, e.categories));
-      console.log(newArr.length)
       const filtered = newArr.slice(0, loadCnt * 3 + 3);
-      console.log(filtered.length)
       setArticles(filtered);
       if (filtered.length > 1) {
         setHorizontalList(filtered);
@@ -136,12 +134,6 @@ export default function Home({ value }) {
         />
       </View>
     ) : null;
-
-    //  isLoadMore ? (
-    //   <View style={styles.loaderStyle}>
-    //     <ActivityIndicator size="large" color="#aaa" />
-    //   </View>
-    // ) : null;
   };
 
   if (isLoading) {
