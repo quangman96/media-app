@@ -143,7 +143,10 @@ export default function VideoScreen({ value }) {
 
 const styles = StyleSheet.create({
   customFlatList: {
-    marginTop: 20,
+    // marginTop: 20,
+    // backgroundColor: 'red',
+    width: '100%',
+    flex: 1,
   },
   container: {
     flex: 1,
