@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect, createRef } from "react";
 import { View, TextInput, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import defaultStyles from "../config/styles";
@@ -11,8 +11,14 @@ export default function AppTextInput({
   fade = false,
   height = 48,
   multiline = false,
+  reset = false,
   ...otherProps
 }) {
+  const refTextInput = createRef();
+  useEffect(() => {
+    if (reset) refTextInput.current.clear();
+  }, [reset]);
+
   const iconStyle =
     style === "right"
       ? { position: "absolute", alignSelf: "center", right: 0, marginRight: 10 }
@@ -45,6 +51,7 @@ export default function AppTextInput({
       ]}
     >
       <TextInput
+        ref={refTextInput}
         editable={editable}
         placeholderTextColor={defaultStyles.colors.placeholder}
         style={multiline ? textMultiLineStyle : textStyle}

@@ -1,32 +1,42 @@
-import React, { useState, useRef, useCallback, createRef } from "react";
-import {
-  StyleSheet,
-  View,
-  Image,
-  TouchableOpacity,
-  ToastAndroid,
-  Alert,
-  Button,
-} from "react-native";
-import AppText from "../components/Text";
-import ChipList from "../components/ChipList";
-import { Feather } from "@expo/vector-icons";
-import defaultStyles from "../config/styles";
-import { useNavigation } from "@react-navigation/core";
-import {
-  createSavedData,
-  deleteSavedData,
-  getUserId,
-  softDelete,
-} from "../../firebase";
 import { Video } from "expo-av";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View
+} from "react-native";
 // import VideoPlayer from "expo-video-player";
 import YoutubePlayer from "react-native-youtube-iframe";
+import ChipList from "../components/ChipList";
+import AppText from "../components/Text";
 // import VideoPlayer from "react-native-video-player";
 
-export default function CardVideo({ cardObj }) {
-  const refView = useRef(null);
+export default function CardVideo({ cardObj, pauseAnotherVideo }) {
+  const timerRef = useRef(null);
   const refVideo = useRef(null);
+  const [showPoster, setShowPoster] = useState(false);
+  const [statusPlay, setStatusPlay] = React.useState({});
+  const [playingYoutube, setPlayingYoutube] = useState(cardObj["isPlaying"]);
+
+  useEffect(() => {
+    if (!cardObj["isPlaying"]) {
+      refVideo?.current?.pauseAsync();
+      setPlayingYoutube(false);
+    }
+  }, [cardObj["isPlaying"]]);
+
+  useEffect(() => {
+    if (statusPlay.isPlaying) pauseAnotherVideo(cardObj["id"]);
+  }, [statusPlay.isPlaying]);
+
+  useEffect(() => {
+    if (playingYoutube) {
+      pauseAnotherVideo(cardObj["id"]);
+    }
+  }, [playingYoutube]);
+
   const calculateTime = (time) => {
     const date = Math.floor(Math.abs(new Date() - new Date(time)) / 86400000);
     let z = 0;
@@ -45,78 +55,102 @@ export default function CardVideo({ cardObj }) {
     return undefined !== url[2] ? url[2].split(/[^0-9a-z_\-]/i)[0] : url[0];
   };
 
-  const handleOnPress = () => {
-    console.log("aaaaaaa");
-    // console.log(refView);
-    // refView.current.focus();
-    // refVideo.current.playAsync();
-    // refVideo.current.stopAsync();
+  const validateYoutubeUrl = (url) => {
+    const regex =
+      /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+    return url.match(regex);
+  };
+
+  const handleOnPressInVideo = () => {
+    setShowPoster(false);
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      setShowPoster(true);
+    }, 3000);
+  };
+
+  const handleOnPressVideo = () => {
+    if (statusPlay.isPlaying) {
+      refVideo.current.stopAsync();
+    } else {
+      refVideo.current.playAsync();
+    }
+  };
+
+  const handleOnPlayChange = (status) => {
+    setDisplayPoster(status);
+    setStatusPlay(status);
+  };
+
+  const handleOnReadyForDisplay = () => {
+    setDisplayPoster(statusPlay);
+  };
+
+  const setDisplayPoster = (status) => {
+    clearTimeout(timerRef.current);
+    if (status.isPlaying) {
+      setShowPoster(false);
+    } else {
+      timerRef.current = setTimeout(() => {
+        setShowPoster(true);
+      }, 3000);
+    }
+  };
+
+  const handleOnFullscreenUpdate = ({ fullscreenUpdate, status }) => {
+    if (fullscreenUpdate == 3 && !statusPlay.isPlaying) setShowPoster(false);
+  };
+
+  const handleOnStateYoutubeChange = (state) => {
+    if (state == "paused") setPlayingYoutube(false);
+    else setPlayingYoutube(true);
+  };
+
+  const renderPoster = () => {
+    return (
+      showPoster && (
+        <Image
+          style={styles.videoPoster}
+          source={require(`../../assets/images/button-icon-png-21060.png`)}
+          resizeMode="contain"
+        />
+      )
+    );
   };
 
   return (
-    <TouchableOpacity style={styles.area} onPress={handleOnPress}>
+    <TouchableOpacity style={styles.area}>
       <View style={styles.form}>
-        {cardObj["isYoutube"] ? (
-          <View style={{ marginTop: 20 }}>
-            {/* <YoutubePlayer height={190} videoId={"iee2TATGMyI"} /> */}
+        {validateYoutubeUrl(cardObj["url"]) ? (
+          <View>
             <YoutubePlayer
-              height={190}
-              videoId={getYouTubeGetID(cardObj["video"])}
+              height={220}
+              play={playingYoutube}
+              videoId={getYouTubeGetID(cardObj["url"])}
+              onChangeState={handleOnStateYoutubeChange}
             />
           </View>
         ) : (
-          // <VideoPlayer
-          //   video={{
-          //     uri: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-          //   }}
-          //   videoWidth={1600}
-          //   videoHeight={900}
-          //   thumbnail={{ uri: "https://picsum.photos/200/300" }}
-          // />
-
-          <Video
-            style={styles.video}
-            source={{
-              uri: cardObj["video"],
-            }}
-            // posterSource={{ uri: "https://picsum.photos/500/300" }}
-            // posterSource={require(`../../assets/images/button-icon-20.png`)}
-            // posterResizeMode={'repeat'}
-            // usePoster={true}
-            useNativeControls
-            resizeMode="contain"
-            isLooping
-            ref={refVideo}
-          />
-
-          // <View style={{ backgroundColor: "yellow" }} ref={refView}>
-          //   <VideoPlayer
-          //     videoProps={{
-          //       shouldPlay: false,
-          //       resizeMode: Video.RESIZE_MODE_CONTAIN,
-          //       source: {
-          //         uri: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-          //       },
-          //     }}
-          //     style={{
-          //       videoBackgroundColor: "transparent",
-          //       controlsBackgroundColor: "red",
-          //       height: 200,
-          //     }}
-          //   />
-          //   <Video
-          //     style={styles.video}
-          //     source={{
-          //       uri: cardObj["video"],
-          //     }}
-          //     // posterSource={{ uri: "https://picsum.photos/200/300" }}
-          //     // usePoster={true}
-          //     useNativeControls
-          //     resizeMode="contain"
-          //     isLooping
-          //     ref={refVideo}
-          //   />
-          // </View>
+          <TouchableWithoutFeedback
+            onPressIn={handleOnPressInVideo}
+            onPress={handleOnPressVideo}
+          >
+            <View style={styles.videoComponent}>
+              <Video
+                style={styles.nativeVideoControls}
+                source={{ uri: cardObj["url"] }}
+                resizeMode="contain"
+                isLooping
+                ref={refVideo}
+                useNativeControls
+                ignoreSilentSwitch="ignore"
+                onReadyForDisplay={handleOnReadyForDisplay}
+                onPlaybackStatusUpdate={handleOnPlayChange}
+                onFullscreenUpdate={handleOnFullscreenUpdate}
+              />
+              {renderPoster()}
+            </View>
+          </TouchableWithoutFeedback>
         )}
 
         <View style={styles.content}>
@@ -128,10 +162,6 @@ export default function CardVideo({ cardObj }) {
             {cardObj["title"]}
           </AppText>
 
-          {/* <AppText numberOfLines={3} style={styles.description}>
-            {cardObj["description"]}
-          </AppText> */}
-
           <View style={styles.footer}>
             <ChipList
               isFull={true}
@@ -139,9 +169,6 @@ export default function CardVideo({ cardObj }) {
               key={cardObj.id}
               data={cardObj["categories"]}
             ></ChipList>
-            {/* <AppText style={styles.time}>
-            {calculateTime(cardObj["create_at"])}
-          </AppText> */}
           </View>
         </View>
       </View>
@@ -150,6 +177,29 @@ export default function CardVideo({ cardObj }) {
 }
 
 const styles = StyleSheet.create({
+  nativeVideoControls: {
+    top: 0,
+    height: "100%",
+  },
+  videoComponent: {
+    width: "100%",
+    height: "auto",
+    minWidth: "100%",
+    aspectRatio: 16 / 9,
+  },
+  videoContainer: {
+    height: "auto",
+  },
+  videoPoster: {
+    position: "absolute",
+    alignSelf: "center",
+    top: 0,
+    bottom: "-5%",
+    width: "20%",
+    minWidth: "20%",
+    height: "auto",
+    aspectRatio: 16 / 9,
+  },
   area: {
     width: "100%",
   },
@@ -158,23 +208,9 @@ const styles = StyleSheet.create({
     width: "100%",
     flex: 1,
     minHeight: 170,
-    // paddingRight: 20,
-    // paddingLeft: 20,
-    // marginBottom: 20,
-    // backgroundColor: "white",
-    // backgroundColor: "red",
-    // borderRadius: 20,
-  },
-  video: {
-    flex: 1,
-    // alignSelf: "center",
-    // // marginTop: 10,
-    aspectRatio: 16 / 9,
-    width: '100%',
   },
   content: {
     margin: 15,
-    // backgroundColor: 'red'
   },
   title: {
     color: "#667080",
@@ -183,82 +219,21 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginBottom: 5,
   },
-  description: {
-    color: "#667080",
-    fontSize: 10,
-    fontWeight: "400",
-    lineHeight: 15,
-  },
   footer: {
     flex: 1,
     flexDirection: "column",
     width: "100%",
-    // marginTop: 5,
-    // marginBottom: 10,
   },
   categories: {
     flexWrap: "wrap",
     marginTop: 5,
-    // width: '50%'
   },
   time: {
     alignSelf: "flex-end",
     marginTop: -10,
-    // position: "absolute",
-    // right: 0,
     color: "#F6CA56",
     fontSize: 10,
     fontWeight: "500",
     lineHeight: 22,
   },
 });
-
-// import React, { useState, useRef } from "react";
-// import { View, StyleSheet, Button } from 'react-native';
-// import { Video, AVPlaybackStatus } from 'expo-av';
-
-// export default function CardVideo() {
-//   const video = useRef(null);
-//   const [status, setStatus] = useState({});
-//   return (
-//     <View>
-//       <Video
-//         ref={video}
-//         style={styles.video}
-//         source={{
-//           uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4',
-//         }}
-//         useNativeControls
-//         resizeMode="contain"
-//         isLooping
-//         onPlaybackStatusUpdate={status => setStatus(() => status)}
-//       />
-//       <View style={styles.buttons}>
-//         <Button
-//           title={status.isPlaying ? 'Pause' : 'Play'}
-//           onPress={() =>
-//             status.isPlaying ? video.current.pauseAsync() : video.current.playAsync()
-//           }
-//         />
-//       </View>
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     // flex: 1,
-//     justifyContent: 'center',
-//     backgroundColor: '#ecf0f1',
-//   },
-// //   video: {
-// //     alignSelf: 'center',
-// //     width: 320,
-// //     height: 200,
-// //   },
-//   buttons: {
-//     flexDirection: 'row',
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-// });

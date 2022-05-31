@@ -21,7 +21,8 @@ import Article from "./app/screens/Article";
 import { LogBox } from "react-native";
 import { StatusBar } from "react-native";
 import VideoScreen from "./app/screens/Video";
-import FilteredArticles from './app/screens/FilteredArticles';
+import FilteredArticles from "./app/screens/FilteredArticles";
+import CreateVideo from "./app/screens/CreateVideo";
 
 import * as Analytics from "expo-firebase-analytics";
 
@@ -94,13 +95,13 @@ export default function App() {
         }}
       />
       <Tab.Screen
-        name="My Article"
-        component={MyList}
+        name="Video"
+        component={VideoScreen}
         options={{
           unmountOnBlur: true,
           tabBarIcon: ({ focused }) => (
             <Feather
-              name="list"
+              name="youtube"
               size={26}
               color={focused ? "#667080" : "#bbc0c8"}
             />
@@ -109,13 +110,13 @@ export default function App() {
         }}
       />
       <Tab.Screen
-        name="Video"
-        children={() => <VideoScreen value={categories} />}
+        name="My Article"
+        component={MyList}
         options={{
           unmountOnBlur: true,
           tabBarIcon: ({ focused }) => (
             <Feather
-              name="youtube"
+              name="list"
               size={26}
               color={focused ? "#667080" : "#bbc0c8"}
             />
@@ -167,7 +168,7 @@ export default function App() {
       routes[routes.length - 1].state?.routeNames[currentRouteIndex];
     if (currentRoute === "Search") {
       setHeaderHeight(180);
-    } else if (currentRoute === "Home" || currentRoute === "Video") {
+    } else if (currentRoute === "Home") {
       setHeaderHeight(150);
     } else if (!currentRoute) {
       setHeaderHeight(150);
@@ -277,6 +278,23 @@ export default function App() {
           name="FilteredArticles"
           component={FilteredArticles}
           options={{
+            headerStyle: {
+              height: 110,
+            },
+            headerTintColor: "#667080",
+            headerTitleStyle: {
+              fontWeight: "bold",
+              fontSize: 35,
+              fontFamily: "Inter",
+            },
+          }}
+        />
+
+        <Stack.Screen
+          name="CreateVideo"
+          component={CreateVideo}
+          options={{
+            title: "Create Video",
             headerStyle: {
               height: 110,
             },

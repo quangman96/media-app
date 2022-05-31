@@ -11,7 +11,7 @@ import {
   View,
 } from "react-native";
 import {
-  createArticle,
+  createByTable,
   getAll,
   getMasterData,
   updateById,
@@ -25,6 +25,7 @@ import AppFormDropDown from "../components/forms/AppFormDropDown";
 import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
 import Screen from "../components/Screens";
 import AppText from "../components/Text";
+import * as Analytics from "expo-firebase-analytics";
 
 export default function Article({ route }) {
   const { uid, email } = auth.currentUser;
@@ -39,6 +40,7 @@ export default function Article({ route }) {
   const [contentHtml, setContentHtml] = useState("");
   const [categoriesErrors, setCategoriesErrors] = useState("");
   const [titleErrors, setTitleErrors] = useState("");
+  const [reset, setReset] = useState(false);
   const [article, setArticle] = useState({
     title: "",
     description: "",
@@ -97,7 +99,6 @@ export default function Article({ route }) {
           video: editData["video"],
           content: editData["content"],
         };
-        setContentHtml(editData["content"]);
       } else {
         data = {
           title: "",
@@ -172,6 +173,7 @@ export default function Article({ route }) {
     setTitleErrors("");
     setCategoriesErrors("");
     let isError = false;
+    setReset(false);
     if (!values["title"] || values["title"].length == 0) {
       isError = true;
       setTitleErrors("Title is required");
@@ -208,18 +210,15 @@ export default function Article({ route }) {
       ToastAndroid.show("Edit article successfully !!!", ToastAndroid.SHORT);
       navigation.navigate("Main", { screen: "My Article" });
       return;
-    } else await createArticle(data);
+    } else await createByTable("articles", data);
     resetForm({});
     setStatus({ success: true });
     setArticle({
       ...article,
-      title: null,
-      description: null,
       categories: [defaultArticle["categories"][0]],
       status: defaultArticle["status"],
       image: null,
       video: null,
-      content: null,
     });
     Analytics.logEvent("article_create", {
       uid,
@@ -227,7 +226,7 @@ export default function Article({ route }) {
       // article_id: article["id"],
       time: new Date(),
     });
-    setContentHtml("");
+    setReset(true);
     ToastAndroid.show("Create article successfully !!!", ToastAndroid.SHORT);
   };
 
@@ -265,6 +264,7 @@ export default function Article({ route }) {
                 placeholder="Input text"
                 initValues={article["title"]}
                 customErrors={titleErrors}
+                reset={reset}
               />
 
               <AppFormField
@@ -277,6 +277,7 @@ export default function Article({ route }) {
                 numberOfLines={4}
                 multiline={true}
                 height={80}
+                reset={reset}
               />
 
               <AppFormDropDown
@@ -369,7 +370,7 @@ export default function Article({ route }) {
                         source={require("../../assets/images/video.png")}
                       />
                     )}
-                    {article["video"] && (
+                    {article["video"]?.length > 0 && (
                       <Video
                         ref={video}
                         style={styles.video}
@@ -389,6 +390,7 @@ export default function Article({ route }) {
               <Editor
                 value={article["content"]}
                 callback={handleOnEditorChange}
+                reset={reset}
               />
               <View style={{ padding: 5 }}></View>
               <SubmitButton title={route?.params?.data ? "Edit" : "Create"} />

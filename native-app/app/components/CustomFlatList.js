@@ -1,16 +1,6 @@
-import {
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  FlatList,
-  KeyboardAvoidingView,
-  ScrollView,
-  TouchableWithoutFeedback,
-  Keyboard,
-} from "react-native";
 import React from "react";
+import { FlatList, StyleSheet, View } from "react-native";
 import Card from "./Card";
-import AppText from "../components/Text";
 import CardVideo from "./CardVideo";
 
 export default function CardList({
@@ -21,6 +11,12 @@ export default function CardList({
   callBack,
   ...rest
 }) {
+  const handleOnPauseAnotherVideo = (id) => {
+    data.forEach((video) => {
+      video["isPlaying"] = video["id"] === id;
+    });
+  };
+
   return (
     <View style={[styles.body, isVideoPage ? styles.video : styles.normal]}>
       <FlatList
@@ -31,7 +27,10 @@ export default function CardList({
         data={data}
         renderItem={({ item }) =>
           isVideoPage ? (
-            <CardVideo cardObj={item} />
+            <CardVideo
+              cardObj={item}
+              pauseAnotherVideo={handleOnPauseAnotherVideo}
+            />
           ) : (
             <Card
               isSavedPage={isSavedPage}
@@ -59,7 +58,7 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   video: {
-    backgroundColor: 'white'
+    backgroundColor: "white",
   },
   flatList: {
     width: "100%",
