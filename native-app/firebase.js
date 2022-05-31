@@ -311,7 +311,7 @@ export const tranferCategory = (list, categoryList, keepCategoryId = false) => {
   return array;
 };
 
-export const createArticle = async (data) => {
+export const createByTable = async (table, data) => {
   const saveData = {
     ...data,
     create_at: new Date().getTime(),
@@ -321,7 +321,7 @@ export const createArticle = async (data) => {
     is_delete: false,
   };
 
-  return await create("articles", saveData);
+  return await create(table, saveData);
 };
 
 export const getByQuery = async (table, ...condition) => {
@@ -339,6 +339,7 @@ export const getDocsLazyLoading = async (
   limitItems = 0,
   ...condition
 ) => {
+  // console.log([...condition].some(e => e['type'] == "orderBy"))
   let docs = [];
   let newLastDocId = null;
   try {
@@ -349,7 +350,7 @@ export const getDocsLazyLoading = async (
           table,
           ...condition,
           where("is_delete", "==", false),
-          orderBy("create_at"),
+          orderBy("create_at", "desc"),
           startAfter(lastDoc),
           limit(limitItems)
         );
@@ -358,7 +359,7 @@ export const getDocsLazyLoading = async (
           table,
           ...condition,
           where("is_delete", "==", false),
-          orderBy("create_at"),
+          orderBy("create_at", "desc"),
           startAfter(lastDoc)
         );
     } else {
@@ -367,7 +368,7 @@ export const getDocsLazyLoading = async (
           table,
           ...condition,
           where("is_delete", "==", false),
-          orderBy("create_at"),
+          orderBy("create_at", "desc"),
           limit(limitItems)
         );
       else
@@ -375,7 +376,7 @@ export const getDocsLazyLoading = async (
           table,
           ...condition,
           where("is_delete", "==", false),
-          orderBy("create_at")
+          orderBy("create_at", "desc"),
         );
     }
     newLastDocId = docs[docs.length - 1]?.id || null;
@@ -386,4 +387,22 @@ export const getDocsLazyLoading = async (
   } catch (error) {
     console.log(error);
   }
+};
+
+export const getVideos = async (lastId, limitItems = 0) => {
+  const { docs: videos, lastDocId } = await getDocsLazyLoading(
+    "videos",
+    lastId,
+    limitItems
+  );
+  const categoryList = await getAll("categories");
+  const resultData = [];
+  videos.forEach((e) => {
+    resultData.push({
+      ...e,
+      categories: tranferCategory(e["categories"], categoryList),
+    });
+  });
+
+  return { data: resultData, lastDocId };
 };

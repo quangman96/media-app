@@ -5,7 +5,7 @@ import QuillEditor, { QuillToolbar } from "react-native-cn-quill";
 import defaultStyles from "../config/styles";
 import AppText from "../components/Text";
 
-export default function Editor({ value, callback }) {
+export default function Editor({ value, callback, reset = false }) {
   const [htmlData, setHtmlData] = useState("");
   const _editor = React.createRef();
   const [editorHeight, setEditorHeight] = useState(400);
@@ -13,7 +13,7 @@ export default function Editor({ value, callback }) {
 
   useEffect(() => {
     (async () => {
-      if (!value || value == "") {
+      if (!value || value == "" || reset) {
         _editor.current?.deleteText(0, htmlData.length);
       }
       if (Platform.OS !== "web") {
@@ -24,7 +24,7 @@ export default function Editor({ value, callback }) {
         }
       }
     })();
-  }, [value]);
+  }, [value, reset]);
 
   const handleOnHtmlChange = ({ html }) => {
     setHtmlData(html);

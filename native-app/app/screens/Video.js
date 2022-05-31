@@ -1,39 +1,27 @@
-import { StyleSheet, ActivityIndicator, View } from "react-native";
-import React, { useState, useEffect } from "react";
-import { getMasterData, getAll, getArticles, getUserId } from "../../firebase";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { getVideos } from "../../firebase";
 import CustomFlatList from "../components/CustomFlatList";
-import { example } from "../mock/videoData";
 
-export default function VideoScreen({ value }) {
-  const user_id = getUserId();
-  const [buttons, setButtons] = useState([]);
-  const [articles, setArticles] = useState([]);
-  const [articlesDF, setArticlesDF] = useState([]);
-  const [articlesHorizontal, setArticlesHorizontal] = useState([]);
-  const [categories, setCategories] = useState([]);
+export default function VideoScreen() {
+  const [videos, setVideos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadMore, setIsLoadMore] = useState(false);
   const [lastId, setLastId] = useState(null);
-  const [loadCnt, setLoadCnt] = useState(0);
-  const [isFilterCategories, setIsFilterCategories] = useState(false);
-  const isHaveChild = (arr1, arr2) => arr1.some((e) => ~arr2.indexOf(e));
 
-  async function getArticleList(lastItemId = null) {
+  async function getVideoList(lastItemId = null) {
     setIsLoadMore(true);
-    const { data: articleList, lastDocId } = await getArticles(
-      user_id,
-      isFilterCategories ? null : lastItemId,
-      isFilterCategories ? 0 : 3
-    );
+    const { data: videoList, lastDocId } = await getVideos(lastItemId, 3);
 
-    const prevData = isFilterCategories ? [] : articles;
-    const resIdList = articleList.map((e) => e.id);
-    const dataIdList = prevData.map((e) => e.id);
+    const resIdList = videoList.map((e) => e.id);
+    const dataIdList = videos.map((e) => e.id);
     const isFound = dataIdList.some((e) => resIdList.includes(e));
-    const newList = isFound ? articles : [...articles, ...articleList];
+    const newList = isFound ? videos : [...videos, ...videoList];
     setLastId(lastDocId);
-    setArticlesDF(newList);
-    filterArticleList([...newList]);
+    newList.forEach((video) => {
+      video["isPlaying"] = false;
+    });
+    setVideos(newList);
 
     setTimeout(() => {
       setIsLoading(false);
@@ -42,67 +30,11 @@ export default function VideoScreen({ value }) {
   }
 
   useEffect(() => {
-    async function getButtonList() {
-      const res = await getMasterData("CATEGORY");
-      const buttonList = [];
-      res.forEach((e, i) => {
-        if (i === 0) {
-          buttonList.push({
-            name: e["name"],
-            theme: "dark",
-          });
-        } else {
-          buttonList.push({
-            name: e["name"],
-            theme: "light",
-          });
-        }
-      });
-      setButtons(buttonList);
-    }
-
-    async function getCategoryList() {
-      const res = await getAll("categories");
-      setCategories(res);
-      getArticleList();
-    }
-    getButtonList();
-    getCategoryList();
+    getVideoList();
   }, []);
 
-  useEffect(() => setIsFilterCategories(!isFilterCategories), [value]);
-
-  const filterArticleList = (arrList) => {
-    const arr = [];
-    (value || []).forEach((e) => {
-      if (e["focus"]) {
-        arr.push(e.name);
-      }
-    });
-
-    if (arr.length > 0) {
-      const newArr = arrList.filter((e) => isHaveChild(arr, e.categories));
-      const filtered = newArr.slice(0, loadCnt * 3 + 3);
-      setArticles(filtered);
-      if (filtered.length > 1) {
-        setHorizontalList(filtered);
-      }
-    } else {
-      setArticles(arrList);
-      if (arrList.length > 1) {
-        setHorizontalList(arrList);
-      }
-    }
-  };
-
-  const setHorizontalList = (list) => {
-    const newArticleList = [...list].reverse();
-    setArticlesHorizontal(newArticleList.slice(0, 4));
-  };
-
   const handleOnEndReached = async () => {
-    await getArticleList(lastId);
-    setLoadCnt(loadCnt + 1);
+    await getVideoList(lastId);
   };
 
   const renderLoader = () => {
@@ -116,12 +48,6 @@ export default function VideoScreen({ value }) {
         />
       </View>
     ) : null;
-
-    //  isLoadMore ? (
-    //   <View style={styles.loaderStyle}>
-    //     <ActivityIndicator size="large" color="#aaa" />
-    //   </View>
-    // ) : null;
   };
 
   if (isLoading) {
@@ -131,10 +57,9 @@ export default function VideoScreen({ value }) {
       <CustomFlatList
         style={styles.customFlatList}
         isVideoPage={true}
-        data={example}
-        // callBack={handleOnUnSaved}
-        // onEndReachedThreshold={0}
-        // onEndReached={handleOnEndReached}
+        data={videos}
+        onEndReachedThreshold={0}
+        onEndReached={handleOnEndReached}
         ListFooterComponent={renderLoader}
       ></CustomFlatList>
     );
@@ -142,12 +67,7 @@ export default function VideoScreen({ value }) {
 }
 
 const styles = StyleSheet.create({
-  customFlatList: {
-    // marginTop: 20,
-    // backgroundColor: 'red',
-    width: '100%',
-    flex: 1,
-  },
+  customFlatList: {},
   container: {
     flex: 1,
     justifyContent: "center",
@@ -155,6 +75,6 @@ const styles = StyleSheet.create({
   horizontal: {
     flexDirection: "row",
     justifyContent: "space-around",
-    padding: 10,
+    // padding: 10,
   },
 });
