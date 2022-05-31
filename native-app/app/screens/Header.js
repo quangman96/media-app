@@ -1,25 +1,20 @@
+import { Feather } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/core";
+import * as Analytics from "expo-firebase-analytics";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  useWindowDimensions,
-  ToastAndroid,
-  TextInput,
+  Text, TextInput, ToastAndroid, TouchableOpacity,
+  useWindowDimensions, View
 } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import { ScrollView } from "react-native-gesture-handler";
+import { auth, getAll } from "../../firebase";
 import AppText from "../components/Text";
 
-import React, { useState, useEffect } from "react";
-import { useNavigation } from "@react-navigation/core";
-import { auth, getAll } from "../../firebase";
-import { ScrollView } from "react-native-gesture-handler";
 
-import * as Analytics from "expo-firebase-analytics";
 
 export default function Header({ title, passInput, passCategory }) {
   const [text, onChangeText] = useState("");
-  const [categories, onCategoryChange] = useState([]);
   const [buttons, setButtons] = useState([]);
   const { width } = useWindowDimensions();
   const name = title === "User" ? "Profile" : title;

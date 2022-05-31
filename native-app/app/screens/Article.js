@@ -1,5 +1,6 @@
 import { useNavigation } from "@react-navigation/core";
 import { Video } from "expo-av";
+import * as Analytics from "expo-firebase-analytics";
 import * as ImagePicker from "expo-image-picker";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -8,16 +9,13 @@ import {
   StyleSheet,
   ToastAndroid,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import {
-  createByTable,
+  auth, createByTable,
   getAll,
-  getMasterData,
-  updateById,
-  uploadFileAsync,
-  getUserId,
-  auth,
+  getMasterData, getUserId, updateById,
+  uploadFileAsync
 } from "../../firebase";
 import Editor from "../components/Editor";
 import { AppForm, AppFormField, SubmitButton } from "../components/forms";
@@ -25,7 +23,6 @@ import AppFormDropDown from "../components/forms/AppFormDropDown";
 import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
 import Screen from "../components/Screens";
 import AppText from "../components/Text";
-import * as Analytics from "expo-firebase-analytics";
 
 export default function Article({ route }) {
   const { uid, email } = auth.currentUser;
@@ -223,7 +220,6 @@ export default function Article({ route }) {
     Analytics.logEvent("article_create", {
       uid,
       email,
-      // article_id: article["id"],
       time: new Date(),
     });
     setReset(true);

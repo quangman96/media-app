@@ -1,9 +1,8 @@
 import React from "react";
 import {
-  KeyboardAvoidingView,
+  Keyboard, KeyboardAvoidingView,
   ScrollView,
-  TouchableWithoutFeedback,
-  Keyboard,
+  TouchableWithoutFeedback
 } from "react-native";
 export default function KeyBoardAvoidingWrapper({ children }) {
   return (

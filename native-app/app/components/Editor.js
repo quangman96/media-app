@@ -2,8 +2,8 @@ import * as ImagePicker from "expo-image-picker";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import QuillEditor, { QuillToolbar } from "react-native-cn-quill";
-import defaultStyles from "../config/styles";
 import AppText from "../components/Text";
+import defaultStyles from "../config/styles";
 
 export default function Editor({ value, callback, reset = false }) {
   const [htmlData, setHtmlData] = useState("");
@@ -68,7 +68,10 @@ export default function Editor({ value, callback, reset = false }) {
   return (
     <SafeAreaView style={styles.root}>
       <AppText style={styles.label}>Content</AppText>
-      <View style={styles.viewInnerParrent} onTouchStart={() => _editor.current?.blur()}>
+      <View
+        style={styles.viewInnerParrent}
+        onTouchStart={() => _editor.current?.blur()}
+      >
         <QuillToolbar
           styles={customStyles}
           editor={_editor}
@@ -145,7 +148,6 @@ const styles = StyleSheet.create({
   },
 
   viewInnerParrent: {
-
     flex: 1,
     width: "100%",
     borderColor: "#979797",

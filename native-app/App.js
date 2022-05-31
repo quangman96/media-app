@@ -1,30 +1,27 @@
-import React, { useState, useEffect, useRef } from "react";
 import { Feather } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createStackNavigator } from "@react-navigation/stack";
-import { useFonts } from "expo-font";
-import "react-native-gesture-handler";
 import {
-  NavigationContainer,
-  useNavigationState,
-  useNavigationContainerRef,
+  NavigationContainer, useNavigationContainerRef, useNavigationState
 } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import * as Analytics from "expo-firebase-analytics";
+import { useFonts } from "expo-font";
+import React, { useEffect, useRef, useState } from "react";
+import { LogBox, StatusBar } from "react-native";
+import "react-native-gesture-handler";
+import Article from "./app/screens/Article";
+import CreateVideo from "./app/screens/CreateVideo";
+import Detail from "./app/screens/Detail";
+import FilteredArticles from "./app/screens/FilteredArticles";
+import Header from "./app/screens/Header";
+import Home from "./app/screens/Home";
 import Login from "./app/screens/Login";
-import User from "./app/screens/User";
+import MyList from "./app/screens/MyList";
 import Saved from "./app/screens/Saved";
 import Search from "./app/screens/Search";
-import Home from "./app/screens/Home";
-import Detail from "./app/screens/Detail";
-import Header from "./app/screens/Header";
-import MyList from "./app/screens/MyList";
-import Article from "./app/screens/Article";
-import { LogBox } from "react-native";
-import { StatusBar } from "react-native";
+import User from "./app/screens/User";
 import VideoScreen from "./app/screens/Video";
-import FilteredArticles from "./app/screens/FilteredArticles";
-import CreateVideo from "./app/screens/CreateVideo";
 
-import * as Analytics from "expo-firebase-analytics";
 
 LogBox.ignoreAllLogs();
 

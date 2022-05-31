@@ -1,8 +1,8 @@
-import { StyleSheet, ActivityIndicator, View } from "react-native";
-import React, { useState, useEffect } from "react";
-import HorizontalList from "../components/HorizontalList";
-import { getMasterData, getAll, getArticles, getUserId } from "../../firebase";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { getAll, getArticles, getMasterData, getUserId } from "../../firebase";
 import CustomFlatList from "../components/CustomFlatList";
+import HorizontalList from "../components/HorizontalList";
 
 export default function Home({ value }) {
   const user_id = getUserId();

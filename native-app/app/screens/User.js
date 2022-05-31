@@ -1,29 +1,18 @@
-import React, { useState, useEffect } from "react";
-import Screen from "../components/Screens";
-import { AppFormField, AppForm, SubmitButton } from "../components/forms";
-import {
-  ActivityIndicator,
-  View,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  ToastAndroid,
-} from "react-native";
-import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import * as ImagePicker from "expo-image-picker";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator, Image, StyleSheet, ToastAndroid, TouchableOpacity, View
+} from "react-native";
+import DropDownPicker from "react-native-dropdown-picker";
 import * as Yup from "yup";
 import {
-  getUserProfile,
-  getMasterData,
-  updateOne,
-  createUser,
-  uploadFileAsync,
-  getUserId,
-  auth,
+  auth, createUser, getMasterData, getUserId, getUserProfile, updateOne, uploadFileAsync
 } from "../../firebase";
-import DropDownPicker from "react-native-dropdown-picker";
+import { AppForm, AppFormField, SubmitButton } from "../components/forms";
+import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
+import Screen from "../components/Screens";
 import AppText from "../components/Text";
-import * as ImagePicker from "expo-image-picker";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string().required().email().label("Email"),
