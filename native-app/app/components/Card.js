@@ -1,26 +1,20 @@
+import { Feather } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/core";
+import * as Analytics from "expo-firebase-analytics";
 import React, { useState } from "react";
 import {
-  StyleSheet,
-  View,
-  Image,
-  TouchableOpacity,
-  ToastAndroid,
-  Alert,
+  Alert, Image, StyleSheet, ToastAndroid, TouchableOpacity, View
 } from "react-native";
-import AppText from "../components/Text";
-import ChipList from "../components/ChipList";
-import { Feather } from "@expo/vector-icons";
-import defaultStyles from "../config/styles";
-import { useNavigation } from "@react-navigation/core";
 import {
-  createSavedData,
+  auth, createSavedData,
   deleteSavedData,
   getUserId,
-  softDelete,
-  auth,
+  softDelete
 } from "../../firebase";
+import ChipList from "../components/ChipList";
+import AppText from "../components/Text";
+import defaultStyles from "../config/styles";
 
-import * as Analytics from "expo-firebase-analytics";
 
 export default function Card({ cardObj, isSavedPage, isMyListPage, callBack }) {
   const { uid, email } = auth.currentUser;

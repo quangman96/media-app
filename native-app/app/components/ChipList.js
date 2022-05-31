@@ -1,6 +1,6 @@
-import { StyleSheet, View, TouchableOpacity } from "react-native";
-import Chip from "./Chip";
 import React from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import Chip from "./Chip";
 
 export default function ChipList({
   data,

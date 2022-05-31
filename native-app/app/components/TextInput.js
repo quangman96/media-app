@@ -1,6 +1,6 @@
-import React, { useRef, useEffect, createRef } from "react";
-import { View, TextInput, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import React, { createRef, useEffect } from "react";
+import { StyleSheet, TextInput, View } from "react-native";
 import defaultStyles from "../config/styles";
 
 export default function AppTextInput({

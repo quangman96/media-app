@@ -74,7 +74,6 @@ const styles = StyleSheet.create({
   },
   horizontal: {
     flexDirection: "row",
-    justifyContent: "space-around",
-    // padding: 10,
+    justifyContent: "space-around"
   },
 });

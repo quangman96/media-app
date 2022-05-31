@@ -1,11 +1,10 @@
-import { StyleSheet, Text, View, Image, ScrollView } from "react-native";
-import React, { useRef } from "react";
-import AppText from "../components/Text";
-import Screen from "../components/Screens";
-import ChipList from "../components/ChipList";
-import { useWindowDimensions } from "react-native";
-import RenderHtml from "react-native-render-html";
 import { Video } from "expo-av";
+import React, { useRef } from "react";
+import { Image, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import RenderHtml from "react-native-render-html";
+import ChipList from "../components/ChipList";
+import Screen from "../components/Screens";
+import AppText from "../components/Text";
 
 export default function Detail({ route }) {
   const video = useRef(null);
@@ -35,13 +34,6 @@ export default function Detail({ route }) {
                 <ChipList data={data.categories || []} size="big"></ChipList>
               </View>
               <Text style={styles.title}>{data.title}</Text>
-              {/* <View style={styles.owner}>
-                <Image
-                  style={styles.avatar}
-                  source={require(`../../assets/images/user.png`)}
-                ></Image>
-                <AppText>Nguyen Quang Man</AppText>
-              </View> */}
               <AppText style={styles.text}>{data.description}</AppText>
               {data?.video?.length > 0 && (
                 <View style={styles.videoArea}>

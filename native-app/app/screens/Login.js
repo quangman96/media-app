@@ -1,18 +1,14 @@
+import * as Analytics from "expo-firebase-analytics";
 import React, { useEffect, useState } from "react";
 import {
-  StyleSheet,
-  Image,
-  View,
-  TouchableOpacity,
-  ToastAndroid,
+  Image, StyleSheet, ToastAndroid, TouchableOpacity, View
 } from "react-native";
-import Screen from "../components/Screens";
 import * as Yup from "yup";
-import { AppFormField, AppForm, SubmitButton } from "../components/forms";
-import AppText from "../components/Text";
-import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
 import { auth, getAll, setUserId } from "../../firebase";
-import * as Analytics from "expo-firebase-analytics";
+import { AppForm, AppFormField, SubmitButton } from "../components/forms";
+import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
+import Screen from "../components/Screens";
+import AppText from "../components/Text";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string().required().email().label("Email"),

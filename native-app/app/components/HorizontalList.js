@@ -1,5 +1,5 @@
-import { View, StyleSheet, FlatList } from "react-native";
 import React from "react";
+import { FlatList, StyleSheet, View } from "react-native";
 import CustomCard from "./CustomCard";
 
 export default function HorizontalList({ data }) {

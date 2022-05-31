@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import AppText from "../Text";
@@ -19,7 +19,7 @@ export default function AppFormDropDown({
 
   useEffect(() => {
     (() => {
-        setValueDropDown(value);
+      setValueDropDown(value);
     })();
   }, [value]);
 

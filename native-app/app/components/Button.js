@@ -1,6 +1,5 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
-
 import colors from "../config/colors";
 
 export default function AppButton({ title, onPress, color = "annotations" }) {

@@ -1,9 +1,9 @@
-import React from "react";
-import AppTextInput from "../TextInput";
-import AppText from "../Text";
-import ErrorMessage from "./ErrorMessage";
 import { useFormikContext } from "formik";
+import React from "react";
 import { StyleSheet, View } from "react-native";
+import AppText from "../Text";
+import AppTextInput from "../TextInput";
+import ErrorMessage from "./ErrorMessage";
 
 export default function AppFormField({
   name,
@@ -30,7 +30,10 @@ export default function AppFormField({
         onBlur={() => setFieldTouched(name)}
         {...props}
       />
-      <ErrorMessage error={errors[name] ? errors[name] : customErrors} visible={touched[name]} />
+      <ErrorMessage
+        error={errors[name] ? errors[name] : customErrors}
+        visible={touched[name]}
+      />
     </View>
   );
 }

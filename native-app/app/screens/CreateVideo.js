@@ -4,18 +4,17 @@ import {
   Dimensions,
   StyleSheet,
   ToastAndroid,
-  View,
+  View
 } from "react-native";
-import { getAll } from "../../firebase";
+import { createByTable, getAll } from "../../firebase";
 import { AppForm, AppFormField, SubmitButton } from "../components/forms";
 import AppFormDropDown from "../components/forms/AppFormDropDown";
 import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
 import Screen from "../components/Screens";
-import { createByTable } from "../../firebase";
 
 const ScreenHeight = Dimensions.get("window").height;
 
-export default function CreateVideo({ route }) {
+export default function CreateVideo() {
   const [isLoading, setIsLoading] = useState(true);
   const [reset, setReset] = useState(false);
   const [categoriesItems, setCategoriesItems] = useState([]);
