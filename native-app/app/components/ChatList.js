@@ -1,9 +1,20 @@
 import { StyleSheet, View, TouchableOpacity, Image } from "react-native";
+import { useNavigation } from "@react-navigation/core";
+import * as Analytics from "expo-firebase-analytics";
 import React from "react";
 import AppText from "../components/Text";
 
 export default function ChatList({ data, callBack }) {
-  const handleClickCard = () => {};
+  const navigation = useNavigation();
+  const handleClickCard = () => {
+    // Analytics.logEvent("chat_view", {
+    //   uid,
+    //   email,
+    //   time: new Date(),
+    // });
+
+    navigation.navigate("ChatDetail", { data: {} });
+  };
   return (
     <View style={styles.area}>
       {([...data, ...data] || []).map((prop, key) => {

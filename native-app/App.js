@@ -24,6 +24,7 @@ import VideoScreen from "./app/screens/Video";
 import Saved from "./app/screens/Saved";
 import Search from "./app/screens/Search";
 import User from "./app/screens/User";
+import ChatDetail from "./app/screens/ChatDetail";
 
 LogBox.ignoreAllLogs();
 
@@ -42,7 +43,7 @@ export default function App() {
     },
     tabBarHideOnKeyboard: true,
     tabBarOptions: {
-      keyboardHidesTabBar: true, //<=====
+      keyboardHidesTabBar: true,
     },
   };
   const TabNavigator = () => (
@@ -243,6 +244,20 @@ export default function App() {
         <Stack.Screen
           name="Detail"
           component={Detail}
+          options={{
+            title: "",
+            headerStyle: {
+              height: 85,
+            },
+            headerLeftContainerStyle: {
+              marginBottom: 20,
+            },
+          }}
+        />
+
+        <Stack.Screen
+          name="ChatDetail"
+          component={ChatDetail}
           options={{
             title: "",
             headerStyle: {
