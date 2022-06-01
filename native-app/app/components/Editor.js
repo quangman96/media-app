@@ -2,10 +2,10 @@ import * as ImagePicker from "expo-image-picker";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import QuillEditor, { QuillToolbar } from "react-native-cn-quill";
-import defaultStyles from "../config/styles";
 import AppText from "../components/Text";
+import defaultStyles from "../config/styles";
 
-export default function Editor({ value, callback }) {
+export default function Editor({ value, callback, reset = false }) {
   const [htmlData, setHtmlData] = useState("");
   const _editor = React.createRef();
   const [editorHeight, setEditorHeight] = useState(400);
@@ -13,7 +13,7 @@ export default function Editor({ value, callback }) {
 
   useEffect(() => {
     (async () => {
-      if (!value || value == "") {
+      if (!value || value == "" || reset) {
         _editor.current?.deleteText(0, htmlData.length);
       }
       if (Platform.OS !== "web") {
@@ -24,7 +24,7 @@ export default function Editor({ value, callback }) {
         }
       }
     })();
-  }, [value]);
+  }, [value, reset]);
 
   const handleOnHtmlChange = ({ html }) => {
     setHtmlData(html);
@@ -68,7 +68,10 @@ export default function Editor({ value, callback }) {
   return (
     <SafeAreaView style={styles.root}>
       <AppText style={styles.label}>Content</AppText>
-      <View style={styles.viewInnerParrent} onTouchStart={() => _editor.current?.blur()}>
+      <View
+        style={styles.viewInnerParrent}
+        onTouchStart={() => _editor.current?.blur()}
+      >
         <QuillToolbar
           styles={customStyles}
           editor={_editor}
@@ -145,7 +148,6 @@ const styles = StyleSheet.create({
   },
 
   viewInnerParrent: {
-
     flex: 1,
     width: "100%",
     borderColor: "#979797",

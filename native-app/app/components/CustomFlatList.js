@@ -1,6 +1,7 @@
 import { StyleSheet, View, FlatList } from "react-native";
 import React from "react";
 import Card from "./Card";
+import CardVideo from "./CardVideo";
 
 export default function CustomFlatList({
   data,
@@ -10,6 +11,12 @@ export default function CustomFlatList({
   callBack,
   ...rest
 }) {
+  const handleOnPauseAnotherVideo = (id) => {
+    data.forEach((video) => {
+      video["isPlaying"] = video["id"] === id;
+    });
+  };
+
   return (
     <View style={[styles.body, isVideoPage ? styles.video : styles.normal]}>
       <FlatList
@@ -20,7 +27,10 @@ export default function CustomFlatList({
         data={data}
         renderItem={({ item }) =>
           isVideoPage ? (
-            <CardVideo cardObj={item} />
+            <CardVideo
+              cardObj={item}
+              pauseAnotherVideo={handleOnPauseAnotherVideo}
+            />
           ) : (
             <Card
               isSavedPage={isSavedPage}

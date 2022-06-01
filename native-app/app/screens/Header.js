@@ -1,25 +1,20 @@
+import { Feather } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/core";
+import * as Analytics from "expo-firebase-analytics";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  useWindowDimensions,
-  ToastAndroid,
-  TextInput,
+  Text, TextInput, ToastAndroid, TouchableOpacity,
+  useWindowDimensions, View
 } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import { ScrollView } from "react-native-gesture-handler";
+import { auth, getAll } from "../../firebase";
 import AppText from "../components/Text";
 
-import React, { useState, useEffect } from "react";
-import { useNavigation } from "@react-navigation/core";
-import { auth, getAll } from "../../firebase";
-import { ScrollView } from "react-native-gesture-handler";
 
-import * as Analytics from "expo-firebase-analytics";
 
 export default function Header({ title, passInput, passCategory }) {
   const [text, onChangeText] = useState("");
-  const [categories, onCategoryChange] = useState([]);
   const [buttons, setButtons] = useState([]);
   const { width } = useWindowDimensions();
   const name = title === "User" ? "Profile" : title;
@@ -64,6 +59,10 @@ export default function Header({ title, passInput, passCategory }) {
     navigation.navigate("AddArticle", { data: null });
   };
 
+  const handleCreateVideo = () => {
+    navigation.navigate("CreateVideo", { data: null });
+  };
+
   const handleClickCard = (index) => {
     const temp = [...buttons];
     // temp[index]["focus"] = !temp[index]["focus"];
@@ -77,7 +76,7 @@ export default function Header({ title, passInput, passCategory }) {
   return (
     <View style={[styles.header, { width: width }]}>
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        {title !== "Search" && title !== "Home" && title !== "Video" && (
+        {title !== "Search" && title !== "Home" && (
           <Text style={[styles.title]}>{name}</Text>
         )}
         {title === "User" && (
@@ -94,6 +93,17 @@ export default function Header({ title, passInput, passCategory }) {
         {title === "My Article" && (
           <TouchableOpacity
             onPress={handleCreateArticle}
+            style={{
+              alignSelf: "flex-end",
+              marginRight: "12%",
+            }}
+          >
+            {<Feather name={"file-plus"} size={30} color={"#0386D0"} />}
+          </TouchableOpacity>
+        )}
+        {title === "Video" && (
+          <TouchableOpacity
+            onPress={handleCreateVideo}
             style={{
               alignSelf: "flex-end",
               marginRight: "12%",
@@ -124,7 +134,7 @@ export default function Header({ title, passInput, passCategory }) {
             <View style={{ marginLeft: 20, marginBottom: 12 }}></View>
           </View>
         )}
-        {(title === "Home" || title === "Video") && (
+        {title === "Home" && (
           <View styles={styles.view}>
             <Text style={styles.title}>{title}</Text>
             <View style={{ marginTop: 10 }}></View>

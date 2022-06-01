@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, View, ActivityIndicator } from "react-native";
-import AppText from "../components/Text";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { getArticleByUser, getUserId } from "../../firebase";
 import CustomFlatList from "../components/CustomFlatList";
+import AppText from "../components/Text";
 
 export default function MyList() {
   const user_id = getUserId();

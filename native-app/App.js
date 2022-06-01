@@ -1,30 +1,29 @@
-import React, { useState, useEffect, useRef } from "react";
 import { Feather } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createStackNavigator } from "@react-navigation/stack";
-import { useFonts } from "expo-font";
-import "react-native-gesture-handler";
 import {
   NavigationContainer,
-  useNavigationState,
   useNavigationContainerRef,
+  useNavigationState,
 } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import * as Analytics from "expo-firebase-analytics";
+import { useFonts } from "expo-font";
+import React, { useEffect, useRef, useState } from "react";
+import { LogBox, StatusBar } from "react-native";
+import "react-native-gesture-handler";
+import Article from "./app/screens/Article";
+import CreateVideo from "./app/screens/CreateVideo";
+import Detail from "./app/screens/Detail";
+import FilteredArticles from "./app/screens/FilteredArticles";
+import Header from "./app/screens/Header";
+import Home from "./app/screens/Home";
 import Login from "./app/screens/Login";
-import User from "./app/screens/User";
+import MyList from "./app/screens/MyList";
+import Chat from "./app/screens/Chat";
+import VideoScreen from "./app/screens/Video";
 import Saved from "./app/screens/Saved";
 import Search from "./app/screens/Search";
-import Home from "./app/screens/Home";
-import Detail from "./app/screens/Detail";
-import Header from "./app/screens/Header";
-import MyList from "./app/screens/MyList";
-import Article from "./app/screens/Article";
-import Chat from "./app/screens/Chat";
-import { LogBox } from "react-native";
-import { StatusBar } from "react-native";
-import VideoScreen from "./app/screens/Video";
-import FilteredArticles from "./app/screens/FilteredArticles";
-
-import * as Analytics from "expo-firebase-analytics";
+import User from "./app/screens/User";
 
 LogBox.ignoreAllLogs();
 
@@ -183,7 +182,7 @@ export default function App() {
       routes[routes.length - 1].state?.routeNames[currentRouteIndex];
     if (currentRoute === "Search") {
       setHeaderHeight(180);
-    } else if (currentRoute === "Home" || currentRoute === "Video") {
+    } else if (currentRoute === "Home") {
       setHeaderHeight(150);
     } else if (!currentRoute) {
       setHeaderHeight(150);
@@ -293,6 +292,23 @@ export default function App() {
           name="FilteredArticles"
           component={FilteredArticles}
           options={{
+            headerStyle: {
+              height: 110,
+            },
+            headerTintColor: "#667080",
+            headerTitleStyle: {
+              fontWeight: "bold",
+              fontSize: 35,
+              fontFamily: "Inter",
+            },
+          }}
+        />
+
+        <Stack.Screen
+          name="CreateVideo"
+          component={CreateVideo}
+          options={{
+            title: "Create Video",
             headerStyle: {
               height: 110,
             },

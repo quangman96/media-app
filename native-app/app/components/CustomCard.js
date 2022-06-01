@@ -1,9 +1,8 @@
-import { StyleSheet, ImageBackground, TouchableOpacity } from "react-native";
-import React from "react";
-import ChipList from "../components/ChipList";
-import { useWindowDimensions } from "react-native";
-import AppText from "../components/Text";
 import { useNavigation } from "@react-navigation/core";
+import React from "react";
+import { ImageBackground, StyleSheet, TouchableOpacity, useWindowDimensions } from "react-native";
+import ChipList from "../components/ChipList";
+import AppText from "../components/Text";
 
 export default function CustomCard({ cardObj }) {
   const navigation = useNavigation();

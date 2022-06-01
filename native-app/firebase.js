@@ -1,23 +1,11 @@
 // Import the functions you need from the SDKs you need
+import { getAnalytics } from "firebase/analytics";
 import * as firebase from "firebase/compat";
 import {
-  getFirestore,
-  collection,
-  getDocs,
-  getDoc,
-  addDoc,
-  deleteDoc,
-  query,
-  where,
-  doc,
-  updateDoc,
-  orderBy,
-  startAfter,
-  limit,
+  addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, limit, orderBy, query, startAfter, updateDoc, where
 } from "firebase/firestore/lite";
-
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import { getAnalytics } from "firebase/analytics";
+
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -311,7 +299,7 @@ export const tranferCategory = (list, categoryList, keepCategoryId = false) => {
   return array;
 };
 
-export const createArticle = async (data) => {
+export const createByTable = async (table, data) => {
   const saveData = {
     ...data,
     create_at: new Date().getTime(),
@@ -321,7 +309,7 @@ export const createArticle = async (data) => {
     is_delete: false,
   };
 
-  return await create("articles", saveData);
+  return await create(table, saveData);
 };
 
 export const getByQuery = async (table, ...condition) => {
@@ -339,6 +327,7 @@ export const getDocsLazyLoading = async (
   limitItems = 0,
   ...condition
 ) => {
+  // console.log([...condition].some(e => e['type'] == "orderBy"))
   let docs = [];
   let newLastDocId = null;
   try {
@@ -349,7 +338,7 @@ export const getDocsLazyLoading = async (
           table,
           ...condition,
           where("is_delete", "==", false),
-          orderBy("create_at"),
+          orderBy("create_at", "desc"),
           startAfter(lastDoc),
           limit(limitItems)
         );
@@ -358,7 +347,7 @@ export const getDocsLazyLoading = async (
           table,
           ...condition,
           where("is_delete", "==", false),
-          orderBy("create_at"),
+          orderBy("create_at", "desc"),
           startAfter(lastDoc)
         );
     } else {
@@ -367,7 +356,7 @@ export const getDocsLazyLoading = async (
           table,
           ...condition,
           where("is_delete", "==", false),
-          orderBy("create_at"),
+          orderBy("create_at", "desc"),
           limit(limitItems)
         );
       else
@@ -375,7 +364,7 @@ export const getDocsLazyLoading = async (
           table,
           ...condition,
           where("is_delete", "==", false),
-          orderBy("create_at")
+          orderBy("create_at", "desc")
         );
     }
     newLastDocId = docs[docs.length - 1]?.id || null;
@@ -386,4 +375,22 @@ export const getDocsLazyLoading = async (
   } catch (error) {
     console.log(error);
   }
+};
+
+export const getVideos = async (lastId, limitItems = 0) => {
+  const { docs: videos, lastDocId } = await getDocsLazyLoading(
+    "videos",
+    lastId,
+    limitItems
+  );
+  const categoryList = await getAll("categories");
+  const resultData = [];
+  videos.forEach((e) => {
+    resultData.push({
+      ...e,
+      categories: tranferCategory(e["categories"], categoryList),
+    });
+  });
+
+  return { data: resultData, lastDocId };
 };
