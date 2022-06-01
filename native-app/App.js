@@ -18,10 +18,11 @@ import Detail from "./app/screens/Detail";
 import Header from "./app/screens/Header";
 import MyList from "./app/screens/MyList";
 import Article from "./app/screens/Article";
+import Chat from "./app/screens/Chat";
 import { LogBox } from "react-native";
 import { StatusBar } from "react-native";
 import VideoScreen from "./app/screens/Video";
-import FilteredArticles from './app/screens/FilteredArticles';
+import FilteredArticles from "./app/screens/FilteredArticles";
 
 import * as Analytics from "expo-firebase-analytics";
 
@@ -55,7 +56,7 @@ export default function App() {
           tabBarIcon: ({ focused }) => (
             <Feather
               name="home"
-              size={26}
+              size={24}
               color={focused ? "#667080" : "#bbc0c8"}
             />
           ),
@@ -70,7 +71,7 @@ export default function App() {
           tabBarIcon: ({ focused }) => (
             <Feather
               name="search"
-              size={26}
+              size={24}
               color={focused ? "#667080" : "#bbc0c8"}
             />
           ),
@@ -85,27 +86,12 @@ export default function App() {
           tabBarIcon: ({ focused }) => (
             <Feather
               name="bookmark"
-              size={26}
+              size={24}
               color={focused ? "#667080" : "#bbc0c8"}
             />
           ),
           header: () => null,
           headerLeft: () => null,
-        }}
-      />
-      <Tab.Screen
-        name="My Article"
-        component={MyList}
-        options={{
-          unmountOnBlur: true,
-          tabBarIcon: ({ focused }) => (
-            <Feather
-              name="list"
-              size={26}
-              color={focused ? "#667080" : "#bbc0c8"}
-            />
-          ),
-          header: () => null,
         }}
       />
       <Tab.Screen
@@ -116,7 +102,37 @@ export default function App() {
           tabBarIcon: ({ focused }) => (
             <Feather
               name="youtube"
-              size={26}
+              size={24}
+              color={focused ? "#667080" : "#bbc0c8"}
+            />
+          ),
+          header: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="My Article"
+        component={MyList}
+        options={{
+          unmountOnBlur: true,
+          tabBarIcon: ({ focused }) => (
+            <Feather
+              name="list"
+              size={24}
+              color={focused ? "#667080" : "#bbc0c8"}
+            />
+          ),
+          header: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="All Chat"
+        children={() => <Chat />}
+        options={{
+          unmountOnBlur: true,
+          tabBarIcon: ({ focused }) => (
+            <Feather
+              name="message-circle"
+              size={24}
               color={focused ? "#667080" : "#bbc0c8"}
             />
           ),
@@ -131,7 +147,7 @@ export default function App() {
           tabBarIcon: ({ focused }) => (
             <Feather
               name="user"
-              size={26}
+              size={24}
               color={focused ? "#667080" : "#bbc0c8"}
             />
           ),

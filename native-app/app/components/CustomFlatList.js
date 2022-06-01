@@ -1,19 +1,8 @@
-import {
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  FlatList,
-  KeyboardAvoidingView,
-  ScrollView,
-  TouchableWithoutFeedback,
-  Keyboard,
-} from "react-native";
+import { StyleSheet, View, FlatList } from "react-native";
 import React from "react";
 import Card from "./Card";
-import AppText from "../components/Text";
-import CardVideo from "./CardVideo";
 
-export default function CardList({
+export default function CustomFlatList({
   data,
   isSavedPage = false,
   isMyListPage = false,
@@ -59,7 +48,7 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   video: {
-    backgroundColor: 'white'
+    backgroundColor: "white",
   },
   flatList: {
     width: "100%",

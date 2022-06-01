@@ -15,7 +15,6 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 0,
     flex: 1,
-    // height: "100%",
   },
   view: {
     position: "relative",

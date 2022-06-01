@@ -1,4 +1,4 @@
-import { StyleSheet, View, TouchableOpacity } from "react-native";
+import { StyleSheet, View } from "react-native";
 import React from "react";
 import Card from "./Card";
 
@@ -6,7 +6,7 @@ export default function CardList({
   data,
   isSavedPage = false,
   isMyListPage = false,
-  callBack
+  callBack,
 }) {
   return (
     <View style={styles.body}>

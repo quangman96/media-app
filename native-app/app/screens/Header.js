@@ -115,7 +115,7 @@ export default function Header({ title, passInput, passCategory }) {
                 color={"#979797"}
               />
               <TextInput
-                style={[styles.input, { width: width - 100 }]}
+                style={{ width: width - 100 }}
                 onChangeText={onChangeText}
                 value={text}
                 placeholder={"Enter the keyword"}
