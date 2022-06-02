@@ -1,9 +1,9 @@
+import { StyleSheet, View, FlatList } from "react-native";
 import React from "react";
-import { FlatList, StyleSheet, View } from "react-native";
 import Card from "./Card";
 import CardVideo from "./CardVideo";
 
-export default function CardList({
+export default function CustomFlatList({
   data,
   isSavedPage = false,
   isMyListPage = false,

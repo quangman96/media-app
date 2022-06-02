@@ -1,7 +1,9 @@
 import { Feather } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
-  NavigationContainer, useNavigationContainerRef, useNavigationState
+  NavigationContainer,
+  useNavigationContainerRef,
+  useNavigationState,
 } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import * as Analytics from "expo-firebase-analytics";
@@ -17,11 +19,13 @@ import Header from "./app/screens/Header";
 import Home from "./app/screens/Home";
 import Login from "./app/screens/Login";
 import MyList from "./app/screens/MyList";
+import Chat from "./app/screens/Chat";
+import VideoScreen from "./app/screens/Video";
 import Saved from "./app/screens/Saved";
 import Search from "./app/screens/Search";
 import User from "./app/screens/User";
-import VideoScreen from "./app/screens/Video";
-
+import ChatDetail from "./app/screens/ChatDetail";
+import { getChatTitle } from "./firebase";
 
 LogBox.ignoreAllLogs();
 
@@ -40,7 +44,7 @@ export default function App() {
     },
     tabBarHideOnKeyboard: true,
     tabBarOptions: {
-      keyboardHidesTabBar: true, //<=====
+      keyboardHidesTabBar: true,
     },
   };
   const TabNavigator = () => (
@@ -53,7 +57,7 @@ export default function App() {
           tabBarIcon: ({ focused }) => (
             <Feather
               name="home"
-              size={26}
+              size={24}
               color={focused ? "#667080" : "#bbc0c8"}
             />
           ),
@@ -68,7 +72,7 @@ export default function App() {
           tabBarIcon: ({ focused }) => (
             <Feather
               name="search"
-              size={26}
+              size={24}
               color={focused ? "#667080" : "#bbc0c8"}
             />
           ),
@@ -83,7 +87,7 @@ export default function App() {
           tabBarIcon: ({ focused }) => (
             <Feather
               name="bookmark"
-              size={26}
+              size={24}
               color={focused ? "#667080" : "#bbc0c8"}
             />
           ),
@@ -93,13 +97,13 @@ export default function App() {
       />
       <Tab.Screen
         name="Video"
-        component={VideoScreen}
+        children={() => <VideoScreen value={categories} />}
         options={{
           unmountOnBlur: true,
           tabBarIcon: ({ focused }) => (
             <Feather
               name="youtube"
-              size={26}
+              size={24}
               color={focused ? "#667080" : "#bbc0c8"}
             />
           ),
@@ -114,7 +118,22 @@ export default function App() {
           tabBarIcon: ({ focused }) => (
             <Feather
               name="list"
-              size={26}
+              size={24}
+              color={focused ? "#667080" : "#bbc0c8"}
+            />
+          ),
+          header: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="All Chat"
+        children={() => <Chat />}
+        options={{
+          unmountOnBlur: true,
+          tabBarIcon: ({ focused }) => (
+            <Feather
+              name="message-circle"
+              size={24}
               color={focused ? "#667080" : "#bbc0c8"}
             />
           ),
@@ -129,7 +148,7 @@ export default function App() {
           tabBarIcon: ({ focused }) => (
             <Feather
               name="user"
-              size={26}
+              size={24}
               color={focused ? "#667080" : "#bbc0c8"}
             />
           ),
@@ -172,7 +191,7 @@ export default function App() {
     } else {
       setHeaderHeight(105);
     }
-    return currentRoute || "Home";
+    return currentRoute || getChatTitle || "Home";
   };
 
   return (
@@ -233,6 +252,24 @@ export default function App() {
             },
             headerLeftContainerStyle: {
               marginBottom: 20,
+            },
+          }}
+        />
+
+        <Stack.Screen
+          name="ChatDetail"
+          component={ChatDetail}
+          options={{
+            title: getChatTitle(),
+            headerStyle: {
+              height: 100,
+            },
+            headerTintColor: "#667080",
+            headerTitleStyle: {
+              color: "#667080",
+              fontSize: 30,
+              fontWeight: "700",
+              marginTop: -10,
             },
           }}
         />

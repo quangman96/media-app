@@ -2,12 +2,25 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import * as ImagePicker from "expo-image-picker";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator, Image, StyleSheet, ToastAndroid, TouchableOpacity, View
+  ActivityIndicator,
+  Image,
+  StyleSheet,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import * as Yup from "yup";
 import {
-  auth, createUser, getMasterData, getUserId, getUserProfile, updateOne, uploadFileAsync
+  auth,
+  createUser,
+  getMasterData,
+  getUserProfile,
+  updateOne,
+  uploadFileAsync,
+  firebaseDatabase,
+  firebaseDatabaseRef,
+  firebaseSet,
 } from "../../firebase";
 import { AppForm, AppFormField, SubmitButton } from "../components/forms";
 import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
@@ -23,8 +36,8 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function User() {
-  const email = auth.currentUser.email;
-  const user_id = getUserId();
+  const email = auth.currentUser?.email;
+  const userId = auth.currentUser?.uid;
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("MALE");
   const [items, setItems] = useState([]);
@@ -140,9 +153,15 @@ export default function User() {
     if (obj["id"]) {
       updateOne("user_profile", obj);
     } else {
-      obj["id"] = user_id;
+      obj["id"] = userId;
       createUser(obj);
     }
+    firebaseSet(firebaseDatabaseRef(firebaseDatabase, `users/${userId}`), {
+      email: values["email"],
+      name: values["name"] || "",
+      avatar: user["avatar"],
+    });
+
     ToastAndroid.show("Update profile successfully !!!", ToastAndroid.SHORT);
   };
 
@@ -312,8 +331,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   avatar: {
-    width: 150,
-    height: 150,
+    width: 120,
+    height: 120,
     marginBottom: 20,
   },
   container: {

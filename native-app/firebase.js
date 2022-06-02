@@ -2,15 +2,32 @@
 import { getAnalytics } from "firebase/analytics";
 import * as firebase from "firebase/compat";
 import {
-  addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, limit, orderBy, query, startAfter, updateDoc, where
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  getFirestore,
+  limit,
+  orderBy,
+  query,
+  startAfter,
+  updateDoc,
+  where,
 } from "firebase/firestore/lite";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import { onAuthStateChanged } from "firebase/auth";
+import {
+  getDatabase,
+  ref as firebaseDatabaseRef,
+  set as firebaseSet,
+  child,
+  get,
+  onValue,
+} from "firebase/database";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyAHmHrFuHJuyzex74mgycMI79BCgFIAHlQ",
   authDomain: "new-app-97a36.firebaseapp.com",
@@ -19,33 +36,39 @@ const firebaseConfig = {
   messagingSenderId: "764737355711",
   appId: "1:764737355711:web:e79cbb3584d7c2c4deeb0a",
   measurementId: "G-DSZW3M6PGV",
+  databaseURL:
+    "https://new-app-97a36-default-rtdb.asia-southeast1.firebasedatabase.app",
 };
 
 // Initialize Firebase
 let app;
 let userId = "";
+let chatTitle = "";
 if (firebase.apps.length === 0) {
   app = firebase.initializeApp(firebaseConfig);
 } else {
   app = firebase.app();
 }
-export const analytics = getAnalytics(app);
+const firebaseDatabase = getDatabase();
+const analytics = getAnalytics(app);
 
-export const auth = firebase.auth();
-export const db = getFirestore(app);
-export const storage = getStorage(app);
+const auth = firebase.auth();
+const db = getFirestore(app);
+const storage = getStorage(app);
 
-export const setUserId = (id) => (userId = id);
-export const getUserId = () => userId;
-export const getTableRef = (table) => {
+const setUserId = (id) => (userId = id);
+const getUserId = () => userId;
+const setChatTitle = (name) => (chatTitle = name);
+const getChatTitle = () => chatTitle;
+const getTableRef = (table) => {
   return collection(db, table);
 };
 
-export const getDocRef = (table, id) => {
+const getDocRef = (table, id) => {
   return doc(db, table, id);
 };
 
-export const uploadFileAsync = async (uri, callBack, type = "image") => {
+const uploadFileAsync = async (uri, callBack, type = "image") => {
   const blob = await new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.onload = () => {
@@ -69,7 +92,7 @@ export const uploadFileAsync = async (uri, callBack, type = "image") => {
   blob.close();
 };
 
-export const getAll = async (table) => {
+const getAll = async (table) => {
   const ref = getTableRef(table);
   const q = query(ref, where("is_delete", "==", false));
   const snapshot = await getDocs(q);
@@ -80,9 +103,10 @@ export const getAll = async (table) => {
   return data;
 };
 
-export const getUserProfile = async () => {
+const getUserProfile = async () => {
+  const userUid = auth.currentUser.uid;
   const ref = getTableRef("user_profile");
-  const q = query(ref, where("id", "==", userId));
+  const q = query(ref, where("id", "==", userUid));
   const snapshot = await getDocs(q);
   const data = snapshot.docs.map((doc) => ({
     ...doc.data(),
@@ -91,12 +115,12 @@ export const getUserProfile = async () => {
   return data;
 };
 
-export const updateOne = async (table, record) => {
+const updateOne = async (table, record) => {
   const ref = doc(db, table, record["id"]);
   const snapshot = await updateDoc(ref, record);
 };
 
-export const createUser = async (data) => {
+const createUser = async (data) => {
   const saveData = {
     ...data,
     create_at: new Date().getTime(),
@@ -114,7 +138,7 @@ const create = async (table, data) => {
   return await addDoc(tableRef, data);
 };
 
-export const getMasterData = async (classCode) => {
+const getMasterData = async (classCode) => {
   const q = query(
     getTableRef("master_data"),
     where("class", "==", classCode),
@@ -127,7 +151,7 @@ export const getMasterData = async (classCode) => {
   }));
 };
 
-export const getSavedData = async (user_id) => {
+const getSavedData = async (user_id) => {
   const q = query(getTableRef("user_saved"), where("user_id", "==", user_id));
   const querySnapshot = await getDocs(q);
   return querySnapshot.docs.map((doc) => ({
@@ -136,7 +160,7 @@ export const getSavedData = async (user_id) => {
   }));
 };
 
-export const getUserByUserId = async (user_id) => {
+const getUserByUserId = async (user_id) => {
   const q = query(getTableRef("user_profile"), where("id", "==", user_id));
   const querySnapshot = await getDocs(q);
   return querySnapshot.docs.map((doc) => ({
@@ -145,7 +169,7 @@ export const getUserByUserId = async (user_id) => {
   }));
 };
 
-export const getArticleByUserId = async (user_id) => {
+const getArticleByUserId = async (user_id) => {
   const q = query(
     getTableRef("articles"),
     where("user_id", "==", user_id),
@@ -158,7 +182,7 @@ export const getArticleByUserId = async (user_id) => {
   }));
 };
 
-export const getArticles = async (user_id, lastId, limitItems = 0) => {
+const getArticles = async (user_id, lastId, limitItems = 0) => {
   // const articles = await getAll("articles");
   const { docs: articles, lastDocId } = await getDocsLazyLoading(
     "articles",
@@ -186,7 +210,7 @@ export const getArticles = async (user_id, lastId, limitItems = 0) => {
   return { data: resultData, lastDocId };
 };
 
-export const getSavedDataByUser = async (user_id, lastId, limitItems = 0) => {
+const getSavedDataByUser = async (user_id, lastId, limitItems = 0) => {
   // const savedData = await getSavedData(user_id);
   const { docs: savedData, lastDocId } = await getDocsLazyLoading(
     "user_saved",
@@ -219,7 +243,7 @@ export const getSavedDataByUser = async (user_id, lastId, limitItems = 0) => {
   return { data: resultData, lastDocId };
 };
 
-export const getArticleByUser = async (
+const getArticleByUser = async (
   user_id,
   lastId,
   limitItems = 0,
@@ -247,7 +271,7 @@ export const getArticleByUser = async (
   return { data: resultData, lastDocId };
 };
 
-export const createSavedData = async (user_id, articles_id) => {
+const createSavedData = async (user_id, articles_id) => {
   const obj = {
     articles_id,
     user_id,
@@ -261,32 +285,32 @@ export const createSavedData = async (user_id, articles_id) => {
   return create("user_saved", obj);
 };
 
-export const deleteById = async (table, id) => {
+const deleteById = async (table, id) => {
   const docRef = getDocRef(table, id);
   await deleteDoc(docRef).catch((e) => {
     console.log(e);
   });
 };
 
-export const softDelete = async (table, id) => {
+const softDelete = async (table, id) => {
   const docRef = getDocRef(table, id);
   await updateDoc(docRef, { is_delete: true }).catch((e) => {
     console.log("No such document exist!");
   });
 };
 
-export const updateById = async (table, data, id) => {
+const updateById = async (table, data, id) => {
   const docRef = getDocRef(table, id);
   await updateDoc(docRef, data).catch((e) => {
     console.log(e);
   });
 };
 
-export const deleteSavedData = async (saved_id) => {
+const deleteSavedData = async (saved_id) => {
   deleteById("user_saved", saved_id);
 };
 
-export const tranferCategory = (list, categoryList, keepCategoryId = false) => {
+const tranferCategory = (list, categoryList, keepCategoryId = false) => {
   const array = [];
   (list || []).forEach((e) => {
     const obj = categoryList.find((z) => z.id === e);
@@ -299,7 +323,7 @@ export const tranferCategory = (list, categoryList, keepCategoryId = false) => {
   return array;
 };
 
-export const createByTable = async (table, data) => {
+const createByTable = async (table, data) => {
   const saveData = {
     ...data,
     create_at: new Date().getTime(),
@@ -312,7 +336,7 @@ export const createByTable = async (table, data) => {
   return await create(table, saveData);
 };
 
-export const getByQuery = async (table, ...condition) => {
+const getByQuery = async (table, ...condition) => {
   const q = query(getTableRef(table), ...condition);
   const querySnapshot = await getDocs(q);
   return querySnapshot.docs.map((doc) => ({
@@ -321,13 +345,12 @@ export const getByQuery = async (table, ...condition) => {
   }));
 };
 
-export const getDocsLazyLoading = async (
+const getDocsLazyLoading = async (
   table,
   lastDocId,
   limitItems = 0,
   ...condition
 ) => {
-  // console.log([...condition].some(e => e['type'] == "orderBy"))
   let docs = [];
   let newLastDocId = null;
   try {
@@ -377,7 +400,7 @@ export const getDocsLazyLoading = async (
   }
 };
 
-export const getVideos = async (lastId, limitItems = 0) => {
+const getVideos = async (lastId, limitItems = 0) => {
   const { docs: videos, lastDocId } = await getDocsLazyLoading(
     "videos",
     lastId,
@@ -393,4 +416,78 @@ export const getVideos = async (lastId, limitItems = 0) => {
   });
 
   return { data: resultData, lastDocId };
+};
+
+const getLastMessage = async (path) => {
+  const dbRef = firebaseDatabaseRef(firebaseDatabase);
+  return get(child(dbRef, `chats/${path}`)).then(async (ss) => {
+    if (ss.exists()) {
+      const data = ss.val();
+      const lastMessage = data[Object.keys(data)[Object.keys(data).length - 1]];
+      return lastMessage;
+    } else {
+      return null;
+    }
+  });
+};
+
+const storeData = async (key, value) => {
+  try {
+    await AsyncStorage.setItem(key, value);
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+const getData = async (key) => {
+  try {
+    return await AsyncStorage.getItem(key).then((res) => res);
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export {
+  analytics,
+  auth,
+  db,
+  storage,
+  firebaseDatabase,
+  onAuthStateChanged,
+  firebaseDatabaseRef,
+  firebaseSet,
+  onValue,
+  child,
+  get,
+  getAll,
+  getUserId,
+  getDocRef,
+  getTableRef,
+  getUserProfile,
+  getMasterData,
+  getSavedData,
+  getUserByUserId,
+  getArticleByUserId,
+  getArticles,
+  getSavedDataByUser,
+  getArticleByUser,
+  setUserId,
+  uploadFileAsync,
+  updateOne,
+  createUser,
+  createSavedData,
+  deleteById,
+  softDelete,
+  updateById,
+  deleteSavedData,
+  tranferCategory,
+  createByTable,
+  getByQuery,
+  getDocsLazyLoading,
+  getVideos,
+  getLastMessage,
+  storeData,
+  getData,
+  setChatTitle,
+  getChatTitle,
 };
