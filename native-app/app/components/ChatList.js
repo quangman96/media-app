@@ -1,25 +1,22 @@
 import { StyleSheet, View, TouchableOpacity, Image } from "react-native";
 import { useNavigation } from "@react-navigation/core";
-import * as Analytics from "expo-firebase-analytics";
 import React from "react";
 import AppText from "../components/Text";
+import { setChatTitle } from "../../firebase";
 
-export default function ChatList({ data, callBack }) {
+export default function ChatList({ data, profile }) {
   const navigation = useNavigation();
-  const handleClickCard = () => {
-    // Analytics.logEvent("chat_view", {
-    //   uid,
-    //   email,
-    //   time: new Date(),
-    // });
-
-    navigation.navigate("ChatDetail", { data: {} });
+  const handleClickCard = (prop) => {
+    setChatTitle(prop.name);
+    setTimeout(() => {
+      navigation.navigate("ChatDetail", { data: prop, profile });
+    }, 0);
   };
   return (
     <View style={styles.area}>
-      {([...data, ...data] || []).map((prop, key) => {
+      {(data || []).map((prop, key) => {
         return (
-          <TouchableOpacity onPress={handleClickCard}>
+          <TouchableOpacity onPress={() => handleClickCard(prop)}>
             <View style={styles.form}>
               <View
                 style={{
@@ -29,19 +26,20 @@ export default function ChatList({ data, callBack }) {
                   marginLeft: 10,
                 }}
               >
-                <Image
-                  style={styles.avatar}
-                  source={require("../../assets/images/delivery-boy.png")}
-                />
+                <Image style={styles.avatar} source={{ uri: prop.avatar }} />
               </View>
               <View
-                style={{ flex: 8, marginLeft: 10, justifyContent: "center" }}
+                style={{ flex: 7, marginLeft: 10, justifyContent: "center" }}
               >
-                <AppText style={styles.name}>Shipper</AppText>
-                <AppText style={styles.text}>Where are you bro?</AppText>
+                <AppText numberOfLines={1} style={styles.name}>
+                  {prop.name || prop.email}
+                </AppText>
+                <AppText numberOfLines={1} style={styles.text}>
+                  {prop.lastMessage}
+                </AppText>
               </View>
-              <View style={{ flex: 2 }}>
-                <AppText style={styles.time}>3m ago</AppText>
+              <View style={{ flex: 3 }}>
+                <AppText style={styles.time}>{prop.time}</AppText>
               </View>
             </View>
           </TouchableOpacity>
@@ -67,10 +65,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   avatar: {
-    backgroundColor: "tomato",
+    backgroundColor: "whitesmoke",
     width: 60,
     height: 60,
     borderRadius: 50,
+    borderWidth: 1,
+    borderColor: "thistle",
   },
   name: {
     color: "#667080",

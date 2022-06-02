@@ -25,6 +25,7 @@ import Saved from "./app/screens/Saved";
 import Search from "./app/screens/Search";
 import User from "./app/screens/User";
 import ChatDetail from "./app/screens/ChatDetail";
+import { getChatTitle } from "./firebase";
 
 LogBox.ignoreAllLogs();
 
@@ -190,7 +191,7 @@ export default function App() {
     } else {
       setHeaderHeight(105);
     }
-    return currentRoute || "Home";
+    return currentRoute || getChatTitle || "Home";
   };
 
   return (
@@ -259,12 +260,16 @@ export default function App() {
           name="ChatDetail"
           component={ChatDetail}
           options={{
-            title: "",
+            title: getChatTitle(),
             headerStyle: {
-              height: 85,
+              height: 100,
             },
-            headerLeftContainerStyle: {
-              marginBottom: 20,
+            headerTintColor: "#667080",
+            headerTitleStyle: {
+              color: "#667080",
+              fontSize: 30,
+              fontWeight: "700",
+              marginTop: -10,
             },
           }}
         />

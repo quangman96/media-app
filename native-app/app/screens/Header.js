@@ -4,14 +4,16 @@ import * as Analytics from "expo-firebase-analytics";
 import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
-  Text, TextInput, ToastAndroid, TouchableOpacity,
-  useWindowDimensions, View
+  Text,
+  TextInput,
+  ToastAndroid,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { auth, getAll } from "../../firebase";
 import AppText from "../components/Text";
-
-
 
 export default function Header({ title, passInput, passCategory }) {
   const [text, onChangeText] = useState("");
@@ -65,9 +67,6 @@ export default function Header({ title, passInput, passCategory }) {
 
   const handleClickCard = (index) => {
     const temp = [...buttons];
-    // temp[index]["focus"] = !temp[index]["focus"];
-    // setButtons(temp);
-    // passCategory(temp);
     temp.forEach((btn) => (btn["focus"] = false));
     temp[index]["focus"] = true;
     navigation.navigate("FilteredArticles", { value: temp });
@@ -169,33 +168,6 @@ export default function Header({ title, passInput, passCategory }) {
                           </AppText>
                         </View>
                       </TouchableOpacity>
-                      // key < 4 && (
-                      //   <TouchableOpacity
-                      //     disabled={false}
-                      //     onPress={() => handleClickCard(key)}
-                      //   >
-                      //     <View
-                      //       style={[
-                      //         styles.theme,
-                      //         {
-                      //           // backgroundColor: prop["focus"]
-                      //           //   ? "#667080"
-                      //           //   : "#EEF1F4",
-                      //           backgroundColor: "#EEF1F4",
-                      //         },
-                      //       ]}
-                      //     >
-                      //       <AppText
-                      //         style={
-                      //           // styles[prop["focus"] ? "fontDark" : "fontLight"]
-                      //           styles["fontLight"]
-                      //         }
-                      //       >
-                      //         {prop["name"]}
-                      //       </AppText>
-                      //     </View>
-                      //   </TouchableOpacity>
-                      // )
                     );
                   })}
                 </View>
