@@ -47,14 +47,11 @@ export default function Header({ title, passInput, passCategory }) {
   };
   const handleSignOut = () => {
     const { uid, email } = auth.currentUser;
-    auth
-      .signOut()
-      .then(() => {
-        Analytics.logEvent("logout", { uid, email, time: new Date() });
-        navigation.replace("Login");
-        showToast();
-      })
-      .catch((e) => console.log(e));
+    auth.signOut().then(() => {
+      Analytics.logEvent("logout", { uid, email, time: new Date() });
+      navigation.replace("Login");
+      showToast();
+    });
   };
 
   const handleCreateArticle = () => {

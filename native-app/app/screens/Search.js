@@ -14,17 +14,6 @@ export default function Search({ value }) {
   const [lastId, setLastId] = useState(null);
   const [loadCnt, setLoadCnt] = useState(0);
 
-  const tranferCategory = (list) => {
-    const array = [];
-    list.forEach((e) => {
-      const obj = categories.find((z) => z.id === e);
-      if (obj) {
-        array.push(obj["name"]);
-      }
-    });
-    return array;
-  };
-
   async function getArticleList(lastItemId = null) {
     const numItemLoad = 3;
     setIsLoadMore(true);
@@ -82,12 +71,8 @@ export default function Search({ value }) {
       setCategories(res);
       getArticleList();
     }
-    try {
-      getButtonList();
-      getCategoryList();
-    } catch (e) {
-      console.log(e);
-    }
+    getButtonList();
+    getCategoryList();
   }, []);
 
   const handleOnEndReached = async () => {
