@@ -3,18 +3,23 @@ import { useNavigation } from "@react-navigation/core";
 import * as Analytics from "expo-firebase-analytics";
 import React, { useState } from "react";
 import {
-  Alert, Image, StyleSheet, ToastAndroid, TouchableOpacity, View
+  Alert,
+  Image,
+  StyleSheet,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import {
-  auth, createSavedData,
+  auth,
+  createSavedData,
   deleteSavedData,
   getUserId,
-  softDelete
+  softDelete,
 } from "../../firebase";
 import ChipList from "../components/ChipList";
 import AppText from "../components/Text";
 import defaultStyles from "../config/styles";
-
 
 export default function Card({ cardObj, isSavedPage, isMyListPage, callBack }) {
   const { uid, email } = auth.currentUser;

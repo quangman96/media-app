@@ -90,5 +90,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "400",
     marginTop: 15,
+    marginRight: 15,
+    textAlign: "right",
   },
 });

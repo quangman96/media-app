@@ -26,7 +26,6 @@ import Search from "./app/screens/Search";
 import User from "./app/screens/User";
 import ChatDetail from "./app/screens/ChatDetail";
 import { getChatTitle } from "./firebase";
-
 LogBox.ignoreAllLogs();
 
 export default function App() {
@@ -163,8 +162,6 @@ export default function App() {
   const [headerHeight, setHeaderHeight] = useState(115);
   const [childData, setChildData] = useState("");
   const [categories, setCategory] = useState([]);
-  const [userId, setUserId] = useState("");
-  const getValue = () => childData;
   const [loaded] = useFonts({
     Inter: require("./assets/fonts/static/Inter-Regular.ttf"),
   });
@@ -191,7 +188,7 @@ export default function App() {
     } else {
       setHeaderHeight(105);
     }
-    return currentRoute || getChatTitle || "Home";
+    return currentRoute || getChatTitle() || "Home";
   };
 
   return (
@@ -242,6 +239,22 @@ export default function App() {
             headerLeft: () => <></>,
           }}
         />
+        <Stack.Screen
+          name="NewProfile"
+          component={User}
+          options={{
+            headerTitle: () => (
+              <Header
+                passInput={setChildData}
+                passCategory={setCategory}
+                title={"New Profile"}
+              />
+            ),
+            headerLeft: null,
+            headerStyle: {},
+          }}
+        />
+
         <Stack.Screen
           name="Detail"
           component={Detail}

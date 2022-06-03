@@ -13,7 +13,6 @@ export default function MyList() {
   const [isLoadMore, setIsLoadMore] = useState(false);
 
   async function getSavedData(id, lastItemId = null) {
-    // const res = await getArticleByUser(id, true);
     setIsLoadMore(true);
     const { data: res, lastDocId } = await getArticleByUser(
       id,

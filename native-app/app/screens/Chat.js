@@ -8,11 +8,12 @@ import {
 import React, { useState, useEffect } from "react";
 import { Feather } from "@expo/vector-icons";
 import {
-  auth,
+  setChatTitle,
   firebaseDatabase,
   firebaseDatabaseRef,
   onValue,
   getLastMessage,
+  getUserId,
 } from "../../firebase";
 import Screen from "../components/Screens";
 import ChatList from "../components/ChatList";
@@ -22,7 +23,8 @@ import moment from "moment";
 import AppText from "../components/Text";
 
 export default function Chat({ value }) {
-  const uid = auth.currentUser?.uid;
+  setChatTitle("");
+  const uid = getUserId();
   const [users, setUsers] = useState([]);
   const [chatUsers, setChatUsers] = useState([]);
   const [myProfile, setMyprofile] = useState(null);
