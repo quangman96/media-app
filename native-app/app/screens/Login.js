@@ -13,10 +13,11 @@ import { AppForm, AppFormField, SubmitButton } from "../components/forms";
 import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
 import Screen from "../components/Screens";
 import AppText from "../components/Text";
+import { FIREBASE_AUTH_CODE } from "../commons/enums";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string().required().email().label("Email"),
-  password: Yup.string().required().min(4).max(12).label("Password"),
+  password: Yup.string().required().min(6).max(12).label("Password"),
 });
 
 export default function Login({ navigation }) {
@@ -34,6 +35,15 @@ export default function Login({ navigation }) {
       ToastAndroid.show("Login successfully !!!", ToastAndroid.SHORT);
     } else {
       ToastAndroid.show("Register successfully !!!", ToastAndroid.SHORT);
+    }
+  };
+
+  const showError = (code) => {
+    const message = FIREBASE_AUTH_CODE[code];
+    if (message) {
+      ToastAndroid.show(message, ToastAndroid.SHORT);
+    } else {
+      ToastAndroid.show(FIREBASE_AUTH_CODE["error"], ToastAndroid.SHORT);
     }
   };
 
@@ -57,7 +67,7 @@ export default function Login({ navigation }) {
         setPage(0);
         showToast("register");
       })
-      .catch((error) => console.log(error.message));
+      .catch((error) => showError(error.code));
   };
 
   const handleLogin = (values) => {
@@ -76,7 +86,7 @@ export default function Login({ navigation }) {
           }
         });
       })
-      .catch((error) => console.log(error.message));
+      .catch((error) => showError(error.code));
   };
 
   return (

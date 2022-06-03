@@ -27,6 +27,7 @@ import {
   onValue,
 } from "firebase/database";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ToastAndroid } from "react-native";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAHmHrFuHJuyzex74mgycMI79BCgFIAHlQ",
@@ -59,6 +60,11 @@ const storage = getStorage(app);
 const getUserId = () => auth.currentUser?.uid;
 const setChatTitle = (name) => (chatTitle = name);
 const getChatTitle = () => chatTitle;
+const showError = () =>
+  ToastAndroid.show(
+    "An error occurred. Please try again later!",
+    ToastAndroid.SHORT
+  );
 const getTableRef = (table) => {
   return collection(db, table);
 };
@@ -86,7 +92,7 @@ const uploadFileAsync = async (uri, callBack, type = "image") => {
   uploadBytes(storageRef, blob).then((snap) =>
     getDownloadURL(snap.ref)
       .then((downloadURL) => callBack(downloadURL, type))
-      .catch((e) => console.log(e))
+      .catch(() => showError())
   );
   blob.close();
 };
@@ -286,23 +292,17 @@ const createSavedData = async (user_id, articles_id) => {
 
 const deleteById = async (table, id) => {
   const docRef = getDocRef(table, id);
-  await deleteDoc(docRef).catch((e) => {
-    console.log(e);
-  });
+  await deleteDoc(docRef).catch(() => showError());
 };
 
 const softDelete = async (table, id) => {
   const docRef = getDocRef(table, id);
-  await updateDoc(docRef, { is_delete: true }).catch((e) => {
-    console.log("No such document exist!");
-  });
+  await updateDoc(docRef, { is_delete: true }).catch(() => showError());
 };
 
 const updateById = async (table, data, id) => {
   const docRef = getDocRef(table, id);
-  await updateDoc(docRef, data).catch((e) => {
-    console.log(e);
-  });
+  await updateDoc(docRef, data).catch(() => showError());
 };
 
 const deleteSavedData = async (saved_id) => {
@@ -394,8 +394,8 @@ const getDocsLazyLoading = async (
       docs,
       lastDocId: newLastDocId,
     };
-  } catch (error) {
-    console.log(error);
+  } catch (e) {
+    showError();
   }
 };
 
@@ -434,7 +434,7 @@ const storeData = async (key, value) => {
   try {
     await AsyncStorage.setItem(key, value);
   } catch (e) {
-    console.log(e);
+    showError();
   }
 };
 
@@ -442,7 +442,7 @@ const getData = async (key) => {
   try {
     return await AsyncStorage.getItem(key).then((res) => res);
   } catch (e) {
-    console.log(e);
+    showError();
   }
 };
 
@@ -488,4 +488,5 @@ export {
   getData,
   setChatTitle,
   getChatTitle,
+  showError,
 };

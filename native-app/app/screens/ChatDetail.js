@@ -29,8 +29,6 @@ export default function ChatDetail({ route }) {
               })
               .sort((y, z) => z.createdAt - y.createdAt)
           );
-        } else {
-          console.log(`no data`);
         }
       }
     );

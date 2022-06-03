@@ -25,12 +25,35 @@ import AppText from "../components/Text";
 export default function Chat({ value }) {
   setChatTitle("");
   const uid = getUserId();
+  const [usersDf, setUsersDf] = useState([]);
   const [users, setUsers] = useState([]);
+  const [chatUsersDf, setChatUsersDf] = useState([]);
   const [chatUsers, setChatUsers] = useState([]);
   const [myProfile, setMyprofile] = useState(null);
   const [text, onChangeText] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDone, setIsDone] = useState(false);
   const { width } = useWindowDimensions();
+
+  const filterChatList = (text) => {
+    if (!isDone) return;
+    if (!text || Array.isArray(text)) {
+      setUsers(usersDf);
+      setChatUsers(chatUsersDf);
+    } else {
+      setUsers(
+        usersDf.filter((e) =>
+          (e.name || "").toLowerCase().includes(text.toLowerCase())
+        )
+      );
+      setChatUsers(
+        chatUsersDf.filter((e) =>
+          (e.name || "").toLowerCase().includes(text.toLowerCase())
+        )
+      );
+    }
+  };
+
   useEffect(() => {
     onValue(
       firebaseDatabaseRef(firebaseDatabase, "users"),
@@ -72,17 +95,26 @@ export default function Chat({ value }) {
             }
           }
           // uid, email, displayName, photoURL
+          const data = arrUsers
+            .filter((e) => e.lastMessage)
+            .sort((a, b) => b.createdAt - a.createdAt);
           setUsers(arrUsers);
-          setChatUsers(
-            arrUsers
-              .filter((e) => e.lastMessage)
-              .sort((a, b) => b.createdAt - a.createdAt)
-          );
+          setUsersDf(arrUsers);
+          setChatUsers(data);
+          setChatUsersDf(data);
           setIsLoading(false);
+          setIsDone(true);
         }
       }
     );
   }, []);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      filterChatList(text);
+    }, 500);
+    return () => clearTimeout(delayDebounceFn);
+  }, [text]);
 
   if (isLoading) {
     return (
