@@ -13,7 +13,6 @@ export default function Saved(props) {
   const [cntUnSaved, setCntUnSaved] = useState(0);
 
   async function getSavedData(id, lastItemId = null) {
-    // const res = await getSavedDataByUser(id);
     setIsLoadMore(true);
     const { data: res, lastDocId } = await getSavedDataByUser(
       id,

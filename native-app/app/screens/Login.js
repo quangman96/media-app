@@ -1,10 +1,14 @@
 import * as Analytics from "expo-firebase-analytics";
 import React, { useEffect, useState } from "react";
 import {
-  Image, StyleSheet, ToastAndroid, TouchableOpacity, View
+  Image,
+  StyleSheet,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import * as Yup from "yup";
-import { auth, getAll, setUserId } from "../../firebase";
+import { auth, getAll, getUserProfile } from "../../firebase";
 import { AppForm, AppFormField, SubmitButton } from "../components/forms";
 import KeyBoardAvoidingWrapper from "../components/KeyBoardAvoidingWrapper";
 import Screen from "../components/Screens";
@@ -64,8 +68,13 @@ export default function Login({ navigation }) {
         showToast("login");
         const { uid, email } = userCredential.user;
         Analytics.logEvent("login", { uid, email, time: new Date() });
-        setUserId(uid);
-        navigation.navigate("Main", { screen: "Home" });
+        getUserProfile().then((res) => {
+          if (res.length === 0) {
+            navigation.navigate("NewProfile", { type: 1 });
+          } else {
+            navigation.navigate("Main", { screen: "Home" });
+          }
+        });
       })
       .catch((error) => console.log(error.message));
   };

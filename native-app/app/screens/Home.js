@@ -129,18 +129,6 @@ export default function Home({ value }) {
         }
         ListFooterComponent={renderLoader}
       ></CustomFlatList>
-
-      // <KeyBoardAvoidingWrapper>
-      //   <Screen style={{ backgroundColor: "#EEF1F4" }}>
-      //     <HorizontalList data={articlesHorizontal}></HorizontalList>
-      //     <View style={{ marginTop: -15 }}></View>
-      //     <CardList
-      //       data={articles}
-      //       onEndReachedThreshold={0.001}
-      //       onEndReached={handleOnEndReached}
-      //     ></CardList>
-      //   </Screen>
-      // </KeyBoardAvoidingWrapper>
     );
   }
 }

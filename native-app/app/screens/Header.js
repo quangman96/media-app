@@ -78,7 +78,7 @@ export default function Header({ title, passInput, passCategory }) {
         {title !== "Search" && title !== "Home" && (
           <Text style={[styles.title]}>{name}</Text>
         )}
-        {title === "User" && (
+        {(title === "User" || title === "New Profile") && (
           <TouchableOpacity
             onPress={handleSignOut}
             style={{

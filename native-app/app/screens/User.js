@@ -35,7 +35,8 @@ const validationSchema = Yup.object().shape({
   gender: Yup.string().required().label("Gender"),
 });
 
-export default function User() {
+export default function User({ route, navigation }) {
+  const type = route?.params?.type;
   const email = auth.currentUser?.email;
   const userId = auth.currentUser?.uid;
   const [open, setOpen] = useState(false);
@@ -142,7 +143,6 @@ export default function User() {
   const handleUpdate = (values) => {
     const genderCode = items.find((item) => item.value === value)["id"];
     const obj = {
-      id: values["id"],
       name: values["name"],
       address: values["address"],
       email: values["email"],
@@ -150,10 +150,12 @@ export default function User() {
       dob: new Date(date).getTime(),
       gender: genderCode,
     };
-    if (obj["id"]) {
+
+    if (values["id"]) {
+      obj["id"] = values["id"];
       updateOne("user_profile", obj);
     } else {
-      obj["id"] = userId;
+      obj["user_id"] = userId;
       createUser(obj);
     }
     firebaseSet(firebaseDatabaseRef(firebaseDatabase, `users/${userId}`), {
@@ -161,8 +163,12 @@ export default function User() {
       name: values["name"] || "",
       avatar: user["avatar"],
     });
-
     ToastAndroid.show("Update profile successfully !!!", ToastAndroid.SHORT);
+    if (type === 1) {
+      setTimeout(() => {
+        navigation.navigate("Main", { screen: "Home" });
+      }, 200);
+    }
   };
 
   function showDatePicker() {
@@ -192,7 +198,6 @@ export default function User() {
       <KeyBoardAvoidingWrapper>
         <Screen
           style={{
-            backgroundColor: "white",
             height: "100%",
           }}
         >
@@ -334,6 +339,7 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     marginBottom: 20,
+    marginTop: 15,
   },
   container: {
     flex: 1,

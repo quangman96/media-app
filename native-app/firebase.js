@@ -56,8 +56,7 @@ const auth = firebase.auth();
 const db = getFirestore(app);
 const storage = getStorage(app);
 
-const setUserId = (id) => (userId = id);
-const getUserId = () => userId;
+const getUserId = () => auth.currentUser?.uid;
 const setChatTitle = (name) => (chatTitle = name);
 const getChatTitle = () => chatTitle;
 const getTableRef = (table) => {
@@ -104,9 +103,9 @@ const getAll = async (table) => {
 };
 
 const getUserProfile = async () => {
-  const userUid = auth.currentUser.uid;
+  const userUid = getUserId();
   const ref = getTableRef("user_profile");
-  const q = query(ref, where("id", "==", userUid));
+  const q = query(ref, where("user_id", "==", userUid));
   const snapshot = await getDocs(q);
   const data = snapshot.docs.map((doc) => ({
     ...doc.data(),
@@ -471,7 +470,6 @@ export {
   getArticles,
   getSavedDataByUser,
   getArticleByUser,
-  setUserId,
   uploadFileAsync,
   updateOne,
   createUser,
