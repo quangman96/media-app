@@ -21,12 +21,55 @@ export default function ChatList({ data, profile }) {
               <View
                 style={{
                   flex: 2,
+                  flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "center",
                   marginLeft: 10,
                 }}
               >
-                <Image style={styles.avatar} source={{ uri: prop.avatar }} />
+                {prop.type !== "group" && (
+                  <Image style={styles.avatar} source={{ uri: prop.avatar }} />
+                )}
+                {prop.type === "group" && (
+                  <View
+                    style={[
+                      styles.avatar,
+                      {
+                        position: "relative",
+                        borderWidth: 0,
+                        backgroundColor: "white",
+                      },
+                    ]}
+                  >
+                    <Image
+                      style={[
+                        styles.avatar,
+                        {
+                          width: 45,
+                          height: 45,
+                          position: "absolute",
+                          bottom: 0,
+                          zIndex: 1,
+                        },
+                      ]}
+                      source={{ uri: prop.avatar1 }}
+                    />
+
+                    <Image
+                      style={[
+                        styles.avatar,
+                        {
+                          width: 35,
+                          height: 35,
+                          position: "absolute",
+                          top: 0,
+                          right: 0,
+                        },
+                      ]}
+                      source={{ uri: prop.avatar2 }}
+                    />
+                  </View>
+                )}
               </View>
               <View
                 style={{ flex: 7, marginLeft: 10, justifyContent: "center" }}
@@ -68,6 +111,14 @@ const styles = StyleSheet.create({
     backgroundColor: "whitesmoke",
     width: 60,
     height: 60,
+    borderRadius: 50,
+    borderWidth: 1,
+    borderColor: "thistle",
+  },
+  avatar2: {
+    backgroundColor: "whitesmoke",
+    width: 40,
+    height: 40,
     borderRadius: 50,
     borderWidth: 1,
     borderColor: "thistle",
