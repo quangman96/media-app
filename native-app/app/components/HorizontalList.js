@@ -4,12 +4,12 @@ import {
   StyleSheet,
   View,
   Image,
-  Text,
   TouchableOpacity,
 } from "react-native";
 import { useNavigation } from "@react-navigation/core";
 import CustomCard from "./CustomCard";
 import { setChatTitle } from "../../firebase";
+import AppText from "./Text";
 
 export default function HorizontalList({ data, type = 0, profile = null }) {
   const navigation = useNavigation();
@@ -43,8 +43,55 @@ export default function HorizontalList({ data, type = 0, profile = null }) {
           renderItem={({ item }) => (
             <TouchableOpacity onPress={() => handleClickAvatar(item)}>
               <View style={styles.area}>
-                <Image style={styles.avatar} source={{ uri: item.avatar }} />
-                <Text style={styles.text}>{item.name}</Text>
+                {/* <Image style={styles.avatar} source={{ uri: item.avatar }} /> */}
+
+                {item.type !== "group" && (
+                  <Image style={styles.avatar} source={{ uri: item.avatar }} />
+                )}
+                {item.type === "group" && (
+                  <View
+                    style={[
+                      styles.avatar,
+                      {
+                        position: "relative",
+                        borderWidth: 0,
+                        backgroundColor: "white",
+                      },
+                    ]}
+                  >
+                    <Image
+                      style={[
+                        styles.avatar,
+                        {
+                          width: 50,
+                          height: 50,
+                          position: "absolute",
+                          bottom: 0,
+                          zIndex: 1,
+                        },
+                      ]}
+                      source={{ uri: item.avatar1 }}
+                    />
+
+                    <Image
+                      style={[
+                        styles.avatar,
+                        {
+                          width: 40,
+                          height: 40,
+                          position: "absolute",
+                          top: 0,
+                          right: 0,
+                        },
+                      ]}
+                      source={{ uri: item.avatar2 }}
+                    />
+                  </View>
+                )}
+
+                <AppText numberOfLines={1} style={styles.text}>
+                  {item.name}
+                </AppText>
               </View>
             </TouchableOpacity>
           )}
@@ -71,6 +118,8 @@ const styles = StyleSheet.create({
   area: {
     paddingRight: 20,
     justifyContent: "center",
+    alignItems: "center",
+    maxWidth: 90,
   },
   avatar: {
     backgroundColor: "whitesmoke",
@@ -84,5 +133,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#667080",
     fontSize: 14,
+    width: 90,
+  },
+  avatar2: {
+    backgroundColor: "whitesmoke",
+    width: 40,
+    height: 40,
+    borderRadius: 50,
+    borderWidth: 1,
+    borderColor: "thistle",
   },
 });

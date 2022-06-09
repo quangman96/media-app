@@ -11,10 +11,11 @@ import {
 export default function ChatDetail({ route }) {
   const data = route?.params?.data;
   const myProfile = route?.params?.profile;
-  const { uid, email, displayName, photoURL } = myProfile;
-  const { id, name, avatar } = data;
+  const { uid, email, photoURL } = myProfile;
+  const { id, type } = data;
   const [messages, setMessages] = useState([]);
-  const folder = uid > id ? `${uid}-${id}` : `${id}-${uid}`;
+  const folder =
+    type === "group" ? id : uid > id ? `${uid}-${id}` : `${id}-${uid}`;
 
   useEffect(() => {
     onValue(
@@ -44,10 +45,6 @@ export default function ChatDetail({ route }) {
       createdAt: new Date().getTime(),
     });
   }, []);
-
-  const renderBubble = (props) => {
-    return <Bubble {...props} />;
-  };
 
   return (
     <GiftedChat
@@ -127,7 +124,7 @@ export default function ChatDetail({ route }) {
         );
       }}
       user={{
-        _id: id,
+        _id: type === "group" ? uid : id,
         name: email,
         avatar: photoURL,
       }}

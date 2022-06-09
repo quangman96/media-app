@@ -24,8 +24,7 @@
         "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "ait.nativeapp",
-      "googleServicesFile": "./google-services.json"
+      "package": "ait.nativeapp"
     },
     "web": {
       "favicon": "./assets/images/favicon.png",
