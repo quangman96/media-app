@@ -62,6 +62,14 @@ export default function Header({ title, passInput, passCategory }) {
     navigation.navigate("CreateVideo", { data: null });
   };
 
+  const navigateToVideoScreen = () => {
+    navigation.navigate("Video", { data: null });
+  };
+
+  const navigateToSavedScreen = () => {
+    navigation.navigate("Saved", { data: null });
+  };
+
   const handleClickCard = (index) => {
     const temp = [...buttons];
     temp.forEach((btn) => (btn["focus"] = false));
@@ -112,6 +120,15 @@ export default function Header({ title, passInput, passCategory }) {
           <View>
             <View style={styles.custom}>
               <Text style={styles.title}>Explore</Text>
+              <TouchableOpacity
+                onPress={navigateToSavedScreen}
+                style={{
+                  alignSelf: "flex-end",
+                  marginRight: 12,
+                }}
+              >
+                {<Feather name={"bookmark"} size={30} color={"#0386D0"} />}
+              </TouchableOpacity>
             </View>
             <View style={[styles.search, { width: width - 40 }]}>
               <Feather
@@ -131,9 +148,21 @@ export default function Header({ title, passInput, passCategory }) {
           </View>
         )}
         {title === "Home" && (
-          <View styles={styles.view}>
-            <Text style={styles.title}>{title}</Text>
+          <View styles={[styles.view]}>
+            <View style={[styles.custom]}>
+              <Text style={[styles.title, { marginTop: 0 }]}>Home</Text>
+              <TouchableOpacity
+                onPress={navigateToVideoScreen}
+                style={{
+                  alignSelf: "flex-end",
+                  marginRight: "12%",
+                }}
+              >
+                {<Feather name={"youtube"} size={30} color={"#0386D0"} />}
+              </TouchableOpacity>
+            </View>
             <View style={{ marginTop: 10 }}></View>
+
             <ScrollView
               showsHorizontalScrollIndicator={false}
               horizontal={true}
@@ -170,7 +199,7 @@ export default function Header({ title, passInput, passCategory }) {
                 </View>
               </View>
             </ScrollView>
-            <View style={{ marginTop: 20 }}></View>
+            <View style={{ marginLeft: 20, marginBottom: 15 }}></View>
           </View>
         )}
       </View>
@@ -179,7 +208,7 @@ export default function Header({ title, passInput, passCategory }) {
 }
 
 const styles = StyleSheet.create({
-  view: { marginBottom: -10 },
+  view: {},
   search: {
     paddingLeft: 10,
     paddingRight: 15,
@@ -192,10 +221,11 @@ const styles = StyleSheet.create({
     borderColor: "#979797",
     borderWidth: 1,
     paddingLeft: 15,
-    marginTop: 30,
+    marginTop: 15,
   },
   custom: {
-    marginBottom: -15,
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   header: {
     position: "absolute",
