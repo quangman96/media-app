@@ -83,15 +83,8 @@ export default function App() {
         component={Saved}
         options={{
           unmountOnBlur: true,
-          tabBarIcon: ({ focused }) => (
-            <Feather
-              name="bookmark"
-              size={24}
-              color={focused ? "#667080" : "#bbc0c8"}
-            />
-          ),
+          tabBarButton: () => null,
           header: () => null,
-          headerLeft: () => null,
         }}
       />
       <Tab.Screen
@@ -99,13 +92,7 @@ export default function App() {
         children={() => <VideoScreen value={categories} />}
         options={{
           unmountOnBlur: true,
-          tabBarIcon: ({ focused }) => (
-            <Feather
-              name="youtube"
-              size={24}
-              color={focused ? "#667080" : "#bbc0c8"}
-            />
-          ),
+          tabBarButton: () => null,
           header: () => null,
         }}
       />
@@ -180,9 +167,9 @@ export default function App() {
     const currentRoute =
       routes[routes.length - 1].state?.routeNames[currentRouteIndex];
     if (currentRoute === "Search") {
-      setHeaderHeight(180);
+      setHeaderHeight(165);
     } else if (currentRoute === "Home") {
-      setHeaderHeight(150);
+      setHeaderHeight(145);
     } else if (!currentRoute) {
       setHeaderHeight(150);
     } else {
